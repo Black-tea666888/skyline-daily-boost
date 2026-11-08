@@ -548,7 +548,6 @@
         </div>
         <div class="wzh" id="wZh"></div>
         <div class="wex" id="wEx"></div>
-        <div class="wexzh" id="wExZh"></div>
         <div class="presets" style="margin-top:12px">
           <button class="chip" id="wKnow" type="button"></button>
           <button class="chip" id="wNext" type="button"></button>
@@ -1804,65 +1803,65 @@ if ("serviceWorker" in navigator && location.protocol === "https:") {
 
 /* ================= Learning: daily word & quiz ================= */
 const WORDS = [
-  ["algorithm", "n.", "演算法", "A good algorithm can sort a million numbers in under a second.", "好的演算法可以在一秒內排序一百萬個數字。"],
-  ["allocate", "v.", "分配", "The operating system allocates memory to each program.", "作業系統會分配記憶體給每個程式。"],
-  ["ambiguous", "adj.", "模稜兩可的", "The question was ambiguous, so many students answered it differently.", "這題的意思不明確，所以很多學生答法不同。"],
-  ["compile", "v.", "編譯；彙編", "You need to compile the Java code before you can run it.", "Java 程式碼要先編譯才能執行。"],
-  ["concurrent", "adj.", "同時發生的；並行的", "The server handles thousands of concurrent requests.", "這台伺服器能處理數千個同時進來的請求。"],
-  ["derive", "v.", "推導；衍生", "We can derive this formula from the chain rule.", "我們可以用連鎖律推導出這個公式。"],
-  ["efficient", "adj.", "有效率的", "Studying in short, focused sessions is more efficient.", "短時間專注地讀書更有效率。"],
-  ["eliminate", "v.", "消除；淘汰", "Testing early helps eliminate bugs before release.", "提早測試能在發布前消除錯誤。"],
-  ["emerge", "v.", "出現；浮現", "New technologies emerge every year.", "每年都有新技術出現。"],
-  ["fundamental", "adj.", "基本的；根本的", "Data structures are fundamental to computer science.", "資料結構是資訊工程的根本。"],
-  ["hypothesis", "n.", "假設", "The experiment was designed to test the hypothesis.", "這個實驗是為了驗證假設而設計的。"],
-  ["implement", "v.", "實作；實施", "Our team will implement the login feature this week.", "我們團隊這週會實作登入功能。"],
-  ["inevitable", "adj.", "不可避免的", "Mistakes are inevitable when you learn something new.", "學新東西時犯錯是不可避免的。"],
-  ["infrastructure", "n.", "基礎建設", "Cloud infrastructure lets small teams build large apps.", "雲端基礎建設讓小團隊也能做出大型應用。"],
-  ["integrate", "v.", "整合", "We integrated the payment system into the app.", "我們把付款系統整合進 App。"],
-  ["interpret", "v.", "解讀；直譯", "Python code is interpreted line by line.", "Python 程式碼是逐行直譯執行的。"],
-  ["iterate", "v.", "反覆；迭代", "The loop iterates over every item in the list.", "這個迴圈會逐一處理清單中的每個項目。"],
-  ["maintain", "v.", "維持；維護", "It is hard to maintain code without comments.", "沒有註解的程式碼很難維護。"],
-  ["optimize", "v.", "最佳化", "We optimized the query so the page loads faster.", "我們最佳化了查詢，讓頁面載入更快。"],
-  ["persistent", "adj.", "持續的；堅持不懈的", "Persistent practice is the key to passing the exam.", "持續練習是通過考試的關鍵。"],
-  ["precise", "adj.", "精確的", "Floating-point numbers are not always precise.", "浮點數不一定精確。"],
-  ["prioritize", "v.", "排定優先順序", "Prioritize the subjects that carry the most points.", "先處理配分最高的科目。"],
-  ["redundant", "adj.", "多餘的；冗餘的", "Remove redundant code to keep the program clean.", "刪掉多餘的程式碼，讓程式保持簡潔。"],
-  ["resilient", "adj.", "有韌性的", "A resilient system keeps working when one server fails.", "有韌性的系統在一台伺服器故障時仍能運作。"],
-  ["retrieve", "v.", "取回；檢索", "The app retrieves data from the database.", "這個 App 會從資料庫取回資料。"],
-  ["scalable", "adj.", "可擴展的", "A scalable design can support more users later.", "可擴展的設計之後能支援更多使用者。"],
-  ["substantial", "adj.", "大量的；重大的", "She made substantial progress in calculus this month.", "她這個月在微積分上有很大的進步。"],
-  ["sustainable", "adj.", "可持續的", "Find a study pace that is sustainable for months.", "找一個能維持好幾個月的讀書節奏。"],
-  ["transmit", "v.", "傳送", "Sensors transmit data to the cloud every second.", "感測器每秒把資料傳送到雲端。"],
-  ["versatile", "adj.", "用途廣的；多才多藝的", "Python is a versatile language used in many fields.", "Python 是一種用途很廣的語言，應用在許多領域。"],
-  ["abstract", "adj.", "抽象的", "An interface is an abstract description of what a class can do.", "介面是對類別功能的抽象描述。"],
-  ["accumulate", "v.", "累積", "Small daily efforts accumulate into big results.", "每天的小努力會累積成大成果。"],
-  ["adequate", "adj.", "足夠的；適當的", "Make sure you get adequate sleep before the exam.", "考試前要確保睡眠充足。"],
-  ["anticipate", "v.", "預期；預料", "Good programmers anticipate what users might do wrong.", "好的程式設計師會預想使用者可能犯的錯。"],
-  ["assess", "v.", "評估", "The test is designed to assess your basic math skills.", "這份測驗是用來評估你的基礎數學能力。"],
-  ["attribute", "n./v.", "屬性；歸因於", "Each object has attributes such as name and size.", "每個物件都有名稱、大小等屬性。"],
-  ["collaborate", "v.", "合作", "Our team collaborates on GitHub every day.", "我們團隊每天在 GitHub 上合作。"],
-  ["comprehensive", "adj.", "全面的；綜合的", "This book gives a comprehensive review of calculus.", "這本書對微積分做了全面的複習。"],
-  ["consistent", "adj.", "一致的；始終如一的", "Consistent effort matters more than talent.", "持續一致的努力比天分更重要。"],
-  ["constraint", "n.", "限制；約束", "Time is the biggest constraint on this project.", "時間是這個專案最大的限制。"],
-  ["contribute", "v.", "貢獻；促成", "Everyone on the team contributed to the final report.", "團隊每個人都對最終報告有所貢獻。"],
-  ["crucial", "adj.", "關鍵的", "Understanding limits is crucial for learning derivatives.", "理解極限是學好導數的關鍵。"],
-  ["deficiency", "n.", "不足；缺陷", "The review revealed a deficiency in the design.", "這次審查發現設計上的缺陷。"],
-  ["demonstrate", "v.", "展示；證明", "Your project should demonstrate what you have learned.", "你的作品應該展示你學到的東西。"],
-  ["distinguish", "v.", "區分；辨別", "Can you distinguish between a compiler and an interpreter?", "你能分辨編譯器和直譯器嗎？"],
-  ["enhance", "v.", "提升；增強", "Regular practice will enhance your problem-solving skills.", "規律練習能提升你解題的能力。"],
-  ["evaluate", "v.", "評估；求值", "Evaluate the integral from 0 to 1.", "計算這個積分從 0 到 1 的值。"],
-  ["facilitate", "v.", "促進；使容易", "Clear comments facilitate teamwork.", "清楚的註解能讓團隊合作更順利。"],
-  ["flexible", "adj.", "有彈性的", "A flexible schedule helps you study and work at the same time.", "有彈性的行程能讓你兼顧讀書和工作。"],
-  ["generate", "v.", "產生", "The script generates a random quote every day.", "這個程式每天產生一句隨機的話。"],
-  ["identical", "adj.", "完全相同的", "The two arrays contain identical values.", "這兩個陣列的值完全相同。"],
-  ["initiative", "n.", "主動性；新措施", "She took the initiative to fix the bug herself.", "她主動自己修好了那個錯誤。"],
-  ["innovation", "n.", "創新", "Silicon Valley is famous for technological innovation.", "矽谷以科技創新聞名。"],
-  ["perspective", "n.", "觀點；角度", "Try to see the problem from the user's perspective.", "試著從使用者的角度看這個問題。"],
-  ["relevant", "adj.", "相關的", "Only include relevant details in your answer.", "答案裡只寫相關的細節。"],
-  ["sequence", "n.", "順序；數列", "The Fibonacci sequence starts with 0 and 1.", "費氏數列從 0 和 1 開始。"],
-  ["significant", "adj.", "重要的；顯著的", "There was a significant improvement in her test scores.", "她的考試成績有顯著進步。"],
-  ["simulate", "v.", "模擬", "We used software to simulate the circuit.", "我們用軟體模擬這個電路。"],
-  ["verify", "v.", "驗證；核實", "Always verify your answer by plugging it back in.", "記得把答案代回去驗證。"]
+  ["algorithm", "n.", "a set of steps for solving a problem", "A good algorithm can sort a million numbers in under a second."],
+  ["allocate", "v.", "to give something to a particular purpose or person", "The operating system allocates memory to each program."],
+  ["ambiguous", "adj.", "having more than one possible meaning", "The question was ambiguous, so many students answered it differently."],
+  ["compile", "v.", "to translate source code into machine code", "You need to compile the Java code before you can run it."],
+  ["concurrent", "adj.", "happening at the same time", "The server handles thousands of concurrent requests."],
+  ["derive", "v.", "to obtain or deduce something from a rule or source", "We can derive this formula from the chain rule."],
+  ["efficient", "adj.", "working well with little wasted effort", "Studying in short, focused sessions is more efficient."],
+  ["eliminate", "v.", "to remove or get rid of something", "Testing early helps eliminate bugs before release."],
+  ["emerge", "v.", "to come out or become visible", "New technologies emerge every year."],
+  ["fundamental", "adj.", "forming the basis of something; essential", "Data structures are fundamental to computer science."],
+  ["hypothesis", "n.", "a proposed explanation that can be tested", "The experiment was designed to test the hypothesis."],
+  ["implement", "v.", "to put a plan or system into action", "Our team will implement the login feature this week."],
+  ["inevitable", "adj.", "certain to happen; cannot be avoided", "Mistakes are inevitable when you learn something new."],
+  ["infrastructure", "n.", "the basic systems and structures a service needs", "Cloud infrastructure lets small teams build large apps."],
+  ["integrate", "v.", "to combine things so they work together", "We integrated the payment system into the app."],
+  ["interpret", "v.", "to explain the meaning; or run code line by line", "Python code is interpreted line by line."],
+  ["iterate", "v.", "to repeat a process again and again", "The loop iterates over every item in the list."],
+  ["maintain", "v.", "to keep something in good condition", "It is hard to maintain code without comments."],
+  ["optimize", "v.", "to make something as effective as possible", "We optimized the query so the page loads faster."],
+  ["persistent", "adj.", "continuing firmly despite difficulty", "Persistent practice is the key to passing the exam."],
+  ["precise", "adj.", "exact and accurate", "Floating-point numbers are not always precise."],
+  ["prioritize", "v.", "to decide what is most important and do it first", "Prioritize the subjects that carry the most points."],
+  ["redundant", "adj.", "not needed because something else already does the job", "Remove redundant code to keep the program clean."],
+  ["resilient", "adj.", "able to recover quickly from difficulties", "A resilient system keeps working when one server fails."],
+  ["retrieve", "v.", "to get back or fetch information", "The app retrieves data from the database."],
+  ["scalable", "adj.", "able to grow to handle more work or users", "A scalable design can support more users later."],
+  ["substantial", "adj.", "large in amount or importance", "She made substantial progress in calculus this month."],
+  ["sustainable", "adj.", "able to be kept up over a long period", "Find a study pace that is sustainable for months."],
+  ["transmit", "v.", "to send signals or data from one place to another", "Sensors transmit data to the cloud every second."],
+  ["versatile", "adj.", "able to be used for many different purposes", "Python is a versatile language used in many fields."],
+  ["abstract", "adj.", "not tied to specific details; a general idea", "An interface is an abstract description of what a class can do."],
+  ["accumulate", "v.", "to gather or build up over time", "Small daily efforts accumulate into big results."],
+  ["adequate", "adj.", "enough for a particular purpose", "Make sure you get adequate sleep before the exam."],
+  ["anticipate", "v.", "to expect or foresee something", "Good programmers anticipate what users might do wrong."],
+  ["assess", "v.", "to judge the quality or level of something", "The test is designed to assess your basic math skills."],
+  ["attribute", "n./v.", "a quality or feature; or to credit something to a cause", "Each object has attributes such as name and size."],
+  ["collaborate", "v.", "to work together with others", "Our team collaborates on GitHub every day."],
+  ["comprehensive", "adj.", "including everything that is needed", "This book gives a comprehensive review of calculus."],
+  ["consistent", "adj.", "behaving or performing the same way every time", "Consistent effort matters more than talent."],
+  ["constraint", "n.", "a limit or restriction", "Time is the biggest constraint on this project."],
+  ["contribute", "v.", "to give or help toward a goal", "Everyone on the team contributed to the final report."],
+  ["crucial", "adj.", "extremely important; essential", "Understanding limits is crucial for learning derivatives."],
+  ["deficiency", "n.", "a lack of something needed", "The review revealed a deficiency in the design."],
+  ["demonstrate", "v.", "to show clearly or prove", "Your project should demonstrate what you have learned."],
+  ["distinguish", "v.", "to recognize the difference between things", "Can you distinguish between a compiler and an interpreter?"],
+  ["enhance", "v.", "to improve or increase quality", "Regular practice will enhance your problem-solving skills."],
+  ["evaluate", "v.", "to judge the value of something; or calculate a result", "Evaluate the integral from 0 to 1."],
+  ["facilitate", "v.", "to make a process easier", "Clear comments facilitate teamwork."],
+  ["flexible", "adj.", "able to change or adapt easily", "A flexible schedule helps you study and work at the same time."],
+  ["generate", "v.", "to produce or create", "The script generates a random quote every day."],
+  ["identical", "adj.", "exactly the same", "The two arrays contain identical values."],
+  ["initiative", "n.", "the ability to act on your own without being told", "She took the initiative to fix the bug herself."],
+  ["innovation", "n.", "a new idea, method, or product", "Silicon Valley is famous for technological innovation."],
+  ["perspective", "n.", "a particular way of looking at something", "Try to see the problem from the user's perspective."],
+  ["relevant", "adj.", "closely connected to the subject", "Only include relevant details in your answer."],
+  ["sequence", "n.", "an ordered set of items or events", "The Fibonacci sequence starts with 0 and 1."],
+  ["significant", "adj.", "important or large enough to notice", "There was a significant improvement in her test scores."],
+  ["simulate", "v.", "to imitate the behavior of a real system", "We used software to simulate the circuit."],
+  ["verify", "v.", "to check that something is true or correct", "Always verify your answer by plugging it back in."]
 ];
 
 // [subject, question, options, answer index, explanation]
@@ -2042,7 +2041,7 @@ function poolFor(filter) {
 function drawLearn() {
   const ui = UI[lang], w = WORDS[learn.word], q = curQ();
   $("wWord").textContent = w[0]; $("wPos").textContent = w[1];
-  $("wZh").textContent = w[2]; $("wEx").textContent = w[3]; $("wExZh").textContent = w[4];
+  $("wZh").textContent = w[2]; $("wEx").textContent = w[3];
   $("wSpeak").textContent = ui.speak;
   $("wSpeak").hidden = !("speechSynthesis" in window);
   $("qNext").textContent = ui.qNext; $("wNext").textContent = ui.unsure; $("wKnow").textContent = ui.know;
@@ -2635,7 +2634,7 @@ function applyCustom() {
       founded: c.founded || "—", zh: text, en: text, custom: true });
   });
   custom.quiz.forEach(q => QUIZ.push([["cs", "calc", "en", "zh"].includes(q.subject) ? q.subject : "cs", q.question, [q.o0, q.o1, q.o2, q.o3], Math.min(3, Math.max(0, +q.answer || 0)), q.exp || ""]));
-  custom.words.forEach(w => WORDS.push([w.word, w.pos || "", w.zh, w.ex || "", w.exZh || ""]));
+  custom.words.forEach(w => WORDS.push([w.word, w.pos || "", w.def || w.zh || "", w.ex || ""]));
 }
 
 // keep every saved index valid after an item at `idx` is removed from `kind`
