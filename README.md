@@ -30,6 +30,16 @@ Plain HTML, CSS and JavaScript in one page, no build step. Weather from [Open-Me
 | `firestore.rules` | Security rules for Firestore |
 | `sw.js`, `manifest.webmanifest` | Offline support and install-as-app |
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/desktop-today.png" alt="Today's city view on desktop" width="48%">
+  <img src="screenshots/desktop-learn.png" alt="Learn tab with vocabulary practice" width="48%">
+</p>
+<p align="center">
+  <img src="screenshots/mobile-today.png" alt="Mobile view" width="30%">
+</p>
+
 ## Run locally
 
 ```bash
@@ -43,3 +53,5 @@ python3 -m http.server 8000
 2. Add your site's domain under Authentication → Settings → Authorized domains.
 3. Create a Firestore database and publish the rules from `firestore.rules`.
 4. Register a web app and paste its `firebaseConfig` into `firebase-config.js`.
+
+The Firebase web config is public by design; access is controlled by the Firestore rules and the Authorized domains list.
