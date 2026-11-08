@@ -1953,18 +1953,6 @@ const QUIZ = [
   ["en", "Choose the word closest in meaning to \"postpone\".", ["cancel", "delay", "finish", "announce"], 1, "postpone = delay."],
   ["en", "I wish I ___ more time to study yesterday.", ["have", "had", "had had", "would have"], 2, "A wish about the past (contrary to fact) uses the past perfect."],
   ["en", "The more you practice, ___ you will become.", ["more confident", "the more confident", "most confident", "the most confident"], 1, "The + comparative..., the + comparative... means 'the more ..., the more ...'."],
-  ["zh", "What does the idiom 畫龍點睛 mean?", ["Skilled painting technique", "A final touch at a key point that brings the whole to life", "Doing something unnecessary", "Deliberately mysterious"], 1, "Legend says the painter Zhang Sengyou added the eyes to a dragon and it flew away; the idiom means a key stroke that brings everything alive."],
-  ["zh", "What does 杯弓蛇影 mean?", ["Excellent skill", "Being overly suspicious and frightening yourself", "Seeing the big picture from small details", "Drinking too much"], 1, "A man mistook the reflection of a bow in a cup for a snake; the idiom describes groundless fear."],
-  ["zh", "What does 守株待兔 mean?", ["Waiting patiently for the right moment", "Clinging to old experience or hoping for something for nothing", "Focusing on your work", "Protecting the weak"], 1, "A farmer found a rabbit that had crashed into a tree stump and then waited by the stump every day for more."],
-  ["zh", "What does 亡羊補牢 mean?", ["Learning only after a loss", "Fixing a problem in time, and it is not too late", "Procrastinating", "Suffering a heavy loss"], 1, "Repairing the sheep pen after the sheep have escaped: fixing a mistake promptly is still worthwhile."],
-  ["zh", "What does 破釜沉舟 mean?", ["Wasting resources", "Being determined with no way back", "A failed war", "Starting over"], 1, "After crossing the river, Xiang Yu smashed the cooking pots and sank the boats, showing he would fight to the death."],
-  ["zh", "What does 三人成虎 mean?", ["Strength in unity", "A rumor repeated often enough will be believed", "Many hands make light work", "Great courage"], 1, "No tiger was in the market, but when three people said so, the listeners believed it."],
-  ["zh", "What does 塞翁失馬 mean?", ["Misfortune can turn into fortune", "A loss that can never be recovered", "Being careful", "Losing big for a small gain"], 0, "The old man lost his horse, which later returned with a fine stallion; good and bad fortune are hard to predict."],
-  ["zh", "How is the character 莘 in 莘莘學子 pronounced?", ["ㄒㄧㄣ", "ㄕㄣ", "ㄒㄧㄥ", "ㄐㄧㄣ"], 1, "莘 is pronounced ㄕㄣ, and 莘莘 describes a large number of people."],
-  ["zh", "What does 罄竹難書 usually describe?", ["Achievements too many to record", "Crimes too numerous to record", "A lengthy essay", "Difficulty of writing"], 1, "Originally it meant the crimes were too many to write on all the bamboo slips; it is used negatively, not for achievements."],
-  ["zh", "What does 差強人意 mean?", ["Very dissatisfying", "Fairly acceptable, somewhat satisfying", "Almost succeeded", "Forcing people to do things"], 1, "Here 差 means 'somewhat'; the idiom means the result is roughly satisfactory."],
-  ["zh", "What does 首當其衝 mean?", ["Being the first to rush out", "Being the first to suffer an attack or disaster", "Leading the group", "Succeeding first"], 1, "It describes being the first to bear the brunt of an attack or disaster, not being the first to act."],
-  ["zh", "What does 朝三暮四 usually mean today?", ["Working diligently", "Fickle and inconsistent", "Planning time well", "Greeting people in the morning and evening"], 1, "Originally it meant deceiving someone with trickery; today it means fickle and inconsistent."]
 ];
 
 // ---- endless practice: freshly generated questions (numbers + calculus) ----
@@ -2048,7 +2036,7 @@ function drawLearn() {
   const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 2).length;
   $("wProg").textContent = ui.mastered(mastered, WORDS.length);
   $("wBar").style.width = (mastered / WORDS.length * 100) + "%";
-  $("qFilters").innerHTML = ["all", "cs", "num", "logic", "arch", "ds", "net", "db", "prog", "calc", "en", "zh", "endless", "wrong"].map(f =>
+  $("qFilters").innerHTML = ["all", "cs", "num", "logic", "arch", "ds", "net", "db", "prog", "calc", "en", "endless", "wrong"].map(f =>
     `<button class="chip" type="button" data-f="${f}" aria-pressed="${learn.filter === f}">${f === "all" ? ui.all : f === "wrong" ? ui.wrongBook(wrongs.length) : ui.subj[f]}</button>`).join("");
   $("qSubject").textContent = ui.subj[q[0]];
   const sc = store.get("sdb.quiz", { total: 0, correct: 0 });

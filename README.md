@@ -12,7 +12,7 @@ A daily encouragement page set against live city skylines. Every day you get a c
 - **51 tech companies** from around the world with short profiles and learning tips
 - **Focus timer** with ambient sounds (rain, waves, stream, white noise), zen mode and weekly stats
 - **Daily goals, reminders** (with calendar export) and a daily review card
-- **Practice**: daily word, 99 quiz questions by subject (number systems, logic, architecture, data structures, networks, databases, programming, calculus, English, Chinese), an endless mode with freshly generated questions, and a mistakes notebook
+- **Practice**: daily word, 87 quiz questions by subject (number systems, logic, architecture, data structures, networks, databases, programming, calculus, English, Chinese), an endless mode with freshly generated questions, and a mistakes notebook
 - **Customize**: add your own cities, companies, questions, words and quotes; export and import backups
 - **Chinese and English**, light and dark themes, °C/°F, 12/24-hour clock
 - **Installable** as an app (PWA) and works offline
