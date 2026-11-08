@@ -859,7 +859,7 @@ Object.assign(UI.zh, {
   signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
   learnTab: "📚 學習", speak: "🔊 發音", qNext: "下一題", wNext: "換一個單字", right: "✅ 答對了！", wrong: "❌ 正確答案是",
   score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
-  subj: { cs: "計算機概論", calc: "微積分", en: "英文", zh: "國文" },
+  subj: { cs: "科技全部", num: "數字系統", logic: "數位邏輯", arch: "電腦結構", ds: "資料結構", net: "網路", db: "資料庫", prog: "程式與作業系統", calc: "微積分", en: "英文", zh: "國文", endless: "∞ 無限題" },
   all: "全部", wrongBook: n => `錯題本 ${n}`, wrongEmpty: "錯題本是空的，太強了！", wrongCleared: "這題已從錯題本移除",
   know: "✓ 認識", unsure: "✗ 不熟", mastered: (a, b) => `已掌握 ${a}／${b} 個單字`,
   remindTab: "⏰ 提醒", rPh: "提醒內容，例如：打開網站看今天的鼓勵語", rDefault: "看看今天的鼓勵語，做一題練習 💪",
@@ -910,7 +910,7 @@ Object.assign(UI.en, {
   signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
   learnTab: "📚 Learn", speak: "🔊 Listen", qNext: "Next question", wNext: "New word", right: "✅ Correct!", wrong: "❌ The answer is",
   score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
-  subj: { cs: "Intro to CS", calc: "Calculus", en: "English", zh: "Chinese" },
+  subj: { cs: "All tech", num: "Number systems", logic: "Logic gates", arch: "Computer architecture", ds: "Data structures", net: "Networks", db: "Databases", prog: "Programming & OS", calc: "Calculus", en: "English", zh: "Chinese", endless: "∞ Endless" },
   all: "All", wrongBook: n => `Mistakes ${n}`, wrongEmpty: "No mistakes to review. Nice!", wrongCleared: "Removed from your mistakes",
   know: "✓ Know it", unsure: "✗ Not yet", mastered: (a, b) => `${a}/${b} words mastered`,
   remindTab: "⏰ Reminders", rPh: "Reminder text, e.g. check today's boost", rDefault: "Check today's boost and do one practice question 💪",
@@ -1866,24 +1866,24 @@ const WORDS = [
 
 // [subject, question, options, answer index, explanation]
 const QUIZ = [
-  ["cs", "What is 13 in decimal, written in binary?", ["1011", "1101", "1110", "1001"], 1, "13 = 8 + 4 + 1, so it is 1101."],
-  ["cs", "How many bits are in 1 byte?", ["4", "8", "16", "32"], 1, "1 byte = 8 bits."],
-  ["cs", "What is 1010 + 0111 in binary?", ["10001", "10011", "1111", "10101"], 0, "10 + 7 = 17, and 17 in binary is 10001."],
-  ["cs", "In 8-bit two's complement, how is -1 represented?", ["10000001", "11111110", "11111111", "00000001"], 2, "1 is 00000001; flipping the bits gives 11111110; adding 1 gives 11111111."],
-  ["cs", "What is the access order of a stack?", ["First in, first out", "Last in, first out", "Random access", "Sorted by priority"], 1, "A stack is LIFO: the item pushed last is popped first."],
-  ["cs", "What is the access order of a queue?", ["First in, first out", "Last in, first out", "Random access", "Sorted by size"], 0, "A queue is FIFO, like a line where first come is first served."],
-  ["cs", "What is the time complexity of binary search on n sorted items?", ["O(1)", "O(log n)", "O(n)", "O(n log n)"], 1, "Each step halves the search range, so it is O(log n)."],
-  ["cs", "What is the worst-case time complexity of bubble sort?", ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"], 2, "Two nested loops compare adjacent elements, so the worst case is O(n²)."],
-  ["cs", "In the TCP/IP model, which layer handles IP addressing and packet routing?", ["Application", "Transport", "Internet (network)", "Link"], 2, "The Internet layer handles IP addressing and routing; TCP and UDP sit at the transport layer."],
-  ["cs", "Which default port does HTTPS use?", ["21", "80", "443", "8080"], 2, "HTTP uses port 80 by default and HTTPS uses 443."],
-  ["cs", "What is hexadecimal FF in decimal?", ["15", "255", "256", "511"], 1, "F = 15, so 15 × 16 + 15 = 255."],
-  ["cs", "Which CPU unit performs arithmetic and logic operations?", ["CU", "ALU", "Cache", "Register"], 1, "The ALU (arithmetic logic unit) does the calculations; the CU controls the flow."],
-  ["cs", "Which statement about RAM is correct?", ["Data is kept after power is off", "Data is lost when power is off", "It is read-only", "It is slower than a hard disk"], 1, "RAM is volatile memory, so its data disappears when power is cut."],
-  ["cs", "Which of these is an operating system?", ["Linux", "Excel", "Chrome", "Python"], 0, "Linux is an OS; Excel is an application, Chrome is a browser, and Python is a programming language."],
-  ["cs", "What is the result of A AND (NOT A) in Boolean logic?", ["A", "NOT A", "0", "1"], 2, "A and NOT A can never both be true, so the result is always 0."],
-  ["cs", "What is the main job of DNS?", ["Encrypting connections", "Translating domain names into IP addresses", "Assigning IP addresses to devices", "Compressing web pages"], 1, "DNS resolves names like google.com to IP addresses; DHCP is what assigns IPs automatically."],
-  ["cs", "A tree has n nodes. How many edges does it have?", ["n", "n − 1", "n + 1", "2n"], 1, "A tree is connected and has no cycles, so it always has n − 1 edges."],
-  ["cs", "How many bytes are in 1 KB (binary)?", ["1000", "1024", "512", "2048"], 1, "2¹⁰ = 1024."],
+  ["num", "What is 13 in decimal, written in binary?", ["1011", "1101", "1110", "1001"], 1, "13 = 8 + 4 + 1, so it is 1101."],
+  ["num", "How many bits are in 1 byte?", ["4", "8", "16", "32"], 1, "1 byte = 8 bits."],
+  ["num", "What is 1010 + 0111 in binary?", ["10001", "10011", "1111", "10101"], 0, "10 + 7 = 17, and 17 in binary is 10001."],
+  ["num", "In 8-bit two's complement, how is -1 represented?", ["10000001", "11111110", "11111111", "00000001"], 2, "1 is 00000001; flipping the bits gives 11111110; adding 1 gives 11111111."],
+  ["ds", "What is the access order of a stack?", ["First in, first out", "Last in, first out", "Random access", "Sorted by priority"], 1, "A stack is LIFO: the item pushed last is popped first."],
+  ["ds", "What is the access order of a queue?", ["First in, first out", "Last in, first out", "Random access", "Sorted by size"], 0, "A queue is FIFO, like a line where first come is first served."],
+  ["ds", "What is the time complexity of binary search on n sorted items?", ["O(1)", "O(log n)", "O(n)", "O(n log n)"], 1, "Each step halves the search range, so it is O(log n)."],
+  ["ds", "What is the worst-case time complexity of bubble sort?", ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"], 2, "Two nested loops compare adjacent elements, so the worst case is O(n²)."],
+  ["net", "In the TCP/IP model, which layer handles IP addressing and packet routing?", ["Application", "Transport", "Internet (network)", "Link"], 2, "The Internet layer handles IP addressing and routing; TCP and UDP sit at the transport layer."],
+  ["net", "Which default port does HTTPS use?", ["21", "80", "443", "8080"], 2, "HTTP uses port 80 by default and HTTPS uses 443."],
+  ["num", "What is hexadecimal FF in decimal?", ["15", "255", "256", "511"], 1, "F = 15, so 15 × 16 + 15 = 255."],
+  ["arch", "Which CPU unit performs arithmetic and logic operations?", ["CU", "ALU", "Cache", "Register"], 1, "The ALU (arithmetic logic unit) does the calculations; the CU controls the flow."],
+  ["arch", "Which statement about RAM is correct?", ["Data is kept after power is off", "Data is lost when power is off", "It is read-only", "It is slower than a hard disk"], 1, "RAM is volatile memory, so its data disappears when power is cut."],
+  ["prog", "Which of these is an operating system?", ["Linux", "Excel", "Chrome", "Python"], 0, "Linux is an OS; Excel is an application, Chrome is a browser, and Python is a programming language."],
+  ["logic", "What is the result of A AND (NOT A) in Boolean logic?", ["A", "NOT A", "0", "1"], 2, "A and NOT A can never both be true, so the result is always 0."],
+  ["net", "What is the main job of DNS?", ["Encrypting connections", "Translating domain names into IP addresses", "Assigning IP addresses to devices", "Compressing web pages"], 1, "DNS resolves names like google.com to IP addresses; DHCP is what assigns IPs automatically."],
+  ["ds", "A tree has n nodes. How many edges does it have?", ["n", "n − 1", "n + 1", "2n"], 1, "A tree is connected and has no cycles, so it always has n − 1 edges."],
+  ["num", "How many bytes are in 1 KB (binary)?", ["1000", "1024", "512", "2048"], 1, "2¹⁰ = 1024."],
   ["calc", "d/dx (x³) = ?", ["x²", "3x²", "3x", "x⁴/4"], 1, "Power rule: d/dx xⁿ = n·xⁿ⁻¹."],
   ["calc", "d/dx (sin x) = ?", ["cos x", "−cos x", "−sin x", "tan x"], 0, "The derivative of sin x is cos x."],
   ["calc", "∫ 2x dx = ?", ["2", "x²", "x² + C", "2x² + C"], 2, "The derivative of x² is 2x. Don't forget the + C for indefinite integrals."],
@@ -1898,32 +1898,32 @@ const QUIZ = [
   ["en", "Choose the word closest in meaning to \"rapid\".", ["fast", "quiet", "careful", "late"], 0, "rapid = fast."],
   ["en", "If I ___ you, I would study harder.", ["am", "was", "were", "be"], 2, "In unreal conditionals (hypothetical situations), use were for all persons."],
   ["en", "Neither Tom nor his friends ___ coming to the party.", ["is", "are", "was", "be"], 1, "With neither...nor, the verb agrees with the nearer subject, friends, which is plural, so use are."],
-  ["cs", "How many bits does a single-precision IEEE 754 float use?", ["16", "32", "64", "128"], 1, "Single precision uses 32 bits (1 sign + 8 exponent + 23 mantissa); double precision uses 64."],
-  ["cs", "Which of these is non-volatile memory?", ["SRAM", "DRAM", "Flash memory", "Register"], 2, "Flash memory (used in SSDs and USB drives) keeps its data without power."],
-  ["cs", "What is the main purpose of a cache?", ["Increase hard disk capacity", "Narrow the speed gap between the CPU and main memory", "Prevent viruses", "Reduce power use"], 1, "A cache holds frequently used data so the CPU doesn't wait on slower main memory."],
-  ["cs", "What must a recursive function always have to avoid infinite calls?", ["A global variable", "A base case (stopping condition)", "A loop", "A pointer"], 1, "Without a base case, recursion keeps calling itself until the stack overflows."],
-  ["cs", "Which structure gives the fastest direct access to the k-th element?", ["Array", "Linked list", "Stack", "Queue"], 0, "An array computes the address from the index in O(1); a linked list must be walked from the head, O(k)."],
-  ["cs", "What is the average search time complexity of a hash table?", ["O(1)", "O(log n)", "O(n)", "O(n²)"], 0, "The hash function computes the location directly, so the average is O(1); with heavy collisions the worst case is O(n)."],
-  ["cs", "What is the average time complexity of quicksort?", ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], 1, "The average is O(n log n); if the pivot is always the worst choice, it degrades to O(n²)."],
-  ["cs", "What is the maximum number of nodes in a binary tree of height h (root at level 1)?", ["2h", "2ʰ", "2ʰ − 1", "h²"], 2, "Each level holds up to 1, 2, 4, ... nodes, which sums to 2ʰ − 1."],
-  ["cs", "What is the order of a preorder traversal of a binary tree?", ["Left, root, right", "Root, left, right", "Left, right, root", "Right, root, left"], 1, "Preorder: root, left, right. Inorder: left, root, right. Postorder: left, right, root."],
-  ["cs", "Which data structure does breadth-first search (BFS) usually use?", ["Stack", "Queue", "Hash table", "Heap"], 1, "BFS explores level by level, using a queue; DFS uses a stack or recursion."],
-  ["cs", "In the OSI model, what is layer 4?", ["Network", "Transport", "Session", "Data link"], 1, "From bottom to top: physical, data link, network, transport, session, presentation, application."],
-  ["cs", "How many bits are in an IPv4 address?", ["16", "32", "64", "128"], 1, "IPv4 addresses are 32 bits; IPv6 addresses are 128 bits."],
-  ["cs", "Which IP address is a private address?", ["8.8.8.8", "192.168.1.10", "140.112.8.116", "1.1.1.1"], 1, "Private ranges include 192.168.0.0/16, 10.0.0.0/8 and 172.16.0.0/12."],
-  ["cs", "The subnet mask 255.255.255.0 is equivalent to which CIDR prefix?", ["/8", "/16", "/24", "/32"], 2, "The first three 255 octets contain 24 ones, so it is /24."],
-  ["cs", "Which protocol automatically assigns IP addresses to devices?", ["DNS", "DHCP", "FTP", "SMTP"], 1, "DHCP assigns IPs automatically; DNS resolves names."],
-  ["cs", "Which SQL command queries data?", ["INSERT", "UPDATE", "SELECT", "DELETE"], 2, "SELECT queries data; INSERT adds rows; UPDATE modifies them; DELETE removes them."],
-  ["cs", "In a relational database, which column uniquely identifies each record?", ["Foreign key", "Primary key", "Index", "View"], 1, "A primary key must be unique and cannot be null."],
-  ["cs", "Which translator converts the whole source program to machine code before running it?", ["Interpreter", "Compiler", "Linker", "Loader"], 1, "A compiler translates the whole program at once; an interpreter translates and runs line by line."],
-  ["cs", "Which is NOT one of the four necessary conditions for deadlock?", ["Mutual exclusion", "Hold and wait", "No preemption", "First come, first served"], 3, "The four conditions are mutual exclusion, hold and wait, no preemption, and circular wait."],
-  ["cs", "What is the main purpose of virtual memory?", ["Speed up the network", "Let programs use an address space larger than physical RAM", "Replace the CPU cache", "Encrypt data"], 1, "The OS moves some data to disk, so programs behave as if they have more memory than physically exists."],
-  ["cs", "Which is NOT one of the three main features of object-oriented programming?", ["Encapsulation", "Inheritance", "Polymorphism", "Compilation"], 3, "The three main features are encapsulation, inheritance, and polymorphism."],
-  ["cs", "What is the output of a NAND gate when both inputs are 1?", ["0", "1", "Undefined", "High impedance"], 0, "AND gives 1, and NAND inverts it to 0."],
-  ["cs", "What is 1 XOR 1?", ["0", "1", "2", "10"], 0, "XOR outputs 0 when inputs are equal and 1 when they differ."],
-  ["cs", "Binary 1011 shifted left by one bit equals what in decimal?", ["11", "22", "5", "44"], 1, "A left shift multiplies by 2: 11 × 2 = 22 (10110)."],
-  ["cs", "What is the largest value an unsigned 8-bit integer can hold?", ["127", "128", "255", "256"], 2, "2⁸ − 1 = 255."],
-  ["cs", "Which is a symmetric encryption algorithm?", ["AES", "RSA", "SHA-256", "MD5"], 0, "AES is symmetric; RSA is asymmetric; SHA-256 and MD5 are hash functions."],
+  ["num", "How many bits does a single-precision IEEE 754 float use?", ["16", "32", "64", "128"], 1, "Single precision uses 32 bits (1 sign + 8 exponent + 23 mantissa); double precision uses 64."],
+  ["arch", "Which of these is non-volatile memory?", ["SRAM", "DRAM", "Flash memory", "Register"], 2, "Flash memory (used in SSDs and USB drives) keeps its data without power."],
+  ["arch", "What is the main purpose of a cache?", ["Increase hard disk capacity", "Narrow the speed gap between the CPU and main memory", "Prevent viruses", "Reduce power use"], 1, "A cache holds frequently used data so the CPU doesn't wait on slower main memory."],
+  ["ds", "What must a recursive function always have to avoid infinite calls?", ["A global variable", "A base case (stopping condition)", "A loop", "A pointer"], 1, "Without a base case, recursion keeps calling itself until the stack overflows."],
+  ["ds", "Which structure gives the fastest direct access to the k-th element?", ["Array", "Linked list", "Stack", "Queue"], 0, "An array computes the address from the index in O(1); a linked list must be walked from the head, O(k)."],
+  ["ds", "What is the average search time complexity of a hash table?", ["O(1)", "O(log n)", "O(n)", "O(n²)"], 0, "The hash function computes the location directly, so the average is O(1); with heavy collisions the worst case is O(n)."],
+  ["ds", "What is the average time complexity of quicksort?", ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], 1, "The average is O(n log n); if the pivot is always the worst choice, it degrades to O(n²)."],
+  ["ds", "What is the maximum number of nodes in a binary tree of height h (root at level 1)?", ["2h", "2ʰ", "2ʰ − 1", "h²"], 2, "Each level holds up to 1, 2, 4, ... nodes, which sums to 2ʰ − 1."],
+  ["ds", "What is the order of a preorder traversal of a binary tree?", ["Left, root, right", "Root, left, right", "Left, right, root", "Right, root, left"], 1, "Preorder: root, left, right. Inorder: left, root, right. Postorder: left, right, root."],
+  ["ds", "Which data structure does breadth-first search (BFS) usually use?", ["Stack", "Queue", "Hash table", "Heap"], 1, "BFS explores level by level, using a queue; DFS uses a stack or recursion."],
+  ["net", "In the OSI model, what is layer 4?", ["Network", "Transport", "Session", "Data link"], 1, "From bottom to top: physical, data link, network, transport, session, presentation, application."],
+  ["net", "How many bits are in an IPv4 address?", ["16", "32", "64", "128"], 1, "IPv4 addresses are 32 bits; IPv6 addresses are 128 bits."],
+  ["net", "Which IP address is a private address?", ["8.8.8.8", "192.168.1.10", "140.112.8.116", "1.1.1.1"], 1, "Private ranges include 192.168.0.0/16, 10.0.0.0/8 and 172.16.0.0/12."],
+  ["net", "The subnet mask 255.255.255.0 is equivalent to which CIDR prefix?", ["/8", "/16", "/24", "/32"], 2, "The first three 255 octets contain 24 ones, so it is /24."],
+  ["net", "Which protocol automatically assigns IP addresses to devices?", ["DNS", "DHCP", "FTP", "SMTP"], 1, "DHCP assigns IPs automatically; DNS resolves names."],
+  ["db", "Which SQL command queries data?", ["INSERT", "UPDATE", "SELECT", "DELETE"], 2, "SELECT queries data; INSERT adds rows; UPDATE modifies them; DELETE removes them."],
+  ["db", "In a relational database, which column uniquely identifies each record?", ["Foreign key", "Primary key", "Index", "View"], 1, "A primary key must be unique and cannot be null."],
+  ["prog", "Which translator converts the whole source program to machine code before running it?", ["Interpreter", "Compiler", "Linker", "Loader"], 1, "A compiler translates the whole program at once; an interpreter translates and runs line by line."],
+  ["prog", "Which is NOT one of the four necessary conditions for deadlock?", ["Mutual exclusion", "Hold and wait", "No preemption", "First come, first served"], 3, "The four conditions are mutual exclusion, hold and wait, no preemption, and circular wait."],
+  ["arch", "What is the main purpose of virtual memory?", ["Speed up the network", "Let programs use an address space larger than physical RAM", "Replace the CPU cache", "Encrypt data"], 1, "The OS moves some data to disk, so programs behave as if they have more memory than physically exists."],
+  ["prog", "Which is NOT one of the three main features of object-oriented programming?", ["Encapsulation", "Inheritance", "Polymorphism", "Compilation"], 3, "The three main features are encapsulation, inheritance, and polymorphism."],
+  ["logic", "What is the output of a NAND gate when both inputs are 1?", ["0", "1", "Undefined", "High impedance"], 0, "AND gives 1, and NAND inverts it to 0."],
+  ["logic", "What is 1 XOR 1?", ["0", "1", "2", "10"], 0, "XOR outputs 0 when inputs are equal and 1 when they differ."],
+  ["num", "Binary 1011 shifted left by one bit equals what in decimal?", ["11", "22", "5", "44"], 1, "A left shift multiplies by 2: 11 × 2 = 22 (10110)."],
+  ["num", "What is the largest value an unsigned 8-bit integer can hold?", ["127", "128", "255", "256"], 2, "2⁸ − 1 = 255."],
+  ["prog", "Which is a symmetric encryption algorithm?", ["AES", "RSA", "SHA-256", "MD5"], 0, "AES is symmetric; RSA is asymmetric; SHA-256 and MD5 are hash functions."],
   ["calc", "d/dx (cos x) = ?", ["sin x", "−sin x", "−cos x", "sec x"], 1, "The derivative of cos x is −sin x."],
   ["calc", "d/dx (tan x) = ?", ["sec² x", "sec x tan x", "−csc² x", "cot x"], 0, "The derivative of tan x is sec² x."],
   ["calc", "d/dx (x² + 1)³ = ?", ["3(x² + 1)²", "6x(x² + 1)²", "3x(x² + 1)²", "2x(x² + 1)³"], 1, "Chain rule: 3(x² + 1)² · 2x = 6x(x² + 1)²."],
@@ -1953,21 +1953,69 @@ const QUIZ = [
   ["en", "Choose the word closest in meaning to \"postpone\".", ["cancel", "delay", "finish", "announce"], 1, "postpone = delay."],
   ["en", "I wish I ___ more time to study yesterday.", ["have", "had", "had had", "would have"], 2, "A wish about the past (contrary to fact) uses the past perfect."],
   ["en", "The more you practice, ___ you will become.", ["more confident", "the more confident", "most confident", "the most confident"], 1, "The + comparative..., the + comparative... means 'the more ..., the more ...'."],
-  ["zh", "What does the idiom 畫龍點睛 mean?", ["Skilled painting technique", "A final touch at a key point that brings the whole to life", "Doing something unnecessary", "Deliberately mysterious"], 1, "Legend says the painter Zhang Sengyou added the eyes to a dragon and it flew away; the idiom means a key stroke that brings everything alive."],
-  ["zh", "What does 杯弓蛇影 mean?", ["Excellent skill", "Being overly suspicious and frightening yourself", "Seeing the big picture from small details", "Drinking too much"], 1, "A man mistook the reflection of a bow in a cup for a snake; the idiom describes groundless fear."],
-  ["zh", "What does 守株待兔 mean?", ["Waiting patiently for the right moment", "Clinging to old experience or hoping for something for nothing", "Focusing on your work", "Protecting the weak"], 1, "A farmer found a rabbit that had crashed into a tree stump and then waited by the stump every day for more."],
-  ["zh", "What does 亡羊補牢 mean?", ["Learning only after a loss", "Fixing a problem in time, and it is not too late", "Procrastinating", "Suffering a heavy loss"], 1, "Repairing the sheep pen after the sheep have escaped: fixing a mistake promptly is still worthwhile."],
-  ["zh", "What does 破釜沉舟 mean?", ["Wasting resources", "Being determined with no way back", "A failed war", "Starting over"], 1, "After crossing the river, Xiang Yu smashed the cooking pots and sank the boats, showing he would fight to the death."],
-  ["zh", "What does 三人成虎 mean?", ["Strength in unity", "A rumor repeated often enough will be believed", "Many hands make light work", "Great courage"], 1, "No tiger was in the market, but when three people said so, the listeners believed it."],
-  ["zh", "What does 塞翁失馬 mean?", ["Misfortune can turn into fortune", "A loss that can never be recovered", "Being careful", "Losing big for a small gain"], 0, "The old man lost his horse, which later returned with a fine stallion; good and bad fortune are hard to predict."],
-  ["zh", "How is the character 莘 in 莘莘學子 pronounced?", ["ㄒㄧㄣ", "ㄕㄣ", "ㄒㄧㄥ", "ㄐㄧㄣ"], 1, "莘 is pronounced ㄕㄣ, and 莘莘 describes a large number of people."],
-  ["zh", "What does 罄竹難書 usually describe?", ["Achievements too many to record", "Crimes too numerous to record", "A lengthy essay", "Difficulty of writing"], 1, "Originally it meant the crimes were too many to write on all the bamboo slips; it is used negatively, not for achievements."],
-  ["zh", "What does 差強人意 mean?", ["Very dissatisfying", "Fairly acceptable, somewhat satisfying", "Almost succeeded", "Forcing people to do things"], 1, "Here 差 means 'somewhat'; the idiom means the result is roughly satisfactory."],
-  ["zh", "What does 首當其衝 mean?", ["Being the first to rush out", "Being the first to suffer an attack or disaster", "Leading the group", "Succeeding first"], 1, "It describes being the first to bear the brunt of an attack or disaster, not being the first to act."],
-  ["zh", "What does 朝三暮四 usually mean today?", ["Working diligently", "Fickle and inconsistent", "Planning time well", "Greeting people in the morning and evening"], 1, "Originally it meant deceiving someone with trickery; today it means fickle and inconsistent."]
+  ["zh", "「畫龍點睛」比喻什麼？", ["畫畫技巧高超", "在關鍵處加上一筆，使全體更生動", "做事多此一舉", "故弄玄虛"], 1, "相傳張僧繇畫龍，點上眼睛後龍便飛去，比喻關鍵處的精彩一筆。"],
+  ["zh", "「杯弓蛇影」比喻什麼？", ["技藝高超", "疑神疑鬼，自相驚擾", "以小見大", "飲酒過量"], 1, "把映在杯中的弓影誤認為蛇，比喻疑神疑鬼。"],
+  ["zh", "「守株待兔」比喻什麼？", ["耐心等待時機", "拘泥舊經驗不知變通，或妄想不勞而獲", "做事專心", "保護弱小"], 1, "農夫偶然撿到撞樹的兔子，便天天守著樹等，比喻不知變通或妄想不勞而獲。"],
+  ["zh", "「亡羊補牢」的意思是？", ["失去才懂珍惜", "犯錯後及時補救，還不算晚", "做事拖延", "損失慘重"], 1, "羊跑了再修羊圈，比喻出錯後及時補救。"],
+  ["zh", "「破釜沉舟」比喻什麼？", ["浪費資源", "下定決心，不留退路", "戰爭失敗", "重新開始"], 1, "項羽渡河後打破鍋、弄沉船，表示決一死戰。"],
+  ["zh", "「三人成虎」比喻什麼？", ["團結力量大", "謠言重複多次就會被當真", "人多好辦事", "勇氣可嘉"], 1, "市集本無虎，但三人都說有，聽者便信了。"],
+  ["zh", "「塞翁失馬」比喻什麼？", ["禍福相倚，壞事也可能變好事", "損失無法挽回", "做事謹慎", "貪小失大"], 0, "塞翁丟了馬，後來馬卻帶回駿馬，比喻得失禍福難以預料。"],
+  ["zh", "「莘莘學子」的「莘」應讀作？", ["ㄒㄧㄣ", "ㄕㄣ", "ㄒㄧㄥ", "ㄐㄧㄣ"], 1, "莘莘讀ㄕㄣ ㄕㄣ，形容眾多。"],
+  ["zh", "「罄竹難書」通常用來形容什麼？", ["功績多到寫不完", "罪狀多到寫不完", "文章冗長", "書寫困難"], 1, "原指罪狀多到用盡竹簡也寫不完，用於負面，不宜形容功績。"],
+  ["zh", "「差強人意」的意思是？", ["很不滿意", "大致還能令人滿意", "差一點就成功", "強人所難"], 1, "「差」是「稍微、尚」的意思，指大致還能令人滿意。"],
+  ["zh", "「首當其衝」的意思是？", ["第一個衝出去", "最先受到攻擊或遭遇災難", "領導眾人", "首先成功"], 1, "比喻最先遭受攻擊或災難，不是「第一個去做」。"],
+  ["zh", "「朝三暮四」今多用來比喻什麼？", ["勤勞工作", "反覆無常", "時間安排得當", "早晚問候"], 1, "原指以詐術欺人，今多比喻反覆無常。"]
 ];
 
-const learn = { word: 0, q: 0, picked: null, filter: store.get("sdb.qfilter", "all") };
+// ---- endless practice: freshly generated questions (numbers + calculus) ----
+const qgSUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻" };
+const qgSup = n => String(n).split("").map(c => qgSUP[c] || c).join("");
+const qgTerm = (c, k) => k === 0 ? String(c) : (c === 1 ? "" : String(c)) + "x" + (k === 1 ? "" : qgSup(k));
+function qgMake(subj, text, correct, wrongs, exp) {
+  const uniq = [...new Set(wrongs.map(String))].filter(w => w !== String(correct));
+  if (uniq.length < 3) return null;
+  const opts = uniq.slice(0, 3);
+  const idx = Math.floor(Math.random() * 4);
+  opts.splice(idx, 0, String(correct));
+  return [subj, text, opts, idx, exp];
+}
+const qgList = [
+  () => { const n = 2 + Math.floor(Math.random() * 254), b = n.toString(2);
+    const parts = [...b].map((d, i) => d === "1" ? 2 ** (b.length - 1 - i) : null).filter(x => x !== null);
+    return qgMake("num", `What is ${n} in decimal, written in binary?`, b,
+      [(n + 1).toString(2), (n - 1).toString(2), (n ^ (1 << Math.floor(Math.random() * 7))).toString(2), (n + 2).toString(2)],
+      `${parts.join(" + ")} = ${n}, so the binary form is ${b}.`); },
+  () => { const n = 10 + Math.floor(Math.random() * 246), h = n.toString(16).toUpperCase();
+    return qgMake("num", `What is decimal ${n} in hexadecimal?`, h,
+      [(n + 1).toString(16).toUpperCase(), (n - 1).toString(16).toUpperCase(), (n + 16).toString(16).toUpperCase(), (n ^ 1).toString(16).toUpperCase()],
+      `${n} = ${Math.floor(n / 16)} × 16 + ${n % 16}, which is ${h} in hexadecimal.`); },
+  () => { const N = [1, 2, 4, 8, 16, 32][Math.floor(Math.random() * 6)], w = N > 1 ? "s" : "";
+    return qgMake("num", `How many bits are in ${N} byte${w}?`, String(8 * N),
+      [String(N), String(4 * N), String(16 * N), String(8 * N + 8)],
+      `1 byte = 8 bits, so ${N} byte${w} = ${8 * N} bits.`); },
+  () => { const k = 2 + Math.floor(Math.random() * 9);
+    return qgMake("num", `What is the largest value an unsigned ${k}-bit integer can hold?`, String(2 ** k - 1),
+      [String(2 ** k), String(2 ** (k - 1) - 1), String(2 * k - 1), String(2 ** (k + 1) - 1)],
+      `The largest unsigned ${k}-bit value is 2^${k} − 1 = ${2 ** k - 1}.`); },
+  () => { const n = 2 + Math.floor(Math.random() * 8), c = qgTerm(n, n - 1);
+    return qgMake("calc", `d/dx (${qgTerm(1, n)}) = ?`, c,
+      [qgTerm(n - 1, n - 1), qgTerm(n, n), qgTerm(1, n - 1), qgTerm(n, n + 1)],
+      `Power rule: d/dx xⁿ = n·xⁿ⁻¹, so the answer is ${c}.`); },
+  () => { const n = 1 + Math.floor(Math.random() * 4), k = 1 + Math.floor(Math.random() * 5), c = (n + 1) * k, ans = qgTerm(k, n + 1) + " + C";
+    return qgMake("calc", `∫ ${qgTerm(c, n)} dx = ?`, ans,
+      [qgTerm(c, n + 1) + " + C", qgTerm(k, n) + " + C", qgTerm(k, n + 1), qgTerm(k + 1, n + 1) + " + C"],
+      `Integrate term by term: ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C, so the answer is ${ans}.`); },
+];
+function genEndless() {
+  for (let t = 0; t < 60; t++) {
+    const q = qgList[Math.floor(Math.random() * qgList.length)]();
+    if (q) return q;
+  }
+  return null;
+}
+const TECH = ["cs", "num", "logic", "arch", "ds", "net", "db", "prog"];
+const learn = { word: 0, q: 0, gen: null, picked: null, filter: store.get("sdb.qfilter", "all") };
+function curQ() { return learn.gen || QUIZ[learn.q]; }
 // word familiarity: 0 = new / not yet, each "know" adds 1; 2+ counts as mastered
 let wordLv = store.get("sdb.words", {});
 let wrongs = store.get("sdb.wrong", []);
@@ -1980,7 +2028,7 @@ function pickWord(avoid) {
 }
 function poolFor(filter) {
   if (filter === "wrong") return wrongs.filter(i => QUIZ[i]);
-  return QUIZ.map((q, i) => i).filter(i => filter === "all" || QUIZ[i][0] === filter);
+  return QUIZ.map((q, i) => i).filter(i => filter === "all" || (filter === "cs" ? TECH.includes(QUIZ[i][0]) : QUIZ[i][0] === filter));
 }
 (function initLearn() {
   const r = rng(hash("learn" + todayKey()));
@@ -1991,7 +2039,7 @@ function poolFor(filter) {
 })();
 
 function drawLearn() {
-  const ui = UI[lang], w = WORDS[learn.word], q = QUIZ[learn.q];
+  const ui = UI[lang], w = WORDS[learn.word], q = curQ();
   $("wWord").textContent = w[0]; $("wPos").textContent = w[1];
   $("wZh").textContent = w[2]; $("wEx").textContent = w[3]; $("wExZh").textContent = w[4];
   $("wSpeak").textContent = ui.speak;
@@ -2000,7 +2048,7 @@ function drawLearn() {
   const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 2).length;
   $("wProg").textContent = ui.mastered(mastered, WORDS.length);
   $("wBar").style.width = (mastered / WORDS.length * 100) + "%";
-  $("qFilters").innerHTML = ["all", "cs", "calc", "en", "zh", "wrong"].map(f =>
+  $("qFilters").innerHTML = ["all", "cs", "num", "logic", "arch", "ds", "net", "db", "prog", "calc", "en", "zh", "endless", "wrong"].map(f =>
     `<button class="chip" type="button" data-f="${f}" aria-pressed="${learn.filter === f}">${f === "all" ? ui.all : f === "wrong" ? ui.wrongBook(wrongs.length) : ui.subj[f]}</button>`).join("");
   $("qSubject").textContent = ui.subj[q[0]];
   const sc = store.get("sdb.quiz", { total: 0, correct: 0 });
@@ -2018,18 +2066,23 @@ function drawLearn() {
 $("qOpts").onclick = e => {
   const b = e.target.closest("[data-opt]"); if (!b || learn.picked !== null) return;
   learn.picked = +b.dataset.opt;
-  const ok = learn.picked === QUIZ[learn.q][3];
+  const ok = learn.picked === curQ()[3];
   const sc = store.get("sdb.quiz", { total: 0, correct: 0 });
   sc.total++; if (ok) sc.correct++;
   store.set("sdb.quiz", sc);
-  if (!ok && !wrongs.includes(learn.q)) { wrongs.push(learn.q); store.set("sdb.wrong", wrongs); }
-  if (ok && wrongs.includes(learn.q)) { wrongs = wrongs.filter(x => x !== learn.q); store.set("sdb.wrong", wrongs); toast(UI[lang].wrongCleared); }
-  store.set("sdb.quizToday", { date: todayKey(), q: learn.q, picked: learn.picked });
+  if (learn.q >= 0 && !ok && !wrongs.includes(learn.q)) { wrongs.push(learn.q); store.set("sdb.wrong", wrongs); }
+  if (learn.q >= 0 && ok && wrongs.includes(learn.q)) { wrongs = wrongs.filter(x => x !== learn.q); store.set("sdb.wrong", wrongs); toast(UI[lang].wrongCleared); }
+  if (learn.q >= 0) store.set("sdb.quizToday", { date: todayKey(), q: learn.q, picked: learn.picked });
   if (ok) confetti();
   dayLog("q", ok);
   drawLearn();
 };
 function nextQuestion() {
+  if (learn.filter === "endless") {
+    const g = genEndless();
+    if (g) { learn.gen = g; learn.q = -1; learn.picked = null; drawLearn(); return; }
+  }
+  learn.gen = null;
   let pool = poolFor(learn.filter);
   if (!pool.length) { if (learn.filter === "wrong") toast(UI[lang].wrongEmpty); learn.filter = "all"; store.set("sdb.qfilter", "all"); pool = poolFor("all"); }
   const choices = pool.length > 1 ? pool.filter(i => i !== learn.q) : pool;
