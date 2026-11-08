@@ -1,5 +1,5 @@
 // Offline support: serve cached files, refresh them in the background.
-const CACHE = "sdb-v12";
+const CACHE = "sdb-v13";
 const FILES = ["./", "index.html", "firebase-config.js", "sync.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
@@ -9,6 +9,15 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   if (new URL(e.request.url).origin !== location.origin) return; // weather API etc. go straight to the network
+  // pages and scripts: network first so updates show right away; cache only when offline
+  const url = new URL(e.request.url);
+  if (e.request.mode === "navigate" || /\.(html|js|webmanifest)$/.test(url.pathname) || url.pathname.endsWith("/")) {
+    e.respondWith(fetch(e.request).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+      return res;
+    }).catch(() => caches.match(e.request).then(hit => hit || caches.match("index.html"))));
+    return;
+  }
   e.respondWith(caches.match(e.request).then(hit => {
     const net = fetch(e.request).then(res => {
       if (res.ok && new URL(e.request.url).origin === location.origin) {
