@@ -1,0 +1,2788 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1026">
+<meta name="description" content="Skyline Daily Boost — 美國城市風景、每日鼓勵與科技公司小知識。">
+<title>Skyline Daily Boost</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Daily Boost">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b1026'/><g fill='%23ffd27a'><rect x='10' y='30' width='9' height='24'/><rect x='22' y='16' width='10' height='38'/><rect x='35' y='24' width='8' height='30'/><rect x='46' y='34' width='8' height='20'/></g></svg>">
+<style>
+  :root {
+    --ink: #fff;
+    --muted: rgba(255,255,255,.72);
+    --glass: rgba(10,14,32,.42);
+    --line: rgba(255,255,255,.16);
+    --accent: #ffd27a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    min-height: 100vh; overflow-x: hidden; color: var(--ink);
+    font-family: -apple-system, "SF Pro Text", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
+    background: #0b1026;
+  }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---------- Scene ---------- */
+  .scene { position: fixed; inset: 0; overflow: hidden; z-index: 0; }
+  .sky { position: absolute; inset: 0; transition: background 1.2s ease; }
+  .stars { position: absolute; inset: 0; transition: opacity 1.2s ease; }
+  .stars circle { animation: twinkle 3s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+  .orb {
+    position: absolute; width: 90px; height: 90px; border-radius: 50%;
+    top: 12vh; right: 12vw; transition: all 1.2s ease; filter: blur(.3px);
+  }
+  .layer { position: absolute; left: -4%; right: -4%; bottom: 0; transition: transform .25s ease-out; }
+  .layer svg { width: 100%; height: 100%; display: block; }
+  .l1 { height: 52vh; } .l2 { height: 42vh; } .l3 { height: 32vh; }
+  .win { animation: flicker 6s ease-in-out infinite; }
+  @keyframes flicker { 0%,100% { opacity: .95 } 45% { opacity: .95 } 50% { opacity: .2 } 55% { opacity: .95 } }
+  .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 6vh; background: linear-gradient(to top, rgba(0,0,0,.55), transparent); }
+
+  /* ---------- Layout ---------- */
+  .wrap {
+    position: relative; z-index: 1; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 16px 40px; gap: 14px;
+  }
+  .card {
+    width: min(620px, 100%); padding: clamp(20px, 4.5vw, 34px); border-radius: 26px;
+    background: var(--glass); border: 1px solid var(--line);
+    backdrop-filter: blur(14px) saturate(130%); -webkit-backdrop-filter: blur(14px) saturate(130%);
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand h1 { margin: 0; font-size: clamp(1.1rem, 2.8vw, 1.35rem); letter-spacing: .02em; }
+  .streak {
+    font-size: .78rem; padding: 3px 10px; border-radius: 999px;
+    background: rgba(255,210,122,.16); color: var(--accent); white-space: nowrap;
+  }
+  .tools { display: flex; gap: 6px; }
+  .chip {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.4);
+    background: transparent; font-size: .82rem; cursor: pointer; transition: background .2s;
+  }
+  .chip:hover, .chip[aria-pressed="true"] { background: rgba(255,255,255,.16); }
+
+  .mode { display: flex; gap: 6px; margin-top: 16px; }
+  .mode .chip { border-color: transparent; background: rgba(255,255,255,.08); }
+  .mode .chip[aria-pressed="true"] { background: #fff; color: #1a1f36; }
+
+  .content { margin-top: 20px; }
+  .cityrow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .eyebrow { margin: 0 0 4px; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .city { margin: 0; font-size: clamp(1.5rem, 4.4vw, 2rem); font-weight: 700; }
+  .clock { text-align: right; }
+  .clock .t { font-size: 1.15rem; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .clock .p { font-size: .78rem; color: var(--muted); }
+  .geo { margin: 10px 0 0; line-height: 1.7; color: rgba(255,255,255,.92); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag { font-size: .74rem; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,.1); }
+
+  .quote {
+    margin: 22px 0 0; padding: 22px 14px 16px; text-align: center;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .quote blockquote { margin: 0; font-size: clamp(1.1rem, 3.2vw, 1.4rem); line-height: 1.6; font-weight: 500; }
+  .qactions { display: flex; justify-content: center; gap: 4px; margin-top: 12px; }
+  .icon {
+    border: none; background: none; padding: 6px 10px; border-radius: 10px;
+    font-size: .82rem; color: var(--muted); cursor: pointer;
+  }
+  .icon:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .icon[aria-pressed="true"] { color: var(--accent); }
+
+  .company {
+    margin-top: 18px; display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start;
+    background: rgba(255,255,255,.07); border-radius: 16px; padding: 14px 16px;
+  }
+  .logo {
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    font-weight: 800; font-size: 1.05rem; color: #fff;
+  }
+  .company h2 { margin: 0; font-size: 1.02rem; }
+  .company .meta { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+  .company p { margin: 6px 0 0; line-height: 1.6; font-size: .93rem; }
+  .company .tip { margin-top: 8px; font-size: .86rem; color: var(--accent); }
+
+  .nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 22px; }
+  .btn {
+    padding: 12px 28px; border: none; border-radius: 14px; cursor: pointer;
+    background: #fff; color: #1a1f36; font-weight: 700; font-size: 1rem;
+    box-shadow: 0 8px 22px rgba(0,0,0,.25); transition: transform .15s;
+  }
+  .btn:hover { transform: translateY(-1px); } .btn:active { transform: translateY(1px); }
+  .round {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35);
+    background: rgba(255,255,255,.06); cursor: pointer; font-size: 1.1rem;
+  }
+  .round:disabled { opacity: .3; cursor: default; }
+
+  .hint { font-size: .74rem; color: var(--muted); text-align: center; }
+  kbd { font-family: inherit; padding: 1px 6px; border-radius: 5px; border: 1px solid rgba(255,255,255,.3); font-size: .7rem; }
+
+  /* ---------- Favorites panel ---------- */
+  .panel {
+    width: min(620px, 100%); padding: 18px 22px; border-radius: 20px;
+    background: var(--glass); border: 1px solid var(--line);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  }
+  .panel h3 { margin: 0 0 10px; font-size: .95rem; }
+  .panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .panel li { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: .92rem; line-height: 1.5; }
+  .panel .empty { color: var(--muted); font-size: .88rem; }
+  [hidden] { display: none !important; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0;
+    padding: 9px 16px; border-radius: 999px; background: rgba(0,0,0,.75); font-size: .88rem;
+    transition: all .25s ease; z-index: 5; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  .fade { animation: fadeUp .55s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+
+  /* ---------- Weather & sky effects ---------- */
+  .fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .drop { position: absolute; top: -10vh; width: 1px; height: 14vh; background: linear-gradient(transparent, rgba(200,220,255,.55)); animation: rain linear infinite; }
+  @keyframes rain { to { transform: translate(-6vw, 125vh); } }
+  .flake { position: absolute; top: -5vh; border-radius: 50%; background: #fff; opacity: .85; animation: snow linear infinite; }
+  @keyframes snow { to { transform: translate(4vw, 110vh); } }
+  .fog { position: absolute; left: -50%; width: 200%; height: 30vh; background: radial-gradient(ellipse at center, rgba(255,255,255,.22), transparent 65%); animation: fogMove 40s linear infinite; }
+  @keyframes fogMove { from { transform: translateX(-10%); } to { transform: translateX(10%); } }
+  .neon { position: absolute; left: 0; right: 0; bottom: 0; height: 45vh; background: radial-gradient(ellipse at 50% 100%, rgba(255,60,200,.35), transparent 60%), radial-gradient(ellipse at 20% 100%, rgba(60,220,255,.25), transparent 50%); animation: pulse 4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .55; } }
+  .shoot { position: absolute; width: 120px; height: 2px; background: linear-gradient(90deg, #fff, transparent); opacity: 0; transform: rotate(-20deg); }
+  .shoot.go { animation: shoot 1.1s ease-out forwards; }
+  @keyframes shoot { 0% { opacity: 0; } 10% { opacity: 1; } 100% { opacity: 0; translate: -340px 130px; } }
+
+  /* ---------- Info strip ---------- */
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+  .pick {
+    margin-left: 8px; padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3);
+    background: rgba(255,255,255,.08); color: #fff; font: inherit; font-size: .72rem; letter-spacing: 0; text-transform: none;
+    color-scheme: dark; max-width: 150px;
+  }
+  .conv { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: .86rem; }
+  .conv label { color: var(--muted); }
+  .conv input { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: #fff; font: inherit; color-scheme: dark; }
+  .conv b { font-variant-numeric: tabular-nums; }
+  .conv .chip { margin-left: auto; }
+  #vol { width: 110px; accent-color: var(--accent); }
+  #sndPick .chip { font-size: .78rem; padding: 4px 10px; }
+  #sndPick .chip[aria-pressed="true"] { background: #fff; color: #1a1f36; }
+  .modal .box.wbox, .modal .box.ebox { text-align: left; }
+  .modal .box.wbox { width: min(760px, 100%); }
+  .modal .box.ebox { width: min(560px, 100%); }
+  .wdetail { min-width: 0; }
+  .wbox { width: min(760px, 100%); max-height: 88vh; overflow-y: auto; text-align: left; padding: 20px; }
+  .wgrid { display: grid; grid-template-columns: 220px 1fr; gap: 16px; }
+  .wplaces { display: grid; gap: 4px; align-content: start; max-height: 62vh; overflow-y: auto; padding-right: 4px; }
+  .wplaces h4 { margin: 8px 0 2px; font-size: .72rem; letter-spacing: .1em; color: var(--muted); }
+  .wplace { text-align: left; padding: 7px 10px; border-radius: 10px; border: none; background: transparent; cursor: pointer; font-size: .9rem; display: flex; justify-content: space-between; gap: 8px; }
+  .wplace:hover { background: rgba(255,255,255,.08); }
+  .wplace[aria-current="true"] { background: rgba(255,255,255,.16); font-weight: 600; }
+  .wplace small { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .wdetail h2 { margin: 0; font-size: 1.5rem; }
+  .wstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+  .wnews { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+  .wnews a {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px;
+    background: rgba(255,255,255,.07); color: #fff; text-decoration: none; font-size: .92rem;
+  }
+  .wnews a:hover { background: rgba(255,255,255,.14); }
+  .wnews small { color: var(--muted); }
+  @media (max-width: 600px) {
+    .wgrid { grid-template-columns: 1fr; }
+    .wplaces { max-height: 30vh; }
+    .wstats { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .fact { background: rgba(255,255,255,.07); border-radius: 12px; padding: 8px 10px; }
+  .fact .k { font-size: .7rem; color: var(--muted); }
+  .fact .v { font-size: .92rem; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Tools panel ---------- */
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tabs .chip { border-color: transparent; background: rgba(255,255,255,.08); }
+  .tabs .chip[aria-selected="true"] { background: #fff; color: #1a1f36; }
+  .timer { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .ring { position: relative; width: 120px; height: 120px; flex: none; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tctl { display: flex; flex-direction: column; gap: 8px; }
+  .presets { display: flex; gap: 6px; }
+  .tmsg { font-size: .85rem; color: var(--muted); }
+  .goals { display: grid; gap: 8px; }
+  .goal { display: flex; align-items: center; gap: 10px; }
+  .goal input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+  .goal input[type=text] {
+    flex: 1; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.06); color: #fff; font: inherit; font-size: .92rem;
+  }
+  .goal input[type=text]::placeholder { color: rgba(255,255,255,.45); }
+  .goal.done input[type=text] { text-decoration: line-through; opacity: .6; }
+  .progress { height: 6px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; margin-top: 4px; }
+  .progress i { display: block; height: 100%; background: var(--accent); transition: width .4s ease; }
+  .celebrate { position: fixed; inset: 0; pointer-events: none; z-index: 6; }
+  .confetti { position: absolute; top: -10px; width: 8px; height: 12px; animation: fall 2.2s ease-in forwards; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: .4; } }
+
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 120px; margin-top: 6px; }
+  .bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .bar i { display: block; width: 100%; max-width: 34px; border-radius: 8px 8px 3px 3px; background: rgba(255,255,255,.18); min-height: 4px; transition: height .5s ease; }
+  .bar.today i { background: var(--accent); }
+  .bar span { font-size: .7rem; color: var(--muted); }
+  .bar b { font-size: .7rem; font-weight: 600; }
+  .stats-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .addrow { display: flex; gap: 8px; }
+  .addrow input {
+    flex: 1; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.06); color: #fff; font: inherit; font-size: .92rem;
+  }
+  .mylist { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+  .mylist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .92rem; }
+  .modal { position: fixed; inset: 0; z-index: 8; display: grid; place-items: center; background: rgba(0,0,0,.6); padding: 20px; }
+  .modal .box { background: #141a33; border: 1px solid var(--line); border-radius: 20px; padding: 16px; width: min(420px, 100%); text-align: center; }
+  .modal img { width: 100%; border-radius: 12px; display: block; }
+  .modal .row { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .modal p { font-size: .8rem; color: var(--muted); margin: 10px 0 0; }
+  .tabs { flex-wrap: wrap; }
+  .ebox { width: min(560px, 100%); max-height: 88vh; overflow-y: auto; text-align: left; padding: 20px; }
+  .ehead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .ehead h3 { margin: 0; font-size: 1.05rem; }
+  .eform { display: grid; gap: 10px; }
+  .eform label { display: grid; gap: 4px; font-size: .8rem; color: var(--muted); text-align: left; min-width: 0; }
+  .eform input, .eform select, .eform textarea { width: 100%; min-width: 0; box-sizing: border-box; }
+  .eform input[type=range] { padding: 0; }
+  .eform input[type=color] { height: 40px; padding: 4px; }
+  .eform input, .eform select, .eform textarea {
+    padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.06); color: #fff; font: inherit; font-size: .92rem; color-scheme: dark;
+  }
+  .eform textarea { min-height: 64px; resize: vertical; }
+  .eform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .eform .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .elist li { background: rgba(255,255,255,.06); border-radius: 10px; padding: 8px 10px; }
+  .elist .t { overflow: hidden; text-overflow: ellipsis; }
+  .eio { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .eio label { cursor: pointer; }
+  @media (max-width: 480px) { .eform .two { grid-template-columns: 1fr; } }
+  .word { background: rgba(255,255,255,.07); border-radius: 16px; padding: 14px 16px; }
+  .wordtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .word .w { font-size: 1.5rem; font-weight: 700; letter-spacing: .01em; }
+  .word .pos { font-size: .85rem; color: var(--muted); font-style: italic; }
+  .wzh { margin-top: 2px; font-weight: 600; color: var(--accent); }
+  .wex { margin-top: 10px; line-height: 1.55; }
+  .wexzh { font-size: .86rem; color: var(--muted); margin-top: 2px; }
+  .quiz { margin-top: 14px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .filters .chip { font-size: .78rem; padding: 4px 10px; border-color: transparent; background: rgba(255,255,255,.08); }
+  .filters .chip[aria-pressed="true"] { background: #fff; color: #1a1f36; }
+  .rrow { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rrow input {
+    padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.06); color: #fff; font: inherit; font-size: .92rem; color-scheme: dark;
+  }
+  #rText { flex: 1; min-width: 160px; }
+  .days { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+  .day { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255,255,255,.06); cursor: pointer; font-size: .82rem; }
+  .day[aria-pressed="true"] { background: var(--accent); color: #1a1f36; border-color: var(--accent); font-weight: 700; }
+  .rlist { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+  .rlist li { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "time text act"; gap: 4px 12px; align-items: center; background: rgba(255,255,255,.07); border-radius: 12px; padding: 10px 12px; }
+  .rlist .rt { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .rlist .rd { font-size: .74rem; color: var(--muted); }
+  .rlist li > div:first-child { grid-area: time; } .rlist .rx { grid-area: text; } .rlist .ract { grid-area: act; }
+  @media (max-width: 520px) {
+    .rlist li { grid-template-columns: auto 1fr; grid-template-areas: "time act" "text text"; }
+    .rlist .ract { justify-content: flex-end; }
+  }
+  .rlist .rx { font-size: .9rem; line-height: 1.4; word-break: break-word; }
+  .rlist li.off { opacity: .45; }
+  .ract { display: flex; gap: 2px; align-items: center; }
+  .switch { width: 40px; height: 24px; border-radius: 99px; border: none; background: rgba(255,255,255,.2); position: relative; cursor: pointer; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; }
+  .switch[aria-checked="true"] { background: #4cd964; }
+  .switch[aria-checked="true"]::after { transform: translateX(16px); }
+  #rHint { margin-top: 12px; line-height: 1.6; }
+  .wprog { margin-top: 10px; font-size: .74rem; color: var(--muted); }
+  .qhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .qtext { margin: 10px 0; line-height: 1.6; font-weight: 600; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .opt {
+    text-align: left; padding: 10px 12px; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--line); background: rgba(255,255,255,.06); font-size: .93rem; line-height: 1.4;
+    transition: background .2s, border-color .2s;
+  }
+  .opt:hover:not(:disabled) { background: rgba(255,255,255,.14); }
+  .opt:disabled { cursor: default; }
+  .opt.right { background: rgba(80,200,120,.28); border-color: rgba(120,230,150,.8); }
+  .opt.wrong { background: rgba(230,80,80,.25); border-color: rgba(255,120,120,.8); }
+  .qexp { margin: 10px 0 0; font-size: .88rem; line-height: 1.6; color: rgba(255,255,255,.9); }
+  @media (max-width: 480px) { .opts { grid-template-columns: 1fr; } }
+
+  @media (max-width: 480px) {
+    .facts { grid-template-columns: 1fr 1fr; }
+    .fact { padding: 7px 8px; } .fact .v { font-size: .82rem; } .fact .k { font-size: .64rem; }
+    .hint { display: none; }
+    .clock { text-align: left; }
+    .cityrow { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+  /* ---------- Settings / review / board ---------- */
+  .sgrid { display: grid; gap: 14px; }
+  .srow { display: grid; gap: 6px; }
+  .srow .lbl { font-size: .8rem; color: var(--muted); }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg .chip { font-size: .82rem; }
+  .seg .chip[aria-pressed="true"] { background: #fff; color: #1a1f36; border-color: #fff; }
+  .srow select { padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--ink); font: inherit; color-scheme: dark; }
+  .rvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .rvgrid .fact .v { font-size: 1.15rem; }
+  .rvq { margin: 0 0 14px; font-size: 1rem; line-height: 1.6; color: var(--muted); }
+  .board { margin-top: 14px; }
+  .board h4 { margin: 0 0 8px; font-size: .9rem; }
+  .board ol { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  .board li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.06); font-size: .9rem; }
+  .board li.me { outline: 1px solid var(--accent); }
+  .board .brow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .board input { padding: 7px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--ink); font: inherit; font-size: .9rem; }
+
+  /* ---------- Zen mode ---------- */
+  body.zen .wrap, body.zen .hint { display: none !important; }
+  .zen {
+    position: fixed; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; text-align: center; padding: 24px; text-shadow: 0 2px 18px rgba(0,0,0,.45); color: #fff;
+  }
+  .zcity { margin: 0; font-size: 1rem; letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
+  .zclock { margin: 0; font-size: .9rem; opacity: .7; font-variant-numeric: tabular-nums; }
+  .ztimer { font-size: clamp(4rem, 16vw, 9rem); font-weight: 200; font-variant-numeric: tabular-nums; letter-spacing: .02em; line-height: 1; }
+  .zquote { margin: 6px 0 18px; max-width: 640px; font-size: clamp(1rem, 2.6vw, 1.3rem); line-height: 1.6; opacity: .92; }
+  .zctl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; opacity: .55; transition: opacity .3s; }
+  .zen:hover .zctl, .zctl:focus-within { opacity: 1; }
+  .zen .chip { border-color: rgba(255,255,255,.5); color: #fff; }
+
+  /* ---------- Light theme ---------- */
+  body.light { --ink: #151a2e; --muted: rgba(21,26,46,.62); --glass: rgba(250,251,255,.78); --line: rgba(21,26,46,.12); --accent: #b7791f; }
+  body.light .card, body.light .panel { color: var(--ink); }
+  body.light .modal .box { background: #f6f7fb; color: var(--ink); }
+  body.light .geo, body.light .qexp, body.light .company p { color: var(--ink); }
+  body.light .fact, body.light .company, body.light .word, body.light .tag, body.light .rlist li, body.light .elist li, body.light .board li,
+  body.light .opt, body.light .mode .chip, body.light .tabs .chip, body.light .filters .chip, body.light .day, body.light .progress, body.light .wnews a,
+  body.light .round { background: rgba(21,26,46,.06); }
+  body.light .chip, body.light .round, body.light .day { border-color: rgba(21,26,46,.22); color: var(--ink); }
+  body.light .mode .chip[aria-pressed="true"], body.light .tabs .chip[aria-selected="true"], body.light .filters .chip[aria-pressed="true"],
+  body.light #sndPick .chip[aria-pressed="true"], body.light .seg .chip[aria-pressed="true"] { background: #151a2e; color: #fff; border-color: #151a2e; }
+  body.light .btn { background: #151a2e; color: #fff; }
+  body.light .icon { color: var(--muted); } body.light .icon:hover { color: var(--ink); background: rgba(21,26,46,.06); }
+  body.light input, body.light select, body.light textarea { color: var(--ink) !important; background: rgba(21,26,46,.05) !important; color-scheme: light !important; }
+  body.light .wnews a { color: var(--ink); }
+  body.light .opt.right { background: rgba(60,170,100,.22); } body.light .opt.wrong { background: rgba(220,70,70,.18); }
+  body.light .switch { background: rgba(21,26,46,.2); }
+  body.light .ghost, body.light .tmsg { color: var(--muted); }
+  body.light .zen .chip { color: #fff; border-color: rgba(255,255,255,.5); background: transparent; }
+  body.light .hint { color: rgba(255,255,255,.75); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" aria-hidden="true">
+  <div class="sky" id="sky"></div>
+  <svg class="stars" id="stars" width="100%" height="100%"></svg>
+  <div class="orb" id="orb"></div>
+  <div class="fx" id="shootLayer"></div>
+  <div class="layer l1" id="l1"></div>
+  <div class="layer l2" id="l2"></div>
+  <div class="layer l3" id="l3"></div>
+  <div class="ground"></div>
+  <div class="fx" id="weather"></div>
+</div>
+<div class="celebrate" id="celebrate" aria-hidden="true"></div>
+
+<div class="wrap">
+  <main class="card">
+    <div class="top">
+      <div class="brand">
+        <h1 id="heading"></h1>
+        <span class="streak" id="streak"></span>
+      </div>
+      <div class="tools">
+        <button class="chip" id="favToggle" type="button" aria-pressed="false"></button>
+        <button class="chip" id="setBtn" type="button"></button>
+        <button class="chip" id="editBtn" type="button"></button>
+        <button class="chip" id="syncBtn" type="button" hidden></button>
+        <button class="chip" id="langBtn" type="button"></button>
+      </div>
+    </div>
+
+    <div class="mode" role="group" id="modeGroup">
+      <button class="chip" id="modeDaily" type="button"></button>
+      <button class="chip" id="modeRandom" type="button"></button>
+    </div>
+
+    <section class="content" id="content" aria-live="polite">
+      <div class="cityrow">
+        <div>
+          <p class="eyebrow"><span id="eyebrow"></span>
+            <select id="cityPick" class="pick" aria-label="city"></select></p>
+          <p class="city" id="city"></p>
+        </div>
+        <div class="clock">
+          <div class="t" id="clock"></div>
+          <div class="p" id="period"></div>
+        </div>
+      </div>
+      <p class="geo" id="geo"></p>
+      <div class="tags" id="tags"></div>
+      <div class="facts">
+        <div class="fact"><div class="k" id="kDiff"></div><div class="v" id="vDiff"></div></div>
+        <div class="fact"><div class="k" id="kWx"></div><div class="v" id="vWx"></div></div>
+        <div class="fact"><div class="k" id="kDist"></div><div class="v" id="vDist"></div></div>
+        <div class="fact"><div class="k" id="kFlight"></div><div class="v" id="vFlight"></div></div>
+      </div>
+      <div class="conv">
+        <label for="convIn" id="convL"></label>
+        <input type="time" id="convIn">
+        <span aria-hidden="true">→</span>
+        <b id="convOut"></b>
+        <button class="chip" id="newsBtn" type="button"></button>
+      </div>
+
+      <div class="quote">
+        <blockquote id="quote"></blockquote>
+        <div class="qactions">
+          <button class="icon" id="favBtn" type="button" aria-pressed="false"></button>
+          <button class="icon" id="copyBtn" type="button"></button>
+          <button class="icon" id="shareBtn" type="button"></button>
+        </div>
+      </div>
+
+      <div class="company">
+        <div class="logo" id="logo"></div>
+        <div>
+          <h2 id="companyName"></h2>
+          <div class="meta" id="companyMeta"></div>
+          <p id="companyInfo"></p>
+          <div class="tip" id="companyTip"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="nav">
+      <button class="round" id="prevBtn" type="button">←</button>
+      <button class="btn" id="btn" type="button"></button>
+      <button class="round" id="nextBtn" type="button">→</button>
+    </div>
+  </main>
+
+  <section class="panel" id="toolsPanel">
+    <div class="tabs" role="tablist">
+      <button class="chip" id="tabFocus" role="tab" type="button" aria-selected="true"></button>
+      <button class="chip" id="tabGoals" role="tab" type="button" aria-selected="false"></button>
+      <button class="chip" id="tabStats" role="tab" type="button" aria-selected="false"></button>
+      <button class="chip" id="tabMine" role="tab" type="button" aria-selected="false"></button>
+      <button class="chip" id="tabLearn" role="tab" type="button" aria-selected="false"></button>
+      <button class="chip" id="tabRemind" role="tab" type="button" aria-selected="false"></button>
+    </div>
+    <div id="paneFocus" role="tabpanel">
+      <div class="timer">
+        <div class="ring">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="8"/>
+            <circle id="ringBar" cx="60" cy="60" r="52" fill="none" stroke="#ffd27a" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="0"/>
+          </svg>
+          <div class="num" id="tNum">25:00</div>
+        </div>
+        <div class="tctl">
+          <div class="presets">
+            <button class="chip" data-min="25" type="button">25</button>
+            <button class="chip" data-min="15" type="button">15</button>
+            <button class="chip" data-min="5" type="button">5</button>
+          </div>
+          <div class="presets">
+            <button class="btn" id="tStart" type="button" style="padding:9px 20px;font-size:.92rem"></button>
+            <button class="chip" id="tReset" type="button"></button>
+            <button class="chip" id="zenBtn" type="button"></button>
+          </div>
+          <div class="presets">
+            <button class="chip" id="noiseBtn" type="button" aria-pressed="false"></button>
+            <input type="range" id="vol" min="0" max="1" step="0.05" aria-label="volume">
+            <button class="chip" id="notifyBtn" type="button"></button>
+          </div>
+          <div class="presets" id="sndPick" role="group"></div>
+          <div class="tmsg" id="tMsg"></div>
+        </div>
+      </div>
+    </div>
+    <div id="paneGoals" role="tabpanel" hidden>
+      <div class="goals" id="goals"></div>
+      <div class="progress"><i id="goalBar" style="width:0"></i></div>
+    </div>
+    <div id="paneStats" role="tabpanel" hidden>
+      <div class="presets" style="margin-bottom:10px"><button class="chip" id="reviewBtn" type="button"></button></div>
+      <div class="bars" id="bars"></div>
+      <div class="stats-sum">
+        <div class="fact"><div class="k" id="kWeek"></div><div class="v" id="vWeek"></div></div>
+        <div class="fact"><div class="k" id="kToday"></div><div class="v" id="vToday"></div></div>
+        <div class="fact"><div class="k" id="kStreak"></div><div class="v" id="vStreak"></div></div>
+      </div>
+      <div class="board" id="board" hidden></div>
+    </div>
+    <div id="paneLearn" role="tabpanel" hidden>
+      <div class="word">
+        <div class="wordtop">
+          <div><span class="w" id="wWord"></span> <span class="pos" id="wPos"></span></div>
+          <button class="chip" id="wSpeak" type="button"></button>
+        </div>
+        <div class="wzh" id="wZh"></div>
+        <div class="wex" id="wEx"></div>
+        <div class="wexzh" id="wExZh"></div>
+        <div class="presets" style="margin-top:12px">
+          <button class="chip" id="wKnow" type="button"></button>
+          <button class="chip" id="wNext" type="button"></button>
+        </div>
+        <div class="wprog"><span id="wProg"></span><div class="progress"><i id="wBar" style="width:0"></i></div></div>
+      </div>
+      <div class="quiz">
+        <div class="filters" id="qFilters" role="group"></div>
+        <div class="qhead"><span class="tag" id="qSubject"></span><span class="tmsg" id="qScore"></span></div>
+        <p class="qtext" id="qText"></p>
+        <div class="opts" id="qOpts"></div>
+        <p class="qexp" id="qExp" hidden></p>
+        <div class="presets" style="margin-top:10px">
+          <button class="chip" id="qNext" type="button"></button>
+        </div>
+      </div>
+    </div>
+    <div id="paneRemind" role="tabpanel" hidden>
+      <form class="rform" id="rForm">
+        <div class="rrow">
+          <input type="time" id="rTime" value="08:00" required>
+          <input id="rText" maxlength="60" autocomplete="off">
+        </div>
+        <div class="days" id="rDays"></div>
+        <div class="presets">
+          <button class="btn" type="submit" id="rAdd" style="padding:9px 18px;font-size:.92rem"></button>
+          <button class="chip" id="rNotify" type="button"></button>
+        </div>
+      </form>
+      <ul class="rlist" id="rList"></ul>
+      <p class="tmsg" id="rHint"></p>
+    </div>
+    <div id="paneMine" role="tabpanel" hidden>
+      <form class="addrow" id="addForm">
+        <input id="addInput" maxlength="80" autocomplete="off">
+        <button class="btn" type="submit" id="addBtn" style="padding:9px 18px;font-size:.92rem"></button>
+      </form>
+      <ul class="mylist" id="myList"></ul>
+    </div>
+  </section>
+
+  <section class="panel" id="panel" hidden>
+    <h3 id="panelTitle"></h3>
+    <ul id="favList"></ul>
+  </section>
+
+  <p class="hint" id="hint"></p>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="zen" id="zen" hidden>
+  <p class="zcity" id="zCity"></p>
+  <p class="zclock" id="zClock"></p>
+  <div class="ztimer" id="zTimer"></div>
+  <blockquote class="zquote" id="zQuote"></blockquote>
+  <div class="zctl">
+    <button class="chip" id="zStart" type="button"></button>
+    <button class="chip" id="zSound" type="button"></button>
+    <button class="chip" id="zExit" type="button"></button>
+  </div>
+</div>
+<div class="modal" id="settings" hidden>
+  <div class="box ebox" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+    <div class="ehead"><h3 id="sTitle"></h3><button class="chip" id="sClose" type="button"></button></div>
+    <div class="sgrid" id="sGrid"></div>
+  </div>
+</div>
+<div class="modal" id="review" hidden>
+  <div class="box ebox" role="dialog" aria-modal="true" aria-labelledby="rvTitle">
+    <div class="ehead"><h3 id="rvTitle"></h3><button class="chip" id="rvClose" type="button"></button></div>
+    <div class="rvgrid" id="rvGrid"></div>
+    <blockquote class="rvq" id="rvQuote"></blockquote>
+    <div class="presets"><button class="btn" id="rvCard" type="button" style="padding:9px 18px;font-size:.92rem"></button></div>
+  </div>
+</div>
+<div class="modal" id="editor" hidden>
+  <div class="box ebox" role="dialog" aria-modal="true" aria-labelledby="eTitle">
+    <div class="ehead">
+      <h3 id="eTitle"></h3>
+      <button class="chip" id="eClose" type="button"></button>
+    </div>
+    <div class="tabs" id="eTabs" role="tablist"></div>
+    <form id="eForm" class="eform"></form>
+    <ul class="mylist elist" id="eList"></ul>
+    <div class="eio">
+      <button class="chip" id="eExport" type="button"></button>
+      <label class="chip" id="eImportLbl"><input type="file" id="eImport" accept="application/json,.json" hidden><span id="eImportTxt"></span></label>
+    </div>
+    <p class="tmsg" id="eHint"></p>
+  </div>
+</div>
+<div class="modal" id="world" hidden>
+  <div class="box wbox" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+    <div class="ehead"><h3 id="wTitle"></h3><button class="chip" id="wClose" type="button"></button></div>
+    <div class="wgrid">
+      <div class="wplaces" id="wPlaces"></div>
+      <div class="wdetail" id="wDetail" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="modal" hidden>
+  <div class="box" role="dialog" aria-modal="true">
+    <img id="shareImg" alt="">
+    <div class="row">
+      <button class="btn" id="dlBtn" type="button" style="padding:9px 18px;font-size:.92rem"></button>
+      <button class="chip" id="nativeShare" type="button" hidden></button>
+      <button class="chip" id="closeModal" type="button"></button>
+    </div>
+    <p id="saveHint"></p>
+  </div>
+</div>
+
+<script src="firebase-config.js" onerror="window.SDB_FIREBASE = null"></script>
+<script>
+/* ================= Data ================= */
+const UI = {
+  zh: {
+    heading: "每日鼓勵", title: "Skyline Daily Boost · 每日鼓勵", btn: "換一組", lang: "English",
+    eyebrow: "今日城市", daily: "今日一組", random: "隨機探索",
+    copy: "複製", copied: "已複製到剪貼簿", fav: "☆ 收藏", faved: "★ 已收藏",
+    favAdded: "已加入收藏", favRemoved: "已取消收藏",
+    favs: "收藏", panel: "我收藏的鼓勵語", empty: "還沒有收藏，按 ☆ 把喜歡的句子留下來。",
+    remove: "移除", founded: "創立", hq: "總部", tipLabel: "學習小提示：",
+    streak: n => `🔥 連續 ${n} 天`, local: "當地時間",
+    period: { night: "夜晚", dawn: "清晨", day: "白天", dusk: "黃昏" },
+    hint: "快捷鍵：<kbd>空白</kbd> 換一組　<kbd>←</kbd><kbd>→</kbd> 上一組／下一組　<kbd>F</kbd> 收藏　<kbd>C</kbd> 複製　<kbd>L</kbd> 語言　<kbd>Z</kbd> 禪模式"
+  },
+  en: {
+    heading: "Daily Boost", title: "Skyline Daily Boost", btn: "New set", lang: "中文",
+    eyebrow: "Today's city", daily: "Today's set", random: "Explore",
+    copy: "Copy", copied: "Copied to clipboard", fav: "☆ Save", faved: "★ Saved",
+    favAdded: "Saved", favRemoved: "Removed",
+    favs: "Saved", panel: "My saved quotes", empty: "Nothing saved yet. Tap ☆ to keep a quote you like.",
+    remove: "Remove", founded: "Founded", hq: "HQ", tipLabel: "Learning tip: ",
+    streak: n => `🔥 ${n}-day streak`, local: "Local time",
+    period: { night: "Night", dawn: "Dawn", day: "Day", dusk: "Dusk" },
+    hint: "Shortcuts: <kbd>Space</kbd> new set · <kbd>←</kbd><kbd>→</kbd> back / forward · <kbd>F</kbd> save · <kbd>C</kbd> copy · <kbd>L</kbd> language · <kbd>Z</kbd> zen"
+  }
+};
+
+// sky: seed, building count, max height, terrain ("flat" | "hills" | "mountains")
+const cities = [
+  { tz: "America/New_York", sky: { seed: 11, n: 30, h: 1, terrain: "flat", spire: true },
+    zh: { name: "紐約", geo: "曼哈頓被哈德遜河與東河環繞，摩天大樓密集，天際線極具氣勢。", tags: ["帝國大廈", "中央公園", "華爾街"] },
+    en: { name: "New York", geo: "Manhattan sits between the Hudson and East Rivers, packed with skyscrapers and a dramatic skyline.", tags: ["Empire State", "Central Park", "Wall Street"] } },
+  { tz: "America/Los_Angeles", sky: { seed: 22, n: 18, h: .7, terrain: "hills" },
+    zh: { name: "舊金山", geo: "城市建在起伏的山丘上，金門大橋橫跨海灣，清晨常被霧氣籠罩。", tags: ["金門大橋", "灣區", "矽谷門戶"] },
+    en: { name: "San Francisco", geo: "Built on rolling hills, with the Golden Gate Bridge spanning the bay and morning fog rolling in.", tags: ["Golden Gate", "Bay Area", "Gateway to Silicon Valley"] } },
+  { tz: "America/Chicago", sky: { seed: 33, n: 24, h: .95, terrain: "flat", spire: true },
+    zh: { name: "芝加哥", geo: "坐落密西根湖畔，現代摩天大樓的發源地之一，又稱「風城」。", tags: ["密西根湖", "建築之都", "風城"] },
+    en: { name: "Chicago", geo: "On the shore of Lake Michigan and a birthplace of the modern skyscraper. Nicknamed the Windy City.", tags: ["Lake Michigan", "Architecture", "Windy City"] } },
+  { tz: "America/Los_Angeles", sky: { seed: 44, n: 14, h: .6, terrain: "mountains" },
+    zh: { name: "西雅圖", geo: "三面環水，周圍是常綠森林與雪山，雨量多而綠意盎然。", tags: ["太空針塔", "雷尼爾山", "咖啡文化"] },
+    en: { name: "Seattle", geo: "Surrounded by water, with evergreen forests and snowy peaks nearby. Rainy and lush.", tags: ["Space Needle", "Mount Rainier", "Coffee culture"] } },
+  { tz: "America/New_York", sky: { seed: 55, n: 18, h: .6, terrain: "flat" },
+    zh: { name: "邁阿密", geo: "位於佛羅里達半島南端，白色沙灘綿延，氣候溫暖濕潤。", tags: ["南灘", "裝飾藝術建築", "熱帶氣候"] },
+    en: { name: "Miami", geo: "At the southern tip of Florida, with long white beaches and a warm, humid climate.", tags: ["South Beach", "Art Deco", "Tropical"] } },
+  { tz: "America/Denver", sky: { seed: 66, n: 12, h: .5, terrain: "mountains" },
+    zh: { name: "丹佛", geo: "位於落基山脈東麓，海拔約一英里，因此被稱為「一英里高城」。", tags: ["落基山脈", "高海拔", "戶外運動"] },
+    en: { name: "Denver", geo: "At the foot of the Rocky Mountains, about a mile high. Known as the Mile High City.", tags: ["Rockies", "High altitude", "Outdoors"] } },
+  { tz: "America/Los_Angeles", sky: { seed: 77, n: 18, h: .75, terrain: "flat", spire: true },
+    zh: { name: "拉斯維加斯", geo: "坐落在莫哈韋沙漠中，霓虹燈與沙漠景觀形成強烈對比。", tags: ["莫哈韋沙漠", "霓虹燈", "大道"] },
+    en: { name: "Las Vegas", geo: "Set in the Mojave Desert, where neon lights contrast sharply with the desert landscape.", tags: ["Mojave", "Neon", "The Strip"] } },
+  { tz: "America/Los_Angeles", sky: { seed: 88, n: 22, h: .55, terrain: "hills" },
+    zh: { name: "洛杉磯", geo: "盆地被群山與太平洋包圍，陽光充足，城市向外延展得非常遼闊。", tags: ["好萊塢", "太平洋", "陽光"] },
+    en: { name: "Los Angeles", geo: "A sprawling basin framed by mountains and the Pacific, with sunshine most of the year.", tags: ["Hollywood", "Pacific", "Sunshine"] } },
+  { tz: "America/Chicago", sky: { seed: 99, n: 16, h: .6, terrain: "hills" },
+    zh: { name: "奧斯汀", geo: "德州首府，位於丘陵地帶，科技公司與音樂文化同樣蓬勃。", tags: ["德州首府", "科技重鎮", "現場音樂"] },
+    en: { name: "Austin", geo: "The Texas capital in hill country, where tech companies and live music both thrive.", tags: ["Texas capital", "Tech hub", "Live music"] } },
+  { tz: "America/New_York", sky: { seed: 111, n: 20, h: .55, terrain: "flat" },
+    zh: { name: "波士頓", geo: "美國最古老的城市之一，查爾斯河畔聚集多所頂尖大學。", tags: ["查爾斯河", "大學城", "歷史名城"] },
+    en: { name: "Boston", geo: "One of the oldest US cities, with world-class universities along the Charles River.", tags: ["Charles River", "University town", "History"] } },
+  { tz: "America/Los_Angeles", sky: { seed: 122, n: 14, h: .5, terrain: "hills" },
+    zh: { name: "聖荷西", geo: "矽谷的核心城市，周圍丘陵環抱，是無數科技公司的大本營。", tags: ["矽谷", "科技總部", "丘陵"] },
+    en: { name: "San Jose", geo: "The heart of Silicon Valley, ringed by hills and home to countless tech companies.", tags: ["Silicon Valley", "Tech HQs", "Hills"] } },
+  { tz: "Pacific/Honolulu", sky: { seed: 133, n: 12, h: .45, terrain: "mountains" },
+    zh: { name: "檀香山", geo: "位於夏威夷歐胡島，火山山脊與威基基海灘相鄰，四季如夏。", tags: ["鑽石頭山", "威基基", "火山島"] },
+    en: { name: "Honolulu", geo: "On Oahu, Hawaii, where volcanic ridges meet Waikiki Beach and it's summer all year.", tags: ["Diamond Head", "Waikiki", "Volcanic island"] } }
+];
+
+const quotes = [
+  { zh: "慢慢來，你可以的。", en: "Take it slow. You've got this." },
+  { zh: "難的東西不會一次就懂，每一步都算數。", en: "Hard things don't click all at once. Every step counts." },
+  { zh: "往前一小步，也是進步。", en: "One small step forward is still progress." },
+  { zh: "你比昨天的自己更進步了。", en: "You're more capable than you were yesterday." },
+  { zh: "累了就休息一下，然後繼續。", en: "Rest when you need to, then keep going." },
+  { zh: "每一次練習，都是在為自己加分。", en: "Every practice session adds to your score." },
+  { zh: "Bug 不是失敗，是程式在告訴你答案在哪裡。", en: "A bug isn't failure. It's the code telling you where the answer is." },
+  { zh: "先求有，再求好，再求完美。", en: "Make it work, then make it good, then make it great." },
+  { zh: "今天只要比昨天多懂一點就夠了。", en: "Understanding a little more than yesterday is enough for today." },
+  { zh: "困難的題目，是在幫你把基礎打得更穩。", en: "Hard problems are quietly making your foundation stronger." },
+  { zh: "專注二十五分鐘，你會驚訝自己能做多少。", en: "Focus for 25 minutes. You'll be surprised how much you get done." },
+  { zh: "不用一次做完，只要開始。", en: "You don't have to finish it all. Just start." },
+  { zh: "你走的每一步，都在靠近想去的地方。", en: "Every step you take brings you closer to where you want to be." },
+  { zh: "會卡關，代表你正在學新東西。", en: "Getting stuck means you're learning something new." },
+  { zh: "把大問題拆小，每一塊都能解決。", en: "Break a big problem into small pieces. Each one is solvable." },
+  { zh: "考試只是檢查點，不是終點。", en: "An exam is a checkpoint, not the finish line." },
+  { zh: "今天的努力，是未來的底氣。", en: "Today's effort is tomorrow's confidence." },
+  { zh: "寫下一行程式，就離完成近了一行。", en: "Every line of code you write is one line closer to done." },
+  { zh: "相信過程，結果會跟上來。", en: "Trust the process. The results will follow." },
+  { zh: "好好吃飯、好好睡覺，也是在變強。", en: "Eating well and sleeping well count as getting stronger too." },
+  { zh: "別跟別人比，跟昨天的自己比。", en: "Don't compare yourself to others. Compare yourself to yesterday." },
+  { zh: "問問題不丟臉，不懂裝懂才可惜。", en: "Asking questions isn't embarrassing. Pretending to know is the real loss." },
+  { zh: "每個厲害的工程師，都曾經是初學者。", en: "Every great engineer was once a beginner." },
+  { zh: "你已經做得比你想像中還好。", en: "You're already doing better than you think." }
+];
+
+const companies = [
+  { id: "apple", color: "#555", mark: "A", founded: 1976,
+    zh: { name: "Apple", hq: "加州庫比蒂諾", info: "由 Steve Jobs、Steve Wozniak 與 Ronald Wayne 創立，以 iPhone、Mac 與自家晶片聞名。", tip: "試著用 Swift 寫一個小 App，體驗軟硬體整合的設計。" },
+    en: { name: "Apple", hq: "Cupertino, CA", info: "Founded by Steve Jobs, Steve Wozniak and Ronald Wayne. Known for the iPhone, Mac and its own chips.", tip: "Try building a tiny app in Swift to see hardware-software integration up close." } },
+  { id: "microsoft", color: "#0078d4", mark: "M", founded: 1975,
+    zh: { name: "Microsoft", hq: "華盛頓州雷德蒙德", info: "由 Bill Gates 與 Paul Allen 創立，旗下有 Windows、Office、Azure 雲端與 GitHub。", tip: "把作品放上 GitHub，履歷會更有說服力。" },
+    en: { name: "Microsoft", hq: "Redmond, WA", info: "Founded by Bill Gates and Paul Allen. Makes Windows, Office, the Azure cloud and owns GitHub.", tip: "Put your projects on GitHub. It makes a resume far more convincing." } },
+  { id: "oracle", color: "#c74634", mark: "O", founded: 1977,
+    zh: { name: "Oracle", hq: "德州奧斯汀", info: "以資料庫軟體起家，也是 Java 的維護者，並經營企業雲端服務。", tip: "SQL 與資料庫正規化，是資工面試的常客。" },
+    en: { name: "Oracle", hq: "Austin, TX", info: "Built on database software, stewards Java, and runs enterprise cloud services.", tip: "SQL and database normalization come up in CS interviews all the time." } },
+  { id: "google", color: "#4285f4", mark: "G", founded: 1998,
+    zh: { name: "Google", hq: "加州山景城", info: "由 Larry Page 與 Sergey Brin 創立，從搜尋引擎發展到 Android、雲端與 AI 研究。", tip: "Android 開發和 Google 雲端服務屬於同一個生態系，可以一起學。" },
+    en: { name: "Google", hq: "Mountain View, CA", info: "Founded by Larry Page and Sergey Brin. Grew from search into Android, cloud and AI research.", tip: "Android development and Google's cloud services share one ecosystem, so they pair well." } },
+  { id: "nvidia", color: "#76b900", mark: "N", founded: 1993,
+    zh: { name: "NVIDIA", hq: "加州聖克拉拉", info: "以 GPU 起家，如今是 AI 運算晶片的核心供應商，創辦人之一是黃仁勳。", tip: "了解平行運算的原理，就能看懂 GPU 為什麼快。" },
+    en: { name: "NVIDIA", hq: "Santa Clara, CA", info: "Started with GPUs and is now a core supplier of AI computing chips. Co-founded by Jensen Huang.", tip: "Learn parallelism in computer organization and you'll see why GPUs are fast." } },
+  { id: "amazon", color: "#ff9900", mark: "a", founded: 1994,
+    zh: { name: "Amazon", hq: "華盛頓州西雅圖", info: "由 Jeff Bezos 從網路書店起家，旗下 AWS 是全球最大的雲端平台之一。", tip: "AWS 有免費方案，可以拿來部署你的作品。" },
+    en: { name: "Amazon", hq: "Seattle, WA", info: "Started by Jeff Bezos as an online bookstore. Its AWS is one of the largest cloud platforms.", tip: "AWS has a free tier you can use to deploy your projects." } },
+  { id: "meta", color: "#0866ff", mark: "∞", founded: 2004,
+    zh: { name: "Meta", hq: "加州門洛帕克", info: "前身為 Facebook，經營 Instagram、WhatsApp，並開源了 React 與 PyTorch。", tip: "React 是前端最熱門的框架之一，值得一學。" },
+    en: { name: "Meta", hq: "Menlo Park, CA", info: "Formerly Facebook. Runs Instagram and WhatsApp, and open-sourced React and PyTorch.", tip: "React is one of the most popular front-end frameworks. Worth learning." } },
+  { id: "intel", color: "#0071c5", mark: "i", founded: 1968,
+    zh: { name: "Intel", hq: "加州聖克拉拉", info: "x86 處理器的開創者，「摩爾定律」就是由共同創辦人 Gordon Moore 提出。", tip: "指令集與管線化，正是現代處理器的核心概念。" },
+    en: { name: "Intel", hq: "Santa Clara, CA", info: "Pioneer of x86 processors. Co-founder Gordon Moore coined Moore's Law.", tip: "The instruction sets and pipelines from computer organization are Intel's core." } },
+  { id: "tesla", color: "#cc0000", mark: "T", founded: 2003,
+    zh: { name: "Tesla", hq: "德州奧斯汀", info: "以電動車與能源儲存聞名，大量運用軟體更新與自動駕駛技術。", tip: "嵌入式系統與感測器資料處理，是汽車軟體的關鍵能力。" },
+    en: { name: "Tesla", hq: "Austin, TX", info: "Known for electric cars and energy storage, with heavy use of software updates and driver assistance.", tip: "Embedded systems and sensor data processing are key skills in automotive software." } },
+  { id: "salesforce", color: "#00a1e0", mark: "S", founded: 1999,
+    zh: { name: "Salesforce", hq: "加州舊金山", info: "雲端客戶關係管理（CRM）的先驅，推動了「軟體即服務」的商業模式。", tip: "好的需求分析，是每個 SaaS 產品的起點。" },
+    en: { name: "Salesforce", hq: "San Francisco, CA", info: "Pioneer of cloud CRM and the software-as-a-service business model.", tip: "Good requirements analysis is where every SaaS product starts." } },
+  ...[
+    // [id, color, mark, founded, zh name, en name, zh HQ, en HQ, zh info, en info, zh tip, en tip]
+    ["netflix", "#e50914", "N", 1997, "Netflix", "Netflix", "加州洛斯加托斯", "Los Gatos, CA", "從郵寄 DVD 起家，轉型為全球最大的串流影音平台之一，也大量自製影集。", "Started by mailing DVDs, became one of the world's largest streaming services, and produces its own shows.", "推薦系統是機器學習最常見的應用之一，可以從協同過濾開始學。", "Recommendation systems are a classic machine learning use case. Start with collaborative filtering."],
+    ["adobe", "#fa0f00", "A", 1982, "Adobe", "Adobe", "加州聖荷西", "San Jose, CA", "Photoshop、Illustrator 與 PDF 格式的創造者，是創意與設計軟體的代表。", "Creator of Photoshop, Illustrator and the PDF format, and a leader in creative software.", "學一點 UI/UX 設計，能讓你做出的程式更好用。", "Learning some UI/UX design makes the software you build easier to use."],
+    ["ibm", "#0f62fe", "I", 1911, "IBM", "IBM", "紐約州阿蒙克", "Armonk, NY", "百年老牌科技公司，從大型主機、企業軟體一路走到混合雲與量子運算。", "A century-old tech company that moved from mainframes and enterprise software to hybrid cloud and quantum computing.", "量子運算還在早期，先打好線性代數基礎。", "Quantum computing is still early. Build a strong foundation in linear algebra first."],
+    ["cisco", "#049fd9", "C", 1984, "Cisco", "Cisco", "加州聖荷西", "San Jose, CA", "網路設備的領導廠商，網際網路上大量的路由器與交換器都出自它。", "A leader in networking gear. Much of the internet runs on its routers and switches.", "弄懂 TCP/IP 和子網路切割，是學網路的第一步。", "Understanding TCP/IP and subnetting is the first step in networking."],
+    ["amd", "#ed1c24", "A", 1969, "AMD", "AMD", "加州聖克拉拉", "Santa Clara, CA", "生產 CPU 與 GPU，在執行長蘇姿丰帶領下成為處理器市場的重要競爭者。", "Makes CPUs and GPUs, and became a major processor competitor under CEO Lisa Su.", "了解多核心與快取架構，能幫你寫出更快的程式。", "Understanding multicore and cache design helps you write faster code."],
+    ["qualcomm", "#3253dc", "Q", 1985, "Qualcomm", "Qualcomm", "加州聖地牙哥", "San Diego, CA", "行動通訊晶片與無線技術專利的龍頭，許多手機都用它的 Snapdragon 處理器。", "A leader in mobile chips and wireless patents. Many phones run on its Snapdragon processors.", "訊號與系統是通訊工程的基礎課，值得好好學。", "Signals and systems is the foundation of communications engineering."],
+    ["dell", "#007db8", "D", 1984, "Dell", "Dell Technologies", "德州朗德羅克", "Round Rock, TX", "由 Michael Dell 在大學宿舍創立，以直銷個人電腦起家，現在也提供伺服器與儲存設備。", "Founded by Michael Dell in his college dorm, it started by selling PCs direct and now also makes servers and storage.", "供應鏈與庫存管理，也是資訊系統的重要應用。", "Supply chain and inventory management are big areas for information systems."],
+    ["hp", "#0096d6", "H", 1939, "HP", "HP", "加州帕羅奧圖", "Palo Alto, CA", "在車庫裡創立，被視為矽谷的起點之一，以電腦與印表機聞名。", "Founded in a garage that's often called the birthplace of Silicon Valley. Known for PCs and printers.", "很多偉大的公司都從小專案開始，先做出能用的東西。", "Many great companies started as small projects. Build something that works first."],
+    ["uber", "#000000", "U", 2009, "Uber", "Uber", "加州舊金山", "San Francisco, CA", "用手機叫車改變了交通方式，也提供外送服務 Uber Eats。", "Changed how people get around with ride-hailing apps, and runs the Uber Eats delivery service.", "地圖、配對與即時定價，背後都是演算法問題。", "Maps, matching and real-time pricing are all algorithm problems underneath."],
+    ["airbnb", "#ff5a5f", "A", 2008, "Airbnb", "Airbnb", "加州舊金山", "San Francisco, CA", "讓人出租自己的房間或房子，改變了全球旅遊住宿的方式。", "Lets people rent out their rooms and homes, changing how the world books travel stays.", "好的產品從解決一個真實的小問題開始。", "Good products start by solving one real, small problem."],
+    ["stripe", "#635bff", "S", 2010, "Stripe", "Stripe", "加州南舊金山／愛爾蘭都柏林", "South San Francisco / Dublin", "由愛爾蘭的 Collison 兄弟創立，用幾行程式碼就能讓網站收款。", "Founded by the Irish Collison brothers. Lets websites accept payments with a few lines of code.", "好的 API 文件，是開發者最愛的產品之一。", "Great API documentation is a product developers love."],
+    ["zoom", "#2d8cff", "Z", 2011, "Zoom", "Zoom", "加州聖荷西", "San Jose, CA", "由袁征創立的視訊會議平台，在遠距工作與上課時代被廣泛使用。", "A video meeting platform founded by Eric Yuan, widely used for remote work and school.", "即時影音要兼顧延遲與品質，是網路工程的好題目。", "Real-time video balances latency and quality, a great networking problem."],
+    ["tsmc", "#c8102e", "T", 1987, "台積電 TSMC", "TSMC", "台灣新竹", "Hsinchu, Taiwan", "由張忠謀創立，開創晶圓代工模式，為全球大多數先進晶片代工生產。", "Founded by Morris Chang, it pioneered the foundry model and makes most of the world's advanced chips.", "半導體製程從材料、物理到電路設計，需要跨領域的知識。", "Chipmaking spans materials, physics and circuit design. It rewards broad knowledge."],
+    ["mediatek", "#f58220", "M", 1997, "聯發科 MediaTek", "MediaTek", "台灣新竹", "Hsinchu, Taiwan", "全球主要的 IC 設計公司之一，手機、電視與網通產品都用它的晶片。", "One of the world's top chip design companies, with chips in phones, TVs and networking gear.", "數位邏輯與硬體描述語言（Verilog）是 IC 設計的入門。", "Digital logic and Verilog are the entry point to chip design."],
+    ["foxconn", "#00529b", "F", 1974, "鴻海 Foxconn", "Foxconn (Hon Hai)", "台灣新北", "New Taipei, Taiwan", "由郭台銘創立，是全球最大的電子代工製造商，近年也投入電動車與 AI 伺服器。", "Founded by Terry Gou, it's the world's largest electronics manufacturer and is expanding into EVs and AI servers.", "智慧製造結合感測器、資料與自動化，是很有前景的領域。", "Smart manufacturing combines sensors, data and automation, a field with a big future."],
+    ["asus", "#000000", "A", 1989, "華碩 ASUS", "ASUS", "台灣台北", "Taipei, Taiwan", "從主機板起家的台灣品牌，生產筆電、手機與電競產品。", "A Taiwanese brand that started with motherboards and now makes laptops, phones and gaming gear.", "了解電腦硬體組成，組一台自己的電腦是很好的練習。", "Building your own PC is a great way to learn how hardware fits together."],
+    ["sony", "#000000", "S", 1946, "Sony", "Sony", "日本東京", "Tokyo, Japan", "從收音機與隨身聽到 PlayStation，橫跨電子、遊戲、音樂與影像感測器。", "From radios and the Walkman to PlayStation, it spans electronics, games, music and image sensors.", "影像感測器與影像處理，是電腦視覺的起點。", "Image sensors and image processing are where computer vision begins."],
+    ["nintendo", "#e60012", "N", 1889, "任天堂 Nintendo", "Nintendo", "日本京都", "Kyoto, Japan", "從花札紙牌公司轉型為遊戲大廠，創造了紅白機、Game Boy 與 Switch。", "Began as a playing-card maker and became a gaming giant behind the NES, Game Boy and Switch.", "做一個小遊戲，是同時練習程式、數學與設計的好方法。", "Making a small game is a fun way to practice coding, math and design together."],
+    ["rakuten", "#bf0000", "R", 1997, "樂天 Rakuten", "Rakuten", "日本東京", "Tokyo, Japan", "日本最大的電商平台之一，業務延伸到金融、通訊與點數生態系。", "One of Japan's largest e-commerce platforms, expanding into finance, mobile and a rewards ecosystem.", "會員點數與推薦，是資料分析的經典應用。", "Loyalty points and recommendations are classic data analysis applications."],
+    ["samsung", "#1428a0", "S", 1969, "三星電子 Samsung", "Samsung Electronics", "韓國水原", "Suwon, South Korea", "全球最大的記憶體晶片與智慧型手機製造商之一。", "One of the world's largest makers of memory chips and smartphones.", "記憶體階層（暫存器、快取、RAM、儲存）是計算機組織的核心觀念。", "The memory hierarchy, from registers to storage, is a core computer architecture idea."],
+    ["lg", "#a50034", "L", 1958, "LG 電子", "LG Electronics", "韓國首爾", "Seoul, South Korea", "前身為金星社（GoldStar），生產家電、電視與顯示器。", "Founded as GoldStar, it makes home appliances, TVs and displays.", "物聯網家電需要嵌入式系統與網路通訊一起配合。", "Smart appliances need embedded systems and networking working together."],
+    ["naver", "#03c75a", "N", 1999, "Naver", "Naver", "韓國城南", "Seongnam, South Korea", "韓國最大的搜尋引擎與入口網站，也經營網路漫畫平台。", "South Korea's largest search engine and portal, and home to a major webcomics platform.", "搜尋引擎的核心是索引與排序，可以從倒排索引學起。", "Search engines come down to indexing and ranking. Start with inverted indexes."],
+    ["alibaba", "#ff6a00", "A", 1999, "阿里巴巴 Alibaba", "Alibaba", "中國杭州", "Hangzhou, China", "由馬雲等人創立，經營淘寶、天貓等電商平台與阿里雲。", "Co-founded by Jack Ma. Runs e-commerce platforms such as Taobao and Tmall, plus Alibaba Cloud.", "大型購物節的流量高峰，是分散式系統的經典挑戰。", "Huge shopping-day traffic spikes are a classic distributed systems challenge."],
+    ["tencent", "#1aad19", "T", 1998, "騰訊 Tencent", "Tencent", "中國深圳", "Shenzhen, China", "經營微信與 QQ，也是全球規模最大的遊戲公司之一。", "Runs WeChat and QQ, and is one of the world's largest gaming companies.", "即時通訊需要處理訊息排序、離線同步和高併發。", "Messaging apps must handle ordering, offline sync and huge concurrency."],
+    ["bytedance", "#000000", "B", 2012, "字節跳動 ByteDance", "ByteDance", "中國北京", "Beijing, China", "由張一鳴創立，旗下有 TikTok 與抖音，以推薦演算法聞名。", "Founded by Zhang Yiming. Owns TikTok and Douyin and is known for its recommendation algorithms.", "短影音推薦結合了機器學習與大規模資料處理。", "Short-video recommendations combine machine learning with large-scale data processing."],
+    ["huawei", "#cf0a2c", "H", 1987, "華為 Huawei", "Huawei", "中國深圳", "Shenzhen, China", "由任正非創立，是全球主要的通訊設備供應商，也生產手機與晶片。", "Founded by Ren Zhengfei, a major telecom equipment supplier that also makes phones and chips.", "行動通訊從 4G 到 5G，關鍵在頻寬、延遲與天線技術。", "From 4G to 5G, mobile networks are about bandwidth, latency and antennas."],
+    ["xiaomi", "#ff6900", "X", 2010, "小米 Xiaomi", "Xiaomi", "中國北京", "Beijing, China", "由雷軍創立，以高性價比手機起家，擴展到智慧家電與電動車。", "Founded by Lei Jun, it began with affordable phones and expanded into smart home devices and EVs.", "把很多裝置串成生態系，需要統一的通訊協定。", "Connecting many devices into one ecosystem needs common communication protocols."],
+    ["baidu", "#2932e1", "B", 2000, "百度 Baidu", "Baidu", "中國北京", "Beijing, China", "由李彥宏創立的中文搜尋引擎，也投入 AI 與自動駕駛研究。", "A Chinese search engine founded by Robin Li, also investing in AI and self-driving cars.", "自動駕駛結合了電腦視覺、感測器融合與路徑規劃。", "Self-driving combines computer vision, sensor fusion and path planning."],
+    ["asml", "#10069f", "A", 1984, "ASML", "ASML", "荷蘭費爾德霍溫", "Veldhoven, Netherlands", "全球唯一能量產極紫外光（EUV）微影機的公司，是先進晶片製程的關鍵設備商。", "The only company that mass-produces EUV lithography machines, essential for making advanced chips.", "光學、精密機械與軟體控制，在高科技設備中缺一不可。", "Optics, precision mechanics and control software all matter in high-tech equipment."],
+    ["sap", "#0faaff", "S", 1972, "SAP", "SAP", "德國瓦爾多夫", "Walldorf, Germany", "企業資源規劃（ERP）軟體的領導者，許多大企業用它管理財務與營運。", "The leader in enterprise resource planning (ERP) software, used by many large companies to run finance and operations.", "資料庫設計與商業流程，是企業軟體的兩大基礎。", "Database design and business processes are the two foundations of enterprise software."],
+    ["spotify", "#1db954", "S", 2006, "Spotify", "Spotify", "瑞典斯德哥爾摩", "Stockholm, Sweden", "全球最大的音樂串流平台之一，以個人化歌單聞名。", "One of the world's largest music streaming services, famous for personalized playlists.", "音訊特徵分析能幫電腦「聽懂」音樂的風格。", "Audio feature analysis helps computers understand musical style."],
+    ["arm", "#0091bd", "A", 1990, "Arm", "Arm", "英國劍橋", "Cambridge, UK", "設計處理器架構並授權給其他公司，絕大多數手機晶片都採用 Arm 架構。", "Designs processor architectures and licenses them out. Most smartphone chips use Arm designs.", "比較 RISC 與 CISC 指令集，能看懂不同處理器的設計取捨。", "Comparing RISC and CISC shows the trade-offs in processor design."],
+    ["nokia", "#124191", "N", 1865, "Nokia", "Nokia", "芬蘭艾斯波", "Espoo, Finland", "從造紙廠轉型為手機霸主，現在專注於通訊網路設備。", "Went from paper mill to mobile phone giant, and now focuses on network equipment.", "科技公司也需要隨市場轉型，持續學習最重要。", "Tech companies have to reinvent themselves. Keep learning."],
+    ["ericsson", "#0082f0", "E", 1876, "Ericsson", "Ericsson", "瑞典斯德哥爾摩", "Stockholm, Sweden", "百年電信設備商，是行動網路基地台的主要供應商之一。", "A telecom equipment maker over a century old, and a major supplier of mobile network infrastructure.", "網路協定分層的觀念，讓複雜系統變得可以管理。", "Layered network protocols make complex systems manageable."],
+    ["shopify", "#95bf47", "S", 2006, "Shopify", "Shopify", "加拿大渥太華", "Ottawa, Canada", "讓任何人都能快速架設網路商店的電商平台。", "An e-commerce platform that lets anyone set up an online store quickly.", "學會一個網頁框架，就能自己做出完整的網站。", "Learn one web framework and you can build a full website yourself."],
+    ["infosys", "#007cc3", "I", 1981, "Infosys", "Infosys", "印度班加羅爾", "Bengaluru, India", "印度主要的資訊服務公司，為全球企業提供軟體開發與顧問服務。", "A major Indian IT services company providing software and consulting to businesses worldwide.", "和不同時區的團隊合作，清楚的文件比什麼都重要。", "When you work across time zones, clear documentation matters most."],
+    ["tcs", "#4b286d", "T", 1968, "Tata Consultancy Services", "Tata Consultancy Services", "印度孟買", "Mumbai, India", "塔塔集團旗下的資訊服務公司，是全球規模最大的 IT 顧問公司之一。", "The IT services arm of the Tata Group, one of the world's largest IT consultancies.", "大型專案靠的是版本控制、測試與程式碼審查。", "Big projects rely on version control, testing and code review."],
+    ["grab", "#00b14f", "G", 2012, "Grab", "Grab", "新加坡", "Singapore", "東南亞的超級 App，整合叫車、外送與電子支付。", "Southeast Asia's super app for rides, food delivery and digital payments.", "一個 App 整合多種服務，背後需要微服務架構。", "Bundling many services into one app usually means a microservices architecture."],
+    ["sea", "#ee4d2d", "S", 2009, "Sea", "Sea Limited", "新加坡", "Singapore", "旗下有電商平台 Shopee 與遊戲平台 Garena，業務遍及東南亞與拉丁美洲。", "Owns the Shopee marketplace and Garena gaming, operating across Southeast Asia and Latin America.", "在地化不只是翻譯，還包含支付方式與使用習慣。", "Localization is more than translation. It includes payments and local habits."],
+    ["atlassian", "#0052cc", "A", 2002, "Atlassian", "Atlassian", "澳洲雪梨", "Sydney, Australia", "Jira、Confluence 與 Trello 的開發商，是軟體團隊協作工具的代表。", "Maker of Jira, Confluence and Trello, key collaboration tools for software teams.", "用看板管理任務，能讓團隊專題進行得更順利。", "Managing tasks on a kanban board keeps team projects on track."],
+    ["canva", "#00c4cc", "C", 2013, "Canva", "Canva", "澳洲雪梨", "Sydney, Australia", "由 Melanie Perkins 共同創立的線上設計平台，讓不會設計的人也能做出好看的作品。", "An online design platform co-founded by Melanie Perkins that lets anyone make great-looking designs.", "降低使用門檻，本身就是很強的產品競爭力。", "Making things easy to use is a powerful competitive edge."]
+  ].map(([id, color, mark, founded, zn, en, zhq, ehq, zi, ei, zt, et]) => ({
+    id, color, mark, founded,
+    zh: { name: zn, hq: zhq, info: zi, tip: zt },
+    en: { name: en, hq: ehq, info: ei, tip: et }
+  }))
+];
+
+Object.assign(UI.zh, {
+  diff: "與你的時差", dist: h => `距離${h}`, distNone: "距離", flight: "飛行約", hrs: "小時", same: "相同",
+  focus: "⏱ 專注", goalsTab: "✅ 今日目標", start: "開始", pause: "暫停", resume: "繼續", reset: "重設",
+  tIdle: "選好時間，按開始。", tRun: "專注中，手機先放一邊。", tPaused: "已暫停。",
+  tDone: "完成一輪專注！休息一下。", rounds: n => `今天完成 ${n} 輪`,
+  goalPh: i => `目標 ${i + 1}，例如：讀 20 頁書`, allDone: "今天的目標全部完成 🎉",
+  set: "🎛 設定", sTitle: "設定", theme: "主題", tAuto: "跟隨系統", tDark: "深色", tLight: "淺色",
+  font: "字體大小", fS: "小", fM: "中", fL: "大", fXL: "特大", unit: "溫度單位", clock: "時間格式", auto: "自動", h12: "12 小時", h24: "24 小時",
+  home: "我的所在地（用來算距離）", homeAuto: "自動（依時區）", homeNone: "不顯示距離", langK: "語言",
+  zen: "🧘 禪模式", zExit: "✕ 離開", zSound: "🎧 聲音",
+  review: "🌙 今日回顧", rvTitle: d => `今日回顧 · ${d}`, rvFocus: "專注", rvRounds: "專注輪數", rvQuiz: "答題", rvGoals: "目標", rvWords: "認識的單字", rvStreak: "連續天數",
+  rvCard: "🖼 存成圖卡", rvCardTitle: "今日回顧",
+  board: "🏆 本週專注排行", bJoin: "加入排行榜", bLeave: "退出", bName: "顯示名稱", bEmpty: "還沒有人上榜，成為第一個吧！", bNeed: "登入同步後就能加入全球排行榜。", bJoined: "已加入排行榜", bLeft: "已退出排行榜",
+  statsTab: "📊 統計", mineTab: "✍️ 我的句子", week: "本週專注", todayMin: "今天", streakK: "連續天數",
+  min: "分", days: n => `${n} 天`, weekdays: ["日", "一", "二", "三", "四", "五", "六"],
+  addPh: "寫一句給自己的話", add: "新增", mineEmpty: "加入你自己的句子，它們會出現在隨機探索裡。", added: "已新增",
+  noise: "🌧 白噪音", notifyOn: "🔔 通知已開", notifyOff: "🔔 開啟通知", notifyNo: "瀏覽器不支援或被封鎖通知",
+  share: "🖼 圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
+  saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
+  signIn: "☁️ 登入同步", synced: "☁️ 已同步", syncing: "☁️ 同步中…", signedIn: "已登入，資料會在裝置間同步",
+  signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
+  learnTab: "📚 學習", speak: "🔊 發音", qNext: "下一題", wNext: "換一個單字", right: "✅ 答對了！", wrong: "❌ 正確答案是",
+  score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
+  subj: { cs: "計算機概論", calc: "微積分", en: "英文", zh: "國文" },
+  all: "全部", wrongBook: n => `錯題本 ${n}`, wrongEmpty: "錯題本是空的，太強了！", wrongCleared: "這題已從錯題本移除",
+  know: "✓ 認識", unsure: "✗ 不熟", mastered: (a, b) => `已掌握 ${a}／${b} 個單字`,
+  remindTab: "⏰ 提醒", rPh: "提醒內容，例如：打開網站看今天的鼓勵語", rDefault: "看看今天的鼓勵語，做一題練習 💪",
+  rAdd: "新增提醒", rAdded: "提醒已新增", rNone: "還沒有提醒，設定一個每天固定的時間吧。", rNoDay: "至少選一天",
+  rCal: "📅 行事曆", rDel: "刪除", everyday: "每天", weekdays5: "週一到週五", weekend: "週末",
+  rHint: "網頁或主畫面 App 開著時，時間到會跳通知。手機上想在網頁關著時也收到提醒，請按「📅 行事曆」把它加進手機行事曆。",
+  rTitle: "Skyline Daily Boost 提醒", rCalHint: "已下載行事曆檔，打開它即可加入行事曆",
+  edit: "⚙️ 自訂", eTitle: "自訂內容", close: "關閉",
+  pickRandom: "🎲 不固定", pinned: "已固定城市，之後每天都會是這裡", unpinned: "城市改回隨機",
+  wx: "當地天氣", wxNA: "—", conv: "🕒 你的時間", news: "📺 當地新聞",
+  wTitle: "🌍 世界頻道", wUS: "美國城市", wMine: "我的城市", wWorld: "世界", wLocal: "當地時間", wDiff: "時差",
+  wNews: "新聞台與媒體", wGoogle: "Google 新聞搜尋", wSet: "設為今日城市", wSetDone: "已切換城市", wOpen: "開啟網站 ↗",
+  wNote: "連結會在新分頁開啟官方網站；有些媒體提供直播，請在網站內找「Live」或「直播」。",
+  snd: { rain: "🌧 雨聲", waves: "🌊 海浪", stream: "💧 流水", white: "⚪ 白噪音" }, play: "▶ 播放", stop: "⏸ 停止",
+  eCats: { cities: "🏙 城市", companies: "🏢 公司", quiz: "📝 題目", words: "🔤 單字", quotes: "💬 鼓勵語" },
+  eSave: "新增", eUpdate: "儲存修改", eCancel: "取消編輯", eEdit: "編輯", eDel: "刪除",
+  eSaved: "已儲存", eDeleted: "已刪除", eEmpty: "還沒有自訂項目。", eRequired: "請填寫必填欄位",
+  eExport: "⬇️ 匯出備份", eImport: "⬆️ 匯入", eImported: n => `已匯入 ${n} 個項目`, eBad: "檔案格式不正確",
+  eExported: "已下載備份檔", eHint: "自訂的內容會和內建內容一起隨機出現。匯出的備份檔可以分享給朋友匯入。",
+  f: {
+    name: "名稱 *", desc: "介紹 *", tags: "標籤（用逗號分隔）", tz: "時區", lat: "緯度（選填）", lon: "經度（選填）",
+    terrain: "地形", tFlat: "平地", tHills: "丘陵", tMountains: "山脈", height: "大樓高度",
+    founded: "創立年份", hq: "總部", info: "簡介 *", tip: "學習小提示", color: "代表色",
+    subject: "科目", question: "題目 *", opt: i => `選項 ${"ABCD"[i]} *`, answer: "正確答案", exp: "解析",
+    word: "單字 *", pos: "詞性", zh: "中文意思 *", ex: "英文例句", exZh: "例句翻譯", quote: "鼓勵語 *"
+  }
+});
+Object.assign(UI.en, {
+  diff: "Time vs you", dist: h => `From ${h}`, distNone: "Distance", flight: "Flight ~", hrs: "h", same: "Same",
+  focus: "⏱ Focus", goalsTab: "✅ Today's goals", start: "Start", pause: "Pause", resume: "Resume", reset: "Reset",
+  tIdle: "Pick a length and press Start.", tRun: "Focusing. Put your phone away.", tPaused: "Paused.",
+  tDone: "Focus round done! Take a break.", rounds: n => `${n} round${n === 1 ? "" : "s"} today`,
+  goalPh: i => `Goal ${i + 1}, e.g. read 20 pages`, allDone: "All of today's goals done 🎉",
+  set: "🎛 Settings", sTitle: "Settings", theme: "Theme", tAuto: "System", tDark: "Dark", tLight: "Light",
+  font: "Text size", fS: "S", fM: "M", fL: "L", fXL: "XL", unit: "Temperature", clock: "Clock", auto: "Auto", h12: "12-hour", h24: "24-hour",
+  home: "My location (for distances)", homeAuto: "Auto (by time zone)", homeNone: "Don't show distance", langK: "Language",
+  zen: "🧘 Zen mode", zExit: "✕ Exit", zSound: "🎧 Sound",
+  review: "🌙 Today's review", rvTitle: d => `Today's review · ${d}`, rvFocus: "Focus", rvRounds: "Rounds", rvQuiz: "Questions", rvGoals: "Goals", rvWords: "Words learned", rvStreak: "Streak",
+  rvCard: "🖼 Save as card", rvCardTitle: "Today's review",
+  board: "🏆 Weekly focus leaderboard", bJoin: "Join leaderboard", bLeave: "Leave", bName: "Display name", bEmpty: "No one here yet. Be the first!", bNeed: "Sign in to sync to join the global leaderboard.", bJoined: "You're on the leaderboard", bLeft: "You left the leaderboard",
+  statsTab: "📊 Stats", mineTab: "✍️ My quotes", week: "Focus this week", todayMin: "Today", streakK: "Streak",
+  min: "min", days: n => `${n} day${n === 1 ? "" : "s"}`, weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+  addPh: "Write a line for yourself", add: "Add", mineEmpty: "Add your own lines. They'll show up in Explore.", added: "Added",
+  noise: "🌧 Rain noise", notifyOn: "🔔 Alerts on", notifyOff: "🔔 Enable alerts", notifyNo: "Notifications unsupported or blocked",
+  share: "🖼 Card", download: "Download", nativeShare: "Share", close: "Close",
+  saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
+  signIn: "☁️ Sign in to sync", synced: "☁️ Synced", syncing: "☁️ Syncing…", signedIn: "Signed in. Your data syncs across devices.",
+  signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
+  learnTab: "📚 Learn", speak: "🔊 Listen", qNext: "Next question", wNext: "New word", right: "✅ Correct!", wrong: "❌ The answer is",
+  score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
+  subj: { cs: "Intro to CS", calc: "Calculus", en: "English", zh: "Chinese" },
+  all: "All", wrongBook: n => `Mistakes ${n}`, wrongEmpty: "No mistakes to review. Nice!", wrongCleared: "Removed from your mistakes",
+  know: "✓ Know it", unsure: "✗ Not yet", mastered: (a, b) => `${a}/${b} words mastered`,
+  remindTab: "⏰ Reminders", rPh: "Reminder text, e.g. check today's boost", rDefault: "Check today's boost and do one practice question 💪",
+  rAdd: "Add reminder", rAdded: "Reminder added", rNone: "No reminders yet. Pick a time for every day.", rNoDay: "Pick at least one day",
+  rCal: "📅 Calendar", rDel: "Delete", everyday: "Every day", weekdays5: "Weekdays", weekend: "Weekends",
+  rHint: "While the page or home-screen app is open, you'll get a notification on time. To get reminders on your phone even when it's closed, tap \"📅 Calendar\" to add it to your phone's calendar.",
+  rTitle: "Skyline Daily Boost reminder", rCalHint: "Calendar file downloaded. Open it to add the reminder.",
+  edit: "⚙️ Customize", eTitle: "Customize content", close: "Close",
+  pickRandom: "🎲 Not pinned", pinned: "City pinned. It will stay here every day.", unpinned: "City back to random",
+  wx: "Weather", wxNA: "—", conv: "🕒 Your time", news: "📺 Local news",
+  wTitle: "🌍 World channels", wUS: "US cities", wMine: "My cities", wWorld: "World", wLocal: "Local time", wDiff: "Time diff",
+  wNews: "News stations & media", wGoogle: "Google News search", wSet: "Make today's city", wSetDone: "City switched", wOpen: "Open site ↗",
+  wNote: "Links open the official sites in a new tab. Many offer a live stream; look for \"Live\" on the site.",
+  snd: { rain: "🌧 Rain", waves: "🌊 Waves", stream: "💧 Stream", white: "⚪ White noise" }, play: "▶ Play", stop: "⏸ Stop",
+  eCats: { cities: "🏙 Cities", companies: "🏢 Companies", quiz: "📝 Questions", words: "🔤 Words", quotes: "💬 Quotes" },
+  eSave: "Add", eUpdate: "Save changes", eCancel: "Cancel edit", eEdit: "Edit", eDel: "Delete",
+  eSaved: "Saved", eDeleted: "Deleted", eEmpty: "No custom items yet.", eRequired: "Please fill in the required fields",
+  eExport: "⬇️ Export backup", eImport: "⬆️ Import", eImported: n => `Imported ${n} item${n === 1 ? "" : "s"}`, eBad: "That file isn't a valid backup",
+  eExported: "Backup downloaded", eHint: "Your items show up alongside the built-in ones. Share an exported backup so friends can import it.",
+  f: {
+    name: "Name *", desc: "Description *", tags: "Tags (comma separated)", tz: "Time zone", lat: "Latitude (optional)", lon: "Longitude (optional)",
+    terrain: "Terrain", tFlat: "Flat", tHills: "Hills", tMountains: "Mountains", height: "Building height",
+    founded: "Founded", hq: "Headquarters", info: "About *", tip: "Learning tip", color: "Brand color",
+    subject: "Subject", question: "Question *", opt: i => `Option ${"ABCD"[i]} *`, answer: "Correct answer", exp: "Explanation",
+    word: "Word *", pos: "Part of speech", zh: "Meaning *", ex: "Example sentence", exZh: "Example translation", quote: "Quote *"
+  }
+});
+
+// lat, lon and weather effect for each city (same order as cities[])
+const GEO = [
+  [40.71, -74.01, "snowWinter"], [37.77, -122.42, "fog"], [41.88, -87.63, "snowWinter"],
+  [47.61, -122.33, "rain"], [25.76, -80.19, ""], [39.74, -104.99, "snow"],
+  [36.17, -115.14, "neon"], [34.05, -118.24, ""], [30.27, -97.74, ""],
+  [42.36, -71.06, "snowWinter"], [37.34, -121.89, ""], [21.31, -157.86, ""]
+];
+const TAIPEI = [25.03, 121.56];
+
+/* ================= Storage helpers ================= */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    if (window.sdbOnLocalChange) window.sdbOnLocalChange(k); // cloud sync hook (sync.js)
+  }
+};
+
+// default language follows the browser: Chinese for zh-*, English for everyone else
+let lang = store.get("sdb.lang", /^zh/i.test(navigator.language || "") ? "zh" : "en");
+let mode = store.get("sdb.mode", "daily");
+let favs = store.get("sdb.favs", []).map(x => typeof x === "number" ? "b" + x : x); // migrate old index format
+let myQuotes = store.get("sdb.myQuotes", []); // [{ id, t }]
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function allLen() { return quotes.length + myQuotes.length; }
+function Q(i) {
+  if (i < quotes.length) return { ...quotes[i], id: "b" + i };
+  const m = myQuotes[i - quotes.length] || myQuotes[0];
+  return m ? { zh: m.t, en: m.t, id: "c" + m.id, mine: true } : { ...quotes[0], id: "b0" };
+}
+function qById(id) {
+  if (id[0] === "b") return quotes[+id.slice(1)] ? { ...quotes[+id.slice(1)], id } : null;
+  const m = myQuotes.find(x => "c" + x.id === id);
+  return m ? { zh: m.t, en: m.t, id, mine: true } : null;
+}
+let history = [], hIndex = -1;
+
+/* ================= Utilities ================= */
+const $ = id => document.getElementById(id);
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function rng(seed) {
+  let s = seed >>> 0 || 1;
+  return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; };
+}
+function todayKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function hash(str) { let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+let pin = store.get("sdb.pin", null); // pinned city index, or null for random
+const pinned = () => (typeof pin === "number" && pin >= 0 && pin < cities.length) ? pin : null;
+function dailyState() {
+  const r = rng(hash(todayKey()));
+  const s = { city: Math.floor(r() * cities.length), quote: Math.floor(r() * quotes.length), company: Math.floor(r() * companies.length) };
+  if (pinned() !== null) s.city = pinned();
+  return s;
+}
+function randomState(prev) {
+  const pick = (n, avoid) => { let i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === avoid); return i; };
+  return { city: pinned() !== null ? pinned() : pick(cities.length, prev && prev.city), quote: pick(allLen(), prev && prev.quote), company: pick(companies.length, prev && prev.company) };
+}
+
+function localHour(tz) {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
+  const h = +parts.find(p => p.type === "hour").value % 24;
+  const m = +parts.find(p => p.type === "minute").value;
+  return h + m / 60;
+}
+function periodOf(h) { return h < 5 || h >= 20 ? "night" : h < 7.5 ? "dawn" : h < 17 ? "day" : "dusk"; }
+
+const SKIES = {
+  night: { sky: "linear-gradient(180deg,#05081a 0%,#0e1a44 55%,#24305e 100%)", orb: "radial-gradient(circle at 35% 35%,#fffbe8,#d9d4b8 60%,#a9a48a)", glow: "0 0 60px 12px rgba(255,250,220,.25)", stars: 1, theme: "#05081a", bld: ["#0f1838", "#0a1129", "#050918"] },
+  dawn:  { sky: "linear-gradient(180deg,#2b3a6b 0%,#b06a8f 50%,#ffb38a 100%)", orb: "radial-gradient(circle,#fff3c4,#ffc07a)", glow: "0 0 80px 20px rgba(255,190,120,.45)", stars: .25, theme: "#2b3a6b", bld: ["#5a4a72", "#3d3456", "#241f38"] },
+  day:   { sky: "linear-gradient(180deg,#2f80d1 0%,#5fa8e8 55%,#a9d4f5 100%)", orb: "radial-gradient(circle,#fffbe0,#ffe27a)", glow: "0 0 90px 25px rgba(255,240,170,.55)", stars: 0, theme: "#2f80d1", bld: ["#5d86b3", "#3f6690", "#27466a"] },
+  dusk:  { sky: "linear-gradient(180deg,#1f1c4a 0%,#7a3b6e 45%,#f2865e 100%)", orb: "radial-gradient(circle,#ffe0a8,#ff8f5a)", glow: "0 0 80px 22px rgba(255,140,90,.45)", stars: .5, theme: "#1f1c4a", bld: ["#4a2e5c", "#331f45", "#1c1230"] }
+};
+
+/* ================= Scene ================= */
+function buildStars() {
+  const r = rng(424242);
+  let s = "";
+  for (let i = 0; i < 110; i++) {
+    const x = (r() * 100).toFixed(2), y = (r() * 62).toFixed(2), rad = (r() * 1.3 + .3).toFixed(2);
+    s += `<circle cx="${x}%" cy="${y}%" r="${rad}" fill="#fff" style="animation-delay:${(r() * 3).toFixed(2)}s"/>`;
+  }
+  $("stars").innerHTML = s;
+}
+
+function terrainPath(r, kind, W, H) {
+  if (kind === "flat") return "";
+  const amp = kind === "mountains" ? H * .55 : H * .22;
+  const steps = kind === "mountains" ? 7 : 5;
+  let d = `M0 ${H} `;
+  for (let i = 0; i <= steps; i++) {
+    const x = (W / steps) * i;
+    const y = H - amp * (kind === "mountains" ? (.45 + r() * .55) : (.5 + .5 * Math.sin(i + r())));
+    d += kind === "mountains" ? `L${x.toFixed(0)} ${y.toFixed(0)} ` : `Q${(x - W / steps / 2).toFixed(0)} ${(y - 30).toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)} `;
+  }
+  return d + `L${W} ${H} Z`;
+}
+
+/* ---------- City landmarks (simple silhouettes, layer coords 1400 x 400) ---------- */
+function palms(color, xs) {
+  return xs.map(([x, h, lean]) => {
+    const top = 400 - h, tx = x + lean;
+    const fronds = [[-60, 18], [-42, -10], [-12, -22], [20, -20], [48, -6], [62, 20]]
+      .map(([dx, dy]) => `<path d="M${tx} ${top} q${dx / 2} ${dy - 14} ${dx} ${dy}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round"/>`).join("");
+    return `<path d="M${x} 400 Q${x + lean * .2} ${400 - h / 2} ${tx} ${top}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round"/>${fronds}`;
+  }).join("");
+}
+const LANDMARKS = {
+  empire: { clear: [1110, 1190], svg: c => `<rect x="1118" y="150" width="64" height="250"/><rect x="1128" y="118" width="44" height="40"/><rect x="1138" y="92" width="24" height="30"/><rect x="1145" y="66" width="10" height="30"/><rect x="1148.5" y="22" width="3" height="48"/>` },
+  goldengate: { clear: [840, 1400], svg: c => {
+    const tower = x => `<rect x="${x - 16}" y="92" width="9" height="308"/><rect x="${x + 7}" y="92" width="9" height="308"/>` +
+      [110, 170, 230].map(y => `<rect x="${x - 16}" y="${y}" width="32" height="7"/>`).join("");
+    return tower(960) + tower(1260) + `<rect x="840" y="300" width="560" height="9"/>` +
+      `<path d="M840 300 Q900 280 960 94 Q1110 290 1260 94 Q1330 280 1400 300" fill="none" stroke="${c}" stroke-width="4"/>` +
+      Array.from({ length: 18 }, (_, i) => { const x = 975 + i * 15.5; const y = 94 + 196 * (1 - Math.pow((x - 1110) / 150, 2)); return `<rect x="${x}" y="${y}" width="1.5" height="${300 - y}"/>`; }).join("");
+  } },
+  willis: { clear: [1090, 1180], svg: c => `<rect x="1100" y="175" width="72" height="225"/><rect x="1100" y="125" width="48" height="60"/><rect x="1124" y="140" width="48" height="45"/><rect x="1112" y="98" width="36" height="35"/><rect x="1117" y="40" width="3" height="60"/><rect x="1139" y="48" width="3" height="52"/>` },
+  needle: { clear: [1120, 1180], svg: c => `<path d="M1128 400 L1146 205 L1148 112 L1152 112 L1154 205 L1172 400 L1162 400 L1150 230 L1138 400 Z"/><ellipse cx="1150" cy="104" rx="42" ry="10"/><ellipse cx="1150" cy="92" rx="25" ry="9"/><rect x="1148.5" y="44" width="3" height="44"/>` },
+  tower: { clear: [1120, 1180], svg: c => `<rect x="1144" y="120" width="12" height="280"/><rect x="1124" y="98" width="52" height="30" rx="12"/><rect x="1132" y="86" width="36" height="14" rx="6"/><rect x="1148.5" y="40" width="3" height="48"/>` },
+  capitol: { clear: [1050, 1250], svg: c => `<rect x="1058" y="330" width="184" height="70"/><rect x="1108" y="292" width="84" height="40"/><path d="M1104 294 Q1150 196 1196 294 Z"/><rect x="1144" y="200" width="12" height="22"/><rect x="1148.5" y="176" width="3" height="26"/>` },
+  palms: { clear: [960, 1230], svg: c => palms(c, [[1000, 170, 26], [1075, 225, -18], [1190, 195, 22]]) },
+  taipei101: { clear: [1110, 1190], svg: c => `<rect x="1118" y="330" width="64" height="70"/><rect x="1132" y="300" width="36" height="32"/>` +
+    Array.from({ length: 8 }, (_, k) => { const y = 274 - 26 * k; return `<path d="M1136 ${y + 26} L1164 ${y + 26} L1170 ${y + 2} L1130 ${y + 2} Z"/>`; }).join("") +
+    `<rect x="1141" y="70" width="18" height="24"/><rect x="1148.5" y="22" width="3" height="50"/>` },
+  eiffel: { clear: [1085, 1215], svg: c => `<path d="M1090 400 Q1128 300 1140 200 L1145 92 L1155 92 L1160 200 Q1172 300 1210 400 L1188 400 Q1162 336 1150 336 Q1138 336 1112 400 Z"/><rect x="1110" y="296" width="80" height="7"/><rect x="1131" y="198" width="38" height="6"/><rect x="1148.5" y="40" width="3" height="56"/>` },
+  bigben: { clear: [1128, 1172], svg: c => `<rect x="1140" y="150" width="20" height="250"/><rect x="1134" y="118" width="32" height="36"/><circle cx="1150" cy="136" r="9" fill="#ffd98a" opacity=".55"/><path d="M1134 118 L1150 66 L1166 118 Z"/><rect x="1148.5" y="40" width="3" height="30"/>` },
+  burj: { clear: [1120, 1180], svg: c => `<path d="M1128 400 L1139 260 L1143 170 L1146 90 L1149 18 L1151 18 L1154 90 L1157 170 L1161 260 L1172 400 Z"/>` },
+  opera: { clear: [1030, 1260], svg: c => `<rect x="1030" y="370" width="230" height="30"/>` +
+    [[1040, 1110, 290], [1095, 1170, 270], [1150, 1230, 300], [1205, 1255, 330]].map(([a, b, top]) => `<path d="M${a} 372 Q${a + 6} ${top} ${b} ${top - 8} Q${b - 18} ${top + 40} ${b - 8} 372 Z"/>`).join("") }
+};
+const CITY_LANDMARK = ["empire", "goldengate", "willis", "needle", "palms", "", "tower", "palms", "capitol", "", "", "palms"];
+
+function buildLayer(cfg, depth, color, period) {
+  const lm = LANDMARKS[CITY_LANDMARK[cities.findIndex(c => c.sky === cfg)]];
+  const r = rng(cfg.seed * 7 + depth * 131);
+  const W = 1400, H = 400;
+  const count = Math.round(cfg.n * (depth === 0 ? .8 : depth === 1 ? 1 : .7));
+  const maxH = H * cfg.h * (depth === 0 ? .95 : depth === 1 ? .75 : .5);
+  let shapes = "", windows = "";
+  const lit = period === "night" || period === "dusk";
+
+  if (depth === 0 && cfg.terrain !== "flat") {
+    shapes += `<path d="${terrainPath(r, cfg.terrain, W, H)}" opacity=".7"/>`;
+    if (cfg.terrain === "mountains" && period !== "day") shapes += "";
+  }
+
+  let x = -10;
+  const slot = W / count;
+  for (let i = 0; i < count; i++) {
+    const w = slot * (.55 + r() * .4);
+    let hh = maxH * (.3 + r() * .7);
+    if (cfg.terrain === "hills") hh *= .55 + .45 * Math.sin((i / count) * Math.PI);
+    hh = Math.max(24, hh);
+    const y = H - hh;
+    if (lm && depth >= 1 && x + w > lm.clear[0] && x < lm.clear[1]) { x += slot; continue; } // keep the landmark visible
+    shapes += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${hh.toFixed(1)}"/>`;
+    // occasional stepped top or spire on the tallest
+    if (r() > .7) shapes += `<rect x="${(x + w * .2).toFixed(1)}" y="${(y - hh * .08).toFixed(1)}" width="${(w * .6).toFixed(1)}" height="${(hh * .08 + 1).toFixed(1)}"/>`;
+    if (cfg.spire && depth === 1 && hh > maxH * .85) shapes += `<rect x="${(x + w / 2 - 1.5).toFixed(1)}" y="${(y - 40).toFixed(1)}" width="3" height="40"/>`;
+
+    // lit windows on the front two layers
+    if (lit && depth >= 1) {
+      const cols = Math.max(1, Math.floor(w / 12)), rows = Math.floor(hh / 16);
+      for (let cx = 0; cx < cols; cx++) for (let ry = 1; ry < rows; ry++) {
+        if (r() < (depth === 2 ? .16 : .1)) {
+          const delay = (r() * 12).toFixed(1);
+          windows += `<rect class="win" x="${(x + 4 + cx * 12).toFixed(1)}" y="${(y + ry * 16).toFixed(1)}" width="5" height="7" style="animation-delay:${delay}s;animation-duration:${(6 + r() * 8).toFixed(1)}s"/>`;
+        }
+      }
+    }
+    x += slot;
+  }
+  if (lm && depth === 1) shapes += lm.svg(color);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice">
+    <g fill="${color}">${shapes}</g>
+    <g fill="#ffd98a" opacity=".9">${windows}</g>
+  </svg>`;
+}
+
+function paintScene(state) {
+  const c = cities[state.city];
+  const p = periodOf(localHour(c.tz));
+  const s = SKIES[p];
+  $("sky").style.background = s.sky;
+  $("stars").style.opacity = s.stars;
+  const orb = $("orb");
+  orb.style.background = s.orb;
+  orb.style.boxShadow = s.glow;
+  orb.style.top = p === "day" ? "9vh" : p === "night" ? "11vh" : "26vh";
+  ["l1", "l2", "l3"].forEach((id, i) => { $(id).innerHTML = buildLayer(c.sky, i, s.bld[i], p); });
+  document.querySelector('meta[name="theme-color"]').content = s.theme;
+  setWeather(state.city, p);
+  return p;
+}
+
+/* weather overlays */
+function setWeather(ci, period) {
+  const w = $("weather");
+  let kind = GEO[ci][2];
+  const real = wxFor(GEO[ci]);
+  if (real) kind = wxInfo(real.code, real.isDay).fx || (kind === "neon" ? "neon" : ""); // real weather wins
+  const month = new Date().getMonth();
+  if (kind === "snowWinter") kind = (month === 11 || month <= 1) ? "snow" : "";
+  if (kind === "neon" && period === "day") kind = "";
+  if (reduceMotion) kind = kind === "neon" || kind === "fog" ? kind : "";
+  let html = "";
+  const r = Math.random;
+  if (kind === "rain") for (let i = 0; i < 70; i++)
+    html += `<i class="drop" style="left:${(r() * 110).toFixed(1)}%;animation-duration:${(.6 + r() * .5).toFixed(2)}s;animation-delay:${(-r() * 2).toFixed(2)}s"></i>`;
+  if (kind === "snow") for (let i = 0; i < 60; i++) {
+    const s = (2 + r() * 4).toFixed(1);
+    html += `<i class="flake" style="left:${(r() * 100).toFixed(1)}%;width:${s}px;height:${s}px;animation-duration:${(7 + r() * 8).toFixed(1)}s;animation-delay:${(-r() * 15).toFixed(1)}s"></i>`;
+  }
+  if (kind === "fog") html = `<i class="fog" style="bottom:12vh"></i><i class="fog" style="bottom:2vh;animation-duration:55s;animation-direction:reverse"></i>`;
+  if (kind === "neon") html = `<i class="neon"></i>`;
+  w.innerHTML = html;
+  scene.period = period;
+}
+const scene = { period: "day" };
+
+/* shooting stars at night */
+function shootingStar() {
+  if (!reduceMotion && scene.period === "night" && !document.hidden) {
+    const s = document.createElement("i");
+    s.className = "shoot";
+    s.style.left = (40 + Math.random() * 55) + "%";
+    s.style.top = (4 + Math.random() * 30) + "%";
+    $("shootLayer").appendChild(s);
+    requestAnimationFrame(() => s.classList.add("go"));
+    setTimeout(() => s.remove(), 1400);
+  }
+  setTimeout(shootingStar, 6000 + Math.random() * 9000);
+}
+
+/* distance & time difference */
+function haversine(a, b) {
+  const R = 6371, rad = d => d * Math.PI / 180;
+  const dLat = rad(b[0] - a[0]), dLon = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function tzOffsetHours(tz) {
+  const now = new Date();
+  const asTz = new Date(now.toLocaleString("en-US", { timeZone: tz }));
+  const asMe = new Date(now.toLocaleString("en-US"));
+  return Math.round((asTz - asMe) / 1800000) / 2;
+}
+
+/* parallax */
+if (!reduceMotion) {
+  window.addEventListener("pointermove", e => {
+    const dx = (e.clientX / innerWidth - .5);
+    $("l1").style.transform = `translateX(${dx * -8}px)`;
+    $("l2").style.transform = `translateX(${dx * -16}px)`;
+    $("l3").style.transform = `translateX(${dx * -26}px)`;
+  });
+}
+
+/* ================= Render ================= */
+function current() { return history[hIndex]; }
+
+function tickClock() {
+  const st = current(); if (!st) return;
+  const c = cities[st.city];
+  const fmt = new Intl.DateTimeFormat(lang === "zh" ? "zh-TW" : "en-US", { timeZone: c.tz, hour: "2-digit", minute: "2-digit", weekday: "short", hourCycle: hc() });
+  $("clock").textContent = fmt.format(new Date());
+  $("period").textContent = `${UI[lang].local} · ${UI[lang].period[periodOf(localHour(c.tz))]}`;
+}
+
+function render(animate) {
+  const ui = UI[lang], st = current();
+  const c = cities[st.city][lang], q = Q(st.quote), co = companies[st.company], cl = co[lang];
+
+  document.documentElement.lang = lang === "zh" ? "zh-TW" : "en";
+  document.title = ui.title;
+  $("heading").textContent = ui.heading;
+  $("langBtn").textContent = ui.lang;
+  $("editBtn").textContent = ui.edit; $("setBtn").textContent = ui.set;
+  drawEditor(); drawWorld(); drawSettings(); drawZen(); drawReview();
+  if (window.sdbSyncLabel) window.sdbSyncLabel();
+  $("btn").textContent = ui.btn;
+  $("eyebrow").textContent = ui.eyebrow;
+  $("modeDaily").textContent = ui.daily;
+  $("modeRandom").textContent = ui.random;
+  $("modeDaily").setAttribute("aria-pressed", mode === "daily");
+  $("modeRandom").setAttribute("aria-pressed", mode === "random");
+
+  $("city").textContent = c.name;
+  $("geo").textContent = c.geo;
+  $("tags").innerHTML = (c.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("");
+
+  $("quote").textContent = q[lang];
+  const isFav = favs.includes(q.id);
+  $("favBtn").textContent = isFav ? ui.faved : ui.fav;
+  $("favBtn").setAttribute("aria-pressed", isFav);
+  $("copyBtn").textContent = "⧉ " + ui.copy;
+  $("shareBtn").textContent = ui.share;
+
+  $("logo").textContent = co.mark;
+  $("logo").style.background = co.color;
+  $("companyName").textContent = cl.name;
+  $("companyMeta").textContent = `${ui.founded} ${co.founded} · ${ui.hq} ${cl.hq}`;
+  $("companyInfo").textContent = cl.info;
+  $("companyTip").textContent = ui.tipLabel + cl.tip;
+
+  $("prevBtn").disabled = hIndex <= 0;
+  $("nextBtn").disabled = hIndex >= history.length - 1;
+  $("prevBtn").setAttribute("aria-label", lang === "zh" ? "上一組" : "Previous");
+  $("nextBtn").setAttribute("aria-label", lang === "zh" ? "下一組" : "Next");
+
+  const g = GEO[st.city], off = tzOffsetHours(cities[st.city].tz);
+  const hi = homeCity(), hg = hi !== null ? GEO[hi] : null;
+  const km = g && typeof g[0] === "number" && hg ? haversine(hg, g) : 0;
+  $("kDiff").textContent = ui.diff;
+  $("vDiff").textContent = off === 0 ? ui.same : `${off > 0 ? "+" : ""}${off} ${ui.hrs}`;
+  $("kDist").textContent = hi !== null ? ui.dist(cities[hi][lang].name) : ui.distNone;
+  const hasGeo = !!hg && g && typeof g[0] === "number" && typeof g[1] === "number";
+  $("vDist").textContent = hasGeo ? `${Math.round(km).toLocaleString()} km` : "—";
+  $("kFlight").textContent = ui.flight;
+  $("vFlight").textContent = hasGeo && km > 150 ? `${Math.round(km / 850 + .5)} ${ui.hrs}` : "—";
+  $("kWx").textContent = ui.wx;
+  showWeather(st.city);
+  $("convL").textContent = ui.conv; $("newsBtn").textContent = ui.news;
+  drawConv(); drawPicker();
+  renderTools();
+
+  $("favToggle").textContent = `★ ${ui.favs}${favs.length ? " " + favs.length : ""}`;
+  $("streak").textContent = ui.streak(streak);
+  $("hint").innerHTML = ui.hint;
+  renderFavs();
+  tickClock();
+
+  if (animate && !reduceMotion) {
+    const el = $("content");
+    el.classList.remove("fade"); void el.offsetWidth; el.classList.add("fade");
+  }
+}
+
+function renderFavs() {
+  const ui = UI[lang];
+  $("panelTitle").textContent = ui.panel;
+  $("favList").innerHTML = favs.length
+    ? favs.map(id => qById(id)).filter(Boolean).map(q => `<li><span>${esc(q[lang])}</span><button class="icon" data-rm="${q.id}" type="button">${ui.remove}</button></li>`).join("")
+    : `<li class="empty">${ui.empty}</li>`;
+}
+
+function go(state, push = true) {
+  if (push) { history = history.slice(0, hIndex + 1); history.push(state); hIndex = history.length - 1; }
+  paintScene(state);
+  render(true);
+}
+
+/* ================= Streak ================= */
+let streak = 1;
+(function updateStreak() {
+  const today = todayKey();
+  const last = store.get("sdb.last", null);
+  streak = store.get("sdb.streak", 0);
+  if (last !== today) {
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    streak = last === todayKey(y) ? streak + 1 : 1;
+    store.set("sdb.last", today); store.set("sdb.streak", streak);
+  }
+  streak = Math.max(1, streak);
+})();
+
+/* ================= Actions ================= */
+let toastTimer;
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+function newSet() { mode = "random"; store.set("sdb.mode", mode); go(randomState(current())); }
+function prev() { if (hIndex > 0) { hIndex--; go(current(), false); } }
+function next() { if (hIndex < history.length - 1) { hIndex++; go(current(), false); } }
+function toggleLang() { lang = lang === "zh" ? "en" : "zh"; store.set("sdb.lang", lang); render(false); }
+function toggleFav() {
+  const i = Q(current().quote).id, ui = UI[lang];
+  if (favs.includes(i)) { favs = favs.filter(x => x !== i); toast(ui.favRemoved); }
+  else { favs.push(i); toast(ui.favAdded); }
+  store.set("sdb.favs", favs); render(false);
+}
+function copyQuote() {
+  const text = Q(current().quote)[lang];
+  const ok = () => toast(UI[lang].copied);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(ok).catch(fallback);
+  } else fallback();
+  function fallback() {
+    const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta);
+    ta.select(); try { document.execCommand("copy"); ok(); } catch (e) {} ta.remove();
+  }
+}
+
+$("btn").onclick = newSet;
+$("prevBtn").onclick = prev;
+$("nextBtn").onclick = next;
+$("langBtn").onclick = toggleLang;
+$("favBtn").onclick = toggleFav;
+$("copyBtn").onclick = copyQuote;
+$("modeDaily").onclick = () => { mode = "daily"; store.set("sdb.mode", mode); go(dailyState()); };
+$("modeRandom").onclick = newSet;
+$("favToggle").onclick = () => {
+  const p = $("panel"); p.hidden = !p.hidden;
+  $("favToggle").setAttribute("aria-pressed", !p.hidden);
+};
+$("favList").onclick = e => {
+  const rm = e.target.closest("[data-rm]"); if (!rm) return;
+  favs = favs.filter(x => x !== rm.dataset.rm); store.set("sdb.favs", favs); render(false);
+};
+
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
+  const onBtn = e.target.tagName === "BUTTON";
+  if ((e.code === "Space" || e.key === "Enter") && !onBtn) { e.preventDefault(); newSet(); }
+  else if (e.key === "ArrowLeft") prev();
+  else if (e.key === "ArrowRight") next();
+  else if (e.key.toLowerCase() === "f") toggleFav();
+  else if (e.key.toLowerCase() === "c") copyQuote();
+  else if (e.key.toLowerCase() === "l") toggleLang();
+});
+
+/* swipe on touch screens */
+let tx = null;
+document.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener("touchend", e => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 60) dx < 0 ? (hIndex < history.length - 1 ? next() : newSet()) : prev();
+}, { passive: true });
+
+/* ================= Celebration ================= */
+function confetti() {
+  if (reduceMotion) return;
+  const box = $("celebrate"), colors = ["#ffd27a", "#ff7eb3", "#7afcff", "#a0ff7a", "#fff"];
+  for (let i = 0; i < 70; i++) {
+    const c = document.createElement("i");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "%";
+    c.style.background = colors[i % colors.length];
+    c.style.animationDelay = Math.random() * .6 + "s";
+    c.style.animationDuration = 1.6 + Math.random() * 1.4 + "s";
+    box.appendChild(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+}
+function chime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [523.25, 659.25, 783.99].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = f; o.type = "sine";
+      g.gain.setValueAtTime(0, ctx.currentTime + i * .18);
+      g.gain.linearRampToValueAtTime(.2, ctx.currentTime + i * .18 + .03);
+      g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + i * .18 + .9);
+      o.connect(g).connect(ctx.destination);
+      o.start(ctx.currentTime + i * .18); o.stop(ctx.currentTime + i * .18 + 1);
+    });
+  } catch (e) {}
+}
+
+/* ================= Tools: focus timer & goals ================= */
+const CIRC = 326.73;
+const timer = { total: 25 * 60, left: 25 * 60, end: 0, running: false, id: null, status: "idle" };
+let tab = "focus";
+
+function roundsKey() { return "sdb.rounds." + todayKey(); }
+function fmtTime(s) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
+
+function drawTimer() {
+  const ui = UI[lang];
+  $("tNum").textContent = fmtTime(timer.left);
+  $("ringBar").style.strokeDashoffset = CIRC * (1 - timer.left / timer.total);
+  $("tStart").textContent = timer.running ? ui.pause : timer.status === "paused" ? ui.resume : ui.start;
+  $("tReset").textContent = ui.reset;
+  const rounds = store.get(roundsKey(), 0);
+  const msg = { idle: ui.tIdle, run: ui.tRun, paused: ui.tPaused, done: ui.tDone }[timer.status];
+  $("tMsg").textContent = rounds ? `${msg} · ${ui.rounds(rounds)}` : msg;
+  document.querySelectorAll("[data-min]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.min * 60 === timer.total));
+  document.title = timer.running ? `${fmtTime(timer.left)} · ${UI[lang].title}` : UI[lang].title;
+}
+function tick() {
+  timer.left = Math.max(0, Math.round((timer.end - Date.now()) / 1000));
+  if (timer.left === 0) {
+    clearInterval(timer.id); timer.running = false; timer.status = "done";
+    store.set(roundsKey(), store.get(roundsKey(), 0) + 1);
+    chime(); confetti();
+    const fq = Q(Math.floor(Math.random() * allLen()))[lang];
+    toast(fq); notify(UI[lang].tDone, fq);
+    logFocus(timer.total / 60);
+    timer.left = timer.total;
+  }
+  drawTimer();
+}
+function startPause() {
+  if (timer.running) {
+    clearInterval(timer.id); timer.running = false; timer.status = "paused";
+  } else {
+    timer.end = Date.now() + timer.left * 1000;
+    timer.running = true; timer.status = "run";
+    timer.id = setInterval(tick, 250);
+  }
+  drawTimer();
+}
+function setLength(min) {
+  clearInterval(timer.id);
+  Object.assign(timer, { total: min * 60, left: min * 60, running: false, status: "idle" });
+  drawTimer();
+}
+
+function goalsKey() { return "sdb.goals." + todayKey(); }
+function getGoals() { return store.get(goalsKey(), [{ t: "", d: false }, { t: "", d: false }, { t: "", d: false }]); }
+function drawGoals() {
+  const ui = UI[lang], goals = getGoals();
+  const box = $("goals");
+  if (!box.children.length) {
+    box.innerHTML = goals.map((_, i) =>
+      `<label class="goal" data-i="${i}"><input type="checkbox"><input type="text" maxlength="60"></label>`).join("");
+  }
+  [...box.children].forEach((row, i) => {
+    const [cb, tx] = row.querySelectorAll("input");
+    cb.checked = goals[i].d;
+    if (document.activeElement !== tx) tx.value = goals[i].t;
+    tx.placeholder = ui.goalPh(i);
+    cb.setAttribute("aria-label", ui.goalPh(i));
+    row.classList.toggle("done", goals[i].d);
+  });
+  const filled = goals.filter(g => g.t.trim());
+  const done = filled.filter(g => g.d).length;
+  $("goalBar").style.width = filled.length ? (done / filled.length * 100) + "%" : "0";
+}
+$("goals").addEventListener("input", e => {
+  const row = e.target.closest(".goal"); if (!row) return;
+  const goals = getGoals(), i = +row.dataset.i;
+  const wasAll = goals.filter(g => g.t.trim()).every(g => g.d) && goals.some(g => g.t.trim());
+  if (e.target.type === "checkbox") goals[i].d = e.target.checked; else goals[i].t = e.target.value;
+  store.set(goalsKey(), goals);
+  drawGoals();
+  const filled = goals.filter(g => g.t.trim());
+  if (e.target.type === "checkbox" && filled.length && filled.every(g => g.d) && !wasAll) {
+    confetti(); chime(); toast(UI[lang].allDone);
+  }
+});
+
+function renderTools() {
+  const ui = UI[lang];
+  $("tabFocus").textContent = ui.focus;
+  $("tabGoals").textContent = ui.goalsTab;
+  $("tabStats").textContent = ui.statsTab;
+  $("tabMine").textContent = ui.mineTab;
+  $("tabLearn").textContent = ui.learnTab;
+  $("tabRemind").textContent = ui.remindTab;
+  ["focus", "goals", "stats", "mine", "learn", "remind"].forEach(t => {
+    const T = t[0].toUpperCase() + t.slice(1);
+    $("tab" + T).setAttribute("aria-selected", tab === t);
+    $("pane" + T).hidden = tab !== t;
+  });
+  drawSound();
+  $("notifyBtn").textContent = notifyAllowed() ? ui.notifyOn : ui.notifyOff;
+  drawTimer(); drawGoals(); drawStats(); drawMine(); drawLearn(); drawReminders();
+  $("zenBtn").textContent = ui.zen; $("reviewBtn").textContent = ui.review; drawBoard();
+}
+$("tabFocus").onclick = () => { tab = "focus"; renderTools(); };
+$("tabGoals").onclick = () => { tab = "goals"; renderTools(); };
+$("tabStats").onclick = () => { tab = "stats"; renderTools(); };
+$("tabMine").onclick = () => { tab = "mine"; renderTools(); };
+$("tabLearn").onclick = () => { tab = "learn"; renderTools(); };
+$("tabRemind").onclick = () => { tab = "remind"; renderTools(); };
+$("tStart").onclick = startPause;
+$("tReset").onclick = () => setLength(timer.total / 60);
+document.querySelectorAll("[data-min]").forEach(b => b.onclick = () => setLength(+b.dataset.min));
+
+/* ================= Ambient sounds (generated in the browser, no audio files) ================= */
+let sndType = store.get("sdb.snd", "rain"), vol = store.get("sdb.vol", .5), noiseOn = false;
+let noiseCtx = null, noiseGain = null;
+const SND_GAIN = { rain: .9, waves: 1.1, stream: .8, white: .35 };
+
+function pinkFiller() { // Paul Kellet's pink noise filter
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+  return () => {
+    const w = Math.random() * 2 - 1;
+    b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852;
+    b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898;
+    const o = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * .5362) * .11; b6 = w * .115926; return o;
+  };
+}
+function makeBuffer(ctx, type) {
+  const sr = ctx.sampleRate;
+  const secs = type === "waves" ? 16 : type === "stream" ? 8 : 6;
+  const len = sr * secs, buf = ctx.createBuffer(1, len, sr), d = buf.getChannelData(0);
+  const pink = pinkFiller();
+  if (type === "white") for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * .5;
+  if (type === "rain") {
+    for (let i = 0; i < len; i++) d[i] = pink() * .55;
+    const drops = secs * 90; // individual drops on top of the steady hiss
+    for (let k = 0; k < drops; k++) {
+      const at = Math.floor(Math.random() * len), dl = Math.floor(sr * (.002 + Math.random() * .01)), amp = .15 + Math.random() * .45;
+      let prev = 0;
+      for (let j = 0; j < dl && at + j < len; j++) { const w = Math.random() * 2 - 1, hf = w - prev; prev = w; d[at + j] += hf * amp * Math.exp(-6 * j / dl); }
+    }
+  }
+  if (type === "waves") {
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      const t = i / sr, env = .12 + .88 * Math.pow(Math.sin(Math.PI * t / 8), 2); // one wave every 8 s, loops cleanly
+      const w = Math.random() * 2 - 1; last = (last + .02 * w) / 1.02;
+      d[i] = last * 3.2 * env + w * .045 * env * env;
+    }
+  }
+  if (type === "stream") {
+    const ph = [0, 0, 0].map(() => Math.random() * 6.28);
+    for (let i = 0; i < len; i++) {
+      const t = i / sr;
+      const bub = .55 + .18 * Math.sin(6.28 * 3.25 * t + ph[0]) + .14 * Math.sin(6.28 * 5.5 * t + ph[1]) + .1 * Math.sin(6.28 * 9.75 * t + ph[2]);
+      d[i] = pink() * bub * .9;
+    }
+  }
+  // short crossfade so the loop point is seamless
+  const fade = Math.floor(sr * .05);
+  for (let i = 0; i < fade; i++) { const k = i / fade; d[i] = d[i] * k + d[len - fade + i] * (1 - k); }
+  return buf;
+}
+function noise(on) {
+  try {
+    if (noiseCtx) { noiseCtx.close(); noiseCtx = null; noiseGain = null; }
+    noiseOn = on;
+    if (!on) return;
+    noiseCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = noiseCtx.createBufferSource(); src.buffer = makeBuffer(noiseCtx, sndType); src.loop = true;
+    const hp = noiseCtx.createBiquadFilter(); hp.type = "highpass";
+    const lp = noiseCtx.createBiquadFilter(); lp.type = "lowpass";
+    ({ rain: () => { hp.frequency.value = 250; lp.frequency.value = 7500; },
+       waves: () => { hp.frequency.value = 30; lp.frequency.value = 1400; },
+       stream: () => { hp.frequency.value = 450; lp.frequency.value = 4200; },
+       white: () => { hp.frequency.value = 20; lp.frequency.value = 9000; } })[sndType]();
+    noiseGain = noiseCtx.createGain(); noiseGain.gain.value = 0;
+    noiseGain.gain.linearRampToValueAtTime(vol * SND_GAIN[sndType], noiseCtx.currentTime + 1.2); // gentle fade-in
+    src.connect(hp).connect(lp).connect(noiseGain).connect(noiseCtx.destination); src.start();
+  } catch (e) { noiseOn = false; }
+}
+function drawSound() {
+  const ui = UI[lang];
+  $("noiseBtn").textContent = noiseOn ? ui.stop : ui.play;
+  $("noiseBtn").setAttribute("aria-pressed", noiseOn);
+  $("vol").value = vol;
+  $("sndPick").innerHTML = Object.keys(ui.snd).map(k => `<button class="chip" type="button" data-snd="${k}" aria-pressed="${k === sndType}">${ui.snd[k]}</button>`).join("");
+}
+$("noiseBtn").onclick = () => { noise(!noiseOn); drawSound(); };
+$("sndPick").onclick = e => {
+  const b = e.target.closest("[data-snd]"); if (!b) return;
+  sndType = b.dataset.snd; store.set("sdb.snd", sndType);
+  noise(true); drawSound(); // picking a sound starts it
+};
+$("vol").oninput = e => {
+  vol = +e.target.value; store.set("sdb.vol", vol);
+  if (noiseGain) noiseGain.gain.setValueAtTime(vol * SND_GAIN[sndType], noiseCtx.currentTime);
+};
+
+/* ================= Notifications ================= */
+function notifyAllowed() { return "Notification" in window && Notification.permission === "granted"; }
+function notify(title, body) {
+  try { if (notifyAllowed() && document.hidden) new Notification(title, { body, icon: "icon-192.png" }); } catch (e) {}
+}
+$("notifyBtn").onclick = async () => {
+  try {
+    if (!("Notification" in window)) throw 0;
+    const r = await Notification.requestPermission();
+    if (r !== "granted") throw 0;
+  } catch (e) { toast(UI[lang].notifyNo); }
+  renderTools();
+};
+
+/* ================= Focus log & stats ================= */
+function logFocus(min) {
+  const log = store.get("sdb.log", {}); const k = todayKey();
+  log[k] = (log[k] || 0) + min;
+  const keys = Object.keys(log).sort(); while (keys.length > 60) delete log[keys.shift()];
+  store.set("sdb.log", log);
+}
+function drawStats() {
+  const ui = UI[lang], log = store.get("sdb.log", {});
+  const days = [];
+  for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push(d); }
+  const other = window.sdbRemoteLogs || {}; // minutes logged on your other devices
+  const vals = days.map(d => {
+    const k = todayKey(d);
+    return (log[k] || 0) + Object.values(other).reduce((a, l) => a + (l[k] || 0), 0);
+  }), max = Math.max(25, ...vals);
+  $("bars").innerHTML = days.map((d, i) =>
+    `<div class="bar${i === 6 ? " today" : ""}"><b>${vals[i] || ""}</b><i style="height:${(vals[i] / max * 80).toFixed(0)}%"></i><span>${ui.weekdays[d.getDay()]}</span></div>`).join("");
+  $("kWeek").textContent = ui.week; $("vWeek").textContent = `${vals.reduce((a, b) => a + b, 0)} ${ui.min}`;
+  $("kToday").textContent = ui.todayMin; $("vToday").textContent = `${vals[6]} ${ui.min}`;
+  $("kStreak").textContent = ui.streakK; $("vStreak").textContent = ui.days(streak);
+}
+
+/* ================= My quotes ================= */
+function drawMine() {
+  const ui = UI[lang];
+  $("addInput").placeholder = ui.addPh; $("addBtn").textContent = ui.add;
+  $("myList").innerHTML = myQuotes.length
+    ? myQuotes.map(m => `<li><span>${esc(m.t)}</span><button class="icon" data-del="${m.id}" type="button">${ui.remove}</button></li>`).join("")
+    : `<li class="tmsg">${ui.mineEmpty}</li>`;
+}
+$("addForm").onsubmit = e => {
+  e.preventDefault();
+  const t = $("addInput").value.trim(); if (!t) return;
+  myQuotes.push({ id: Date.now().toString(36), t }); store.set("sdb.myQuotes", myQuotes);
+  $("addInput").value = ""; toast(UI[lang].added); drawMine();
+};
+$("myList").onclick = e => {
+  const b = e.target.closest("[data-del]"); if (!b) return;
+  const idx = myQuotes.findIndex(m => m.id === b.dataset.del);
+  const curId = Q(current().quote).id;
+  myQuotes.splice(idx, 1); store.set("sdb.myQuotes", myQuotes);
+  favs = favs.filter(x => x !== "c" + b.dataset.del); store.set("sdb.favs", favs);
+  history.forEach(h => { if (h.quote >= allLen()) h.quote = 0; });
+  if (curId === "c" + b.dataset.del) current().quote = 0;
+  render(false);
+};
+
+/* ================= Share card (canvas image) ================= */
+function wrapText(ctx, text, maxW) {
+  const lines = []; let line = "";
+  const tokens = /[\u3000-\u9fff\uff00-\uffef]/.test(text) ? [...text] : text.split(/(\s+)/);
+  for (const t of tokens) {
+    const punct = /^[，。！？、；：」』）,.!?;:)]$/.test(t); // never start a line with punctuation
+    if (!punct && ctx.measureText(line + t).width > maxW && line.trim()) { lines.push(line.trim()); line = t.trimStart(); }
+    else line += t;
+  }
+  if (line.trim()) lines.push(line.trim());
+  return lines;
+}
+function makeCard(custom) {
+  const st = current(), c = cities[st.city], p = periodOf(localHour(c.tz)), sk = SKIES[p];
+  const W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const x = cv.getContext("2d");
+  const cols = sk.sky.match(/#[0-9a-f]{6}/gi);
+  const gr = x.createLinearGradient(0, 0, 0, H); cols.forEach((col, i) => gr.addColorStop(i / (cols.length - 1), col));
+  x.fillStyle = gr; x.fillRect(0, 0, W, H);
+  const r = rng(c.sky.seed);
+  if (p !== "day") { x.fillStyle = "#fff"; for (let i = 0; i < 90; i++) { x.globalAlpha = .3 + r() * .7; x.beginPath(); x.arc(r() * W, r() * H * .55, r() * 2 + .5, 0, 7); x.fill(); } x.globalAlpha = 1; }
+  sk.bld.forEach((col, layer) => {
+    x.fillStyle = col; let bx = -10; const n = 10 + layer * 4, maxH = H * (.42 - layer * .1);
+    while (bx < W) { const w = W / n * (.6 + r() * .4), h = maxH * (.35 + r() * .65); x.fillRect(bx, H - h, w, h);
+      if (layer === 2 && p !== "day") { x.fillStyle = "#ffd98a"; for (let k = 0; k < 6; k++) x.fillRect(bx + 6 + r() * (w - 16), H - h + 10 + r() * (h - 20), 6, 9); x.fillStyle = col; }
+      bx += W / n; }
+  });
+  const fam = '-apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif';
+
+  // sun / moon behind the glass so the blur has something to refract
+  const ox = 860, oy = 330, orad = 110;
+  const og = x.createRadialGradient(ox, oy, orad * .2, ox, oy, orad * 2.2);
+  og.addColorStop(0, p === "day" ? "rgba(255,240,170,.9)" : p === "night" ? "rgba(255,250,225,.9)" : "rgba(255,180,120,.9)");
+  og.addColorStop(.45, "rgba(255,230,180,.18)"); og.addColorStop(1, "rgba(255,230,180,0)");
+  x.fillStyle = og; x.beginPath(); x.arc(ox, oy, orad * 2.2, 0, 7); x.fill();
+  x.fillStyle = p === "day" ? "#fff3b0" : p === "night" ? "#f4f0dc" : "#ffc58a";
+  x.beginPath(); x.arc(ox, oy, orad, 0, 7); x.fill();
+
+  // ---- liquid glass panel ----
+  const gx = 80, gy = 360, gw = W - 160, gh = 620, gr2 = 56;
+  // 1. blurred copy of the scene: real blur filter where supported, smooth halving pyramid otherwise
+  const blurred = document.createElement("canvas"); blurred.width = W; blurred.height = H;
+  const bx2 = blurred.getContext("2d");
+  let usedFilter = false;
+  if (typeof bx2.filter === "string") {
+    bx2.filter = "blur(36px) saturate(140%)"; bx2.drawImage(cv, 0, 0);
+    usedFilter = bx2.getImageData(W / 2, H * .8, 1, 1).data[3] > 0 && bx2.filter !== "none";
+  }
+  if (!usedFilter) {
+    bx2.filter = "none";
+    let src = cv, w = W, h = H;
+    const steps = [];
+    for (let i = 0; i < 5; i++) { // shrink by half 5 times
+      w = Math.ceil(w / 2); h = Math.ceil(h / 2);
+      const c2 = document.createElement("canvas"); c2.width = w; c2.height = h;
+      const g2 = c2.getContext("2d"); g2.imageSmoothingQuality = "high"; g2.drawImage(src, 0, 0, w, h);
+      steps.push(c2); src = c2;
+    }
+    for (let i = steps.length - 2; i >= 0; i--) { // grow back up
+      const g2 = steps[i].getContext("2d"); g2.imageSmoothingQuality = "high";
+      g2.clearRect(0, 0, steps[i].width, steps[i].height); g2.drawImage(src, 0, 0, steps[i].width, steps[i].height); src = steps[i];
+    }
+    bx2.imageSmoothingQuality = "high"; bx2.drawImage(src, 0, 0, W, H);
+  }
+  // soft drop shadow
+  x.save(); x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 60; x.shadowOffsetY = 24;
+  x.fillStyle = "rgba(0,0,0,.01)"; x.beginPath(); x.roundRect(gx, gy, gw, gh, gr2); x.fill(); x.restore();
+  x.save(); x.beginPath(); x.roundRect(gx, gy, gw, gh, gr2); x.clip();
+  x.drawImage(blurred, 0, 0);
+  // 2. milky tint, brighter at the top like thick glass
+  const tint = x.createLinearGradient(0, gy, 0, gy + gh);
+  tint.addColorStop(0, "rgba(255,255,255,.26)"); tint.addColorStop(.5, "rgba(255,255,255,.10)"); tint.addColorStop(1, "rgba(255,255,255,.16)");
+  x.fillStyle = tint; x.fillRect(gx, gy, gw, gh);
+  // 3. curved specular sheen across the top
+  const sheen = x.createLinearGradient(gx, gy, gx + gw * .7, gy + gh * .55);
+  sheen.addColorStop(0, "rgba(255,255,255,.38)"); sheen.addColorStop(.35, "rgba(255,255,255,.06)"); sheen.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = sheen; x.beginPath();
+  x.moveTo(gx, gy); x.lineTo(gx + gw, gy); x.lineTo(gx + gw, gy + gh * .18);
+  x.bezierCurveTo(gx + gw * .65, gy + gh * .36, gx + gw * .3, gy + gh * .12, gx, gy + gh * .34); x.closePath(); x.fill();
+  // 4. light caustic blob at the bottom edge
+  const cau = x.createRadialGradient(gx + gw * .75, gy + gh, 10, gx + gw * .75, gy + gh, gw * .45);
+  cau.addColorStop(0, "rgba(255,255,255,.22)"); cau.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = cau; x.fillRect(gx, gy, gw, gh);
+  x.restore();
+  // 5. rim light: bright top-left, fading, bright again bottom-right
+  const rim = x.createLinearGradient(gx, gy, gx + gw, gy + gh);
+  rim.addColorStop(0, "rgba(255,255,255,.85)"); rim.addColorStop(.3, "rgba(255,255,255,.15)");
+  rim.addColorStop(.7, "rgba(255,255,255,.08)"); rim.addColorStop(1, "rgba(255,255,255,.55)");
+  x.strokeStyle = rim; x.lineWidth = 2.5; x.beginPath(); x.roundRect(gx + 1, gy + 1, gw - 2, gh - 2, gr2); x.stroke();
+  x.strokeStyle = "rgba(255,255,255,.12)"; x.lineWidth = 1.5; x.beginPath(); x.roundRect(gx + 8, gy + 8, gw - 16, gh - 16, gr2 - 8); x.stroke();
+
+  // ---- text ----
+  const tx = gx + 64;
+  x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 16;
+  x.fillStyle = "rgba(255,255,255,.8)"; x.font = `600 32px ${fam}`; x.fillText((custom ? custom.eyebrow : UI[lang].eyebrow).toUpperCase(), tx, gy + 96);
+  x.fillStyle = "#fff"; x.font = `700 76px ${fam}`; x.fillText(custom ? custom.title : c[lang].name, tx, gy + 182);
+  if (custom) {
+    x.font = `600 46px ${fam}`;
+    custom.lines.slice(0, 5).forEach((l, i) => x.fillText(l, tx, gy + 290 + i * 66));
+  } else {
+    x.font = `600 54px ${fam}`;
+    const lines = wrapText(x, Q(st.quote)[lang], gw - 128).slice(0, 5);
+    lines.forEach((l, i) => x.fillText(l, tx, gy + 300 + i * 76));
+  }
+  x.shadowBlur = 0;
+  x.fillStyle = "#ffd27a"; x.font = `600 30px ${fam}`; x.fillText("Skyline Daily Boost · " + todayKey(), tx, gy + gh - 56);
+  return cv.toDataURL("image/png");
+}
+let cardURL = "";
+function openCard(url, alt) {
+  const ui = UI[lang];
+  cardURL = url;
+  $("shareImg").src = cardURL; $("shareImg").alt = alt;
+  $("dlBtn").textContent = ui.download; $("closeModal").textContent = ui.close;
+  $("nativeShare").textContent = ui.nativeShare; $("saveHint").textContent = ui.saveHint;
+  $("nativeShare").hidden = !(navigator.canShare);
+  $("modal").hidden = false; $("closeModal").focus();
+}
+$("shareBtn").onclick = () => openCard(makeCard(), Q(current().quote)[lang]);
+$("dlBtn").onclick = () => { const a = document.createElement("a"); a.href = cardURL; a.download = `daily-boost-${todayKey()}.png`; document.body.appendChild(a); a.click(); a.remove(); };
+$("nativeShare").onclick = async () => {
+  try {
+    const blob = await (await fetch(cardURL)).blob();
+    const file = new File([blob], "daily-boost.png", { type: "image/png" });
+    if (navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: "Skyline Daily Boost" });
+  } catch (e) {}
+};
+$("closeModal").onclick = () => { $("modal").hidden = true; };
+$("modal").onclick = e => { if (e.target.id === "modal") $("modal").hidden = true; };
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("modal").hidden = true; });
+
+/* ================= Install as app (works when hosted, e.g. Netlify) ================= */
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {}
+}
+
+/* ================= Learning: daily word & quiz ================= */
+const WORDS = [
+  ["algorithm", "n.", "演算法", "A good algorithm can sort a million numbers in under a second.", "好的演算法可以在一秒內排序一百萬個數字。"],
+  ["allocate", "v.", "分配", "The operating system allocates memory to each program.", "作業系統會分配記憶體給每個程式。"],
+  ["ambiguous", "adj.", "模稜兩可的", "The question was ambiguous, so many students answered it differently.", "這題的意思不明確，所以很多學生答法不同。"],
+  ["compile", "v.", "編譯；彙編", "You need to compile the Java code before you can run it.", "Java 程式碼要先編譯才能執行。"],
+  ["concurrent", "adj.", "同時發生的；並行的", "The server handles thousands of concurrent requests.", "這台伺服器能處理數千個同時進來的請求。"],
+  ["derive", "v.", "推導；衍生", "We can derive this formula from the chain rule.", "我們可以用連鎖律推導出這個公式。"],
+  ["efficient", "adj.", "有效率的", "Studying in short, focused sessions is more efficient.", "短時間專注地讀書更有效率。"],
+  ["eliminate", "v.", "消除；淘汰", "Testing early helps eliminate bugs before release.", "提早測試能在發布前消除錯誤。"],
+  ["emerge", "v.", "出現；浮現", "New technologies emerge every year.", "每年都有新技術出現。"],
+  ["fundamental", "adj.", "基本的；根本的", "Data structures are fundamental to computer science.", "資料結構是資訊工程的根本。"],
+  ["hypothesis", "n.", "假設", "The experiment was designed to test the hypothesis.", "這個實驗是為了驗證假設而設計的。"],
+  ["implement", "v.", "實作；實施", "Our team will implement the login feature this week.", "我們團隊這週會實作登入功能。"],
+  ["inevitable", "adj.", "不可避免的", "Mistakes are inevitable when you learn something new.", "學新東西時犯錯是不可避免的。"],
+  ["infrastructure", "n.", "基礎建設", "Cloud infrastructure lets small teams build large apps.", "雲端基礎建設讓小團隊也能做出大型應用。"],
+  ["integrate", "v.", "整合", "We integrated the payment system into the app.", "我們把付款系統整合進 App。"],
+  ["interpret", "v.", "解讀；直譯", "Python code is interpreted line by line.", "Python 程式碼是逐行直譯執行的。"],
+  ["iterate", "v.", "反覆；迭代", "The loop iterates over every item in the list.", "這個迴圈會逐一處理清單中的每個項目。"],
+  ["maintain", "v.", "維持；維護", "It is hard to maintain code without comments.", "沒有註解的程式碼很難維護。"],
+  ["optimize", "v.", "最佳化", "We optimized the query so the page loads faster.", "我們最佳化了查詢，讓頁面載入更快。"],
+  ["persistent", "adj.", "持續的；堅持不懈的", "Persistent practice is the key to passing the exam.", "持續練習是通過考試的關鍵。"],
+  ["precise", "adj.", "精確的", "Floating-point numbers are not always precise.", "浮點數不一定精確。"],
+  ["prioritize", "v.", "排定優先順序", "Prioritize the subjects that carry the most points.", "先處理配分最高的科目。"],
+  ["redundant", "adj.", "多餘的；冗餘的", "Remove redundant code to keep the program clean.", "刪掉多餘的程式碼，讓程式保持簡潔。"],
+  ["resilient", "adj.", "有韌性的", "A resilient system keeps working when one server fails.", "有韌性的系統在一台伺服器故障時仍能運作。"],
+  ["retrieve", "v.", "取回；檢索", "The app retrieves data from the database.", "這個 App 會從資料庫取回資料。"],
+  ["scalable", "adj.", "可擴展的", "A scalable design can support more users later.", "可擴展的設計之後能支援更多使用者。"],
+  ["substantial", "adj.", "大量的；重大的", "She made substantial progress in calculus this month.", "她這個月在微積分上有很大的進步。"],
+  ["sustainable", "adj.", "可持續的", "Find a study pace that is sustainable for months.", "找一個能維持好幾個月的讀書節奏。"],
+  ["transmit", "v.", "傳送", "Sensors transmit data to the cloud every second.", "感測器每秒把資料傳送到雲端。"],
+  ["versatile", "adj.", "用途廣的；多才多藝的", "Python is a versatile language used in many fields.", "Python 是一種用途很廣的語言，應用在許多領域。"],
+  ["abstract", "adj.", "抽象的", "An interface is an abstract description of what a class can do.", "介面是對類別功能的抽象描述。"],
+  ["accumulate", "v.", "累積", "Small daily efforts accumulate into big results.", "每天的小努力會累積成大成果。"],
+  ["adequate", "adj.", "足夠的；適當的", "Make sure you get adequate sleep before the exam.", "考試前要確保睡眠充足。"],
+  ["anticipate", "v.", "預期；預料", "Good programmers anticipate what users might do wrong.", "好的程式設計師會預想使用者可能犯的錯。"],
+  ["assess", "v.", "評估", "The test is designed to assess your basic math skills.", "這份測驗是用來評估你的基礎數學能力。"],
+  ["attribute", "n./v.", "屬性；歸因於", "Each object has attributes such as name and size.", "每個物件都有名稱、大小等屬性。"],
+  ["collaborate", "v.", "合作", "Our team collaborates on GitHub every day.", "我們團隊每天在 GitHub 上合作。"],
+  ["comprehensive", "adj.", "全面的；綜合的", "This book gives a comprehensive review of calculus.", "這本書對微積分做了全面的複習。"],
+  ["consistent", "adj.", "一致的；始終如一的", "Consistent effort matters more than talent.", "持續一致的努力比天分更重要。"],
+  ["constraint", "n.", "限制；約束", "Time is the biggest constraint on this project.", "時間是這個專案最大的限制。"],
+  ["contribute", "v.", "貢獻；促成", "Everyone on the team contributed to the final report.", "團隊每個人都對最終報告有所貢獻。"],
+  ["crucial", "adj.", "關鍵的", "Understanding limits is crucial for learning derivatives.", "理解極限是學好導數的關鍵。"],
+  ["deficiency", "n.", "不足；缺陷", "The review revealed a deficiency in the design.", "這次審查發現設計上的缺陷。"],
+  ["demonstrate", "v.", "展示；證明", "Your project should demonstrate what you have learned.", "你的作品應該展示你學到的東西。"],
+  ["distinguish", "v.", "區分；辨別", "Can you distinguish between a compiler and an interpreter?", "你能分辨編譯器和直譯器嗎？"],
+  ["enhance", "v.", "提升；增強", "Regular practice will enhance your problem-solving skills.", "規律練習能提升你解題的能力。"],
+  ["evaluate", "v.", "評估；求值", "Evaluate the integral from 0 to 1.", "計算這個積分從 0 到 1 的值。"],
+  ["facilitate", "v.", "促進；使容易", "Clear comments facilitate teamwork.", "清楚的註解能讓團隊合作更順利。"],
+  ["flexible", "adj.", "有彈性的", "A flexible schedule helps you study and work at the same time.", "有彈性的行程能讓你兼顧讀書和工作。"],
+  ["generate", "v.", "產生", "The script generates a random quote every day.", "這個程式每天產生一句隨機的話。"],
+  ["identical", "adj.", "完全相同的", "The two arrays contain identical values.", "這兩個陣列的值完全相同。"],
+  ["initiative", "n.", "主動性；新措施", "She took the initiative to fix the bug herself.", "她主動自己修好了那個錯誤。"],
+  ["innovation", "n.", "創新", "Silicon Valley is famous for technological innovation.", "矽谷以科技創新聞名。"],
+  ["perspective", "n.", "觀點；角度", "Try to see the problem from the user's perspective.", "試著從使用者的角度看這個問題。"],
+  ["relevant", "adj.", "相關的", "Only include relevant details in your answer.", "答案裡只寫相關的細節。"],
+  ["sequence", "n.", "順序；數列", "The Fibonacci sequence starts with 0 and 1.", "費氏數列從 0 和 1 開始。"],
+  ["significant", "adj.", "重要的；顯著的", "There was a significant improvement in her test scores.", "她的考試成績有顯著進步。"],
+  ["simulate", "v.", "模擬", "We used software to simulate the circuit.", "我們用軟體模擬這個電路。"],
+  ["verify", "v.", "驗證；核實", "Always verify your answer by plugging it back in.", "記得把答案代回去驗證。"]
+];
+
+// [subject, question, options, answer index, explanation]
+const QUIZ = [
+  ["cs", "十進位 13 轉成二進位是？", ["1011", "1101", "1110", "1001"], 1, "13 = 8 + 4 + 1，所以是 1101。"],
+  ["cs", "1 Byte 等於幾個 bit？", ["4", "8", "16", "32"], 1, "1 Byte = 8 bits。"],
+  ["cs", "二進位 1010 + 0111 = ？", ["10001", "10011", "1111", "10101"], 0, "10 + 7 = 17，17 的二進位是 10001。"],
+  ["cs", "8 位元二補數中，-1 的表示法是？", ["10000001", "11111110", "11111111", "00000001"], 2, "1 是 00000001，反轉得 11111110，再加 1 得 11111111。"],
+  ["cs", "堆疊（Stack）的存取特性是？", ["先進先出", "後進先出", "隨機存取", "依優先權"], 1, "Stack 是 LIFO，最後放進去的最先拿出來。"],
+  ["cs", "佇列（Queue）的存取特性是？", ["先進先出", "後進先出", "隨機存取", "依大小排序"], 0, "Queue 是 FIFO，像排隊一樣先來先服務。"],
+  ["cs", "在已排序的 n 筆資料中做二元搜尋，時間複雜度是？", ["O(1)", "O(log n)", "O(n)", "O(n log n)"], 1, "每次把範圍砍半，所以是 O(log n)。"],
+  ["cs", "氣泡排序（Bubble Sort）最差情況的時間複雜度是？", ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"], 2, "兩層迴圈逐一比較相鄰元素，最差是 O(n²)。"],
+  ["cs", "TCP/IP 模型中，負責 IP 位址與封包繞送的是哪一層？", ["應用層", "傳輸層", "網路層", "鏈結層"], 2, "網路層（Internet layer）處理 IP 定址與路由；TCP/UDP 在傳輸層。"],
+  ["cs", "HTTPS 預設使用哪個埠號？", ["21", "80", "443", "8080"], 2, "HTTP 預設 80，HTTPS 預設 443。"],
+  ["cs", "十六進位 FF 等於十進位多少？", ["15", "255", "256", "511"], 1, "F = 15，15 × 16 + 15 = 255。"],
+  ["cs", "CPU 中負責算術與邏輯運算的單元是？", ["CU", "ALU", "Cache", "Register"], 1, "ALU（算術邏輯單元）負責運算；CU 負責控制流程。"],
+  ["cs", "關於 RAM，下列何者正確？", ["斷電後資料仍保留", "斷電後資料會消失", "只能讀不能寫", "速度比硬碟慢"], 1, "RAM 是揮發性記憶體，斷電後資料消失。"],
+  ["cs", "下列何者是作業系統？", ["Linux", "Excel", "Chrome", "Python"], 0, "Linux 是作業系統；Excel 是應用軟體，Chrome 是瀏覽器，Python 是程式語言。"],
+  ["cs", "布林運算 A AND (NOT A) 的結果是？", ["A", "NOT A", "0", "1"], 2, "A 和 NOT A 不可能同時為真，所以恆為 0。"],
+  ["cs", "DNS 的主要功能是？", ["加密網路連線", "把網域名稱轉成 IP 位址", "分配 IP 給裝置", "壓縮網頁"], 1, "DNS 把像 google.com 這樣的名稱解析成 IP；自動分配 IP 的是 DHCP。"],
+  ["cs", "一棵有 n 個節點的樹，共有幾條邊？", ["n", "n − 1", "n + 1", "2n"], 1, "樹是連通且無迴路的圖，邊數永遠是 n − 1。"],
+  ["cs", "1 KB（以二進位計）等於多少 Byte？", ["1000", "1024", "512", "2048"], 1, "2¹⁰ = 1024。"],
+  ["calc", "d/dx (x³) = ？", ["x²", "3x²", "3x", "x⁴/4"], 1, "冪次法則：d/dx xⁿ = n·xⁿ⁻¹。"],
+  ["calc", "d/dx (sin x) = ？", ["cos x", "−cos x", "−sin x", "tan x"], 0, "sin x 的導數是 cos x。"],
+  ["calc", "∫ 2x dx = ？", ["2", "x²", "x² + C", "2x² + C"], 2, "x² 的導數是 2x，不定積分別忘了 + C。"],
+  ["calc", "lim(x→0) sin x / x = ？", ["0", "1", "∞", "不存在"], 1, "這是重要的基本極限，值為 1。"],
+  ["calc", "d/dx (eˣ) = ？", ["x·eˣ⁻¹", "eˣ", "ln x", "1/x"], 1, "eˣ 的導數就是它自己。"],
+  ["calc", "d/dx (ln x)，x > 0，等於？", ["1/x", "x", "eˣ", "ln x / x"], 0, "ln x 的導數是 1/x。"],
+  ["calc", "∫₀¹ x dx = ？", ["1", "1/2", "1/3", "2"], 1, "x²/2 從 0 到 1，得 1/2。"],
+  ["calc", "f(x) = x² 在 x = 3 的切線斜率是？", ["3", "6", "9", "2"], 1, "f′(x) = 2x，f′(3) = 6。"],
+  ["calc", "d/dx (x·eˣ) = ？", ["eˣ", "x·eˣ", "eˣ(x + 1)", "eˣ(x − 1)"], 2, "乘法法則：1·eˣ + x·eˣ = eˣ(x + 1)。"],
+  ["calc", "lim(x→∞) (3x² + 1) / x² = ？", ["0", "1", "3", "∞"], 2, "分子分母同除以 x²，得 3 + 1/x² → 3。"],
+  ["en", "She has lived in Taichung ___ 2020.", ["for", "since", "from", "at"], 1, "接時間點用 since；接一段時間（例如 five years）用 for。"],
+  ["en", "Choose the word closest in meaning to \"rapid\".", ["fast", "quiet", "careful", "late"], 0, "rapid = fast，快速的。"],
+  ["en", "If I ___ you, I would study harder.", ["am", "was", "were", "be"], 2, "與現在事實相反的假設語氣，be 動詞一律用 were。"],
+  ["en", "Neither Tom nor his friends ___ coming to the party.", ["is", "are", "was", "be"], 1, "neither…nor 的動詞跟最靠近的主詞一致，friends 是複數，所以用 are。"],
+  ["cs", "IEEE 754 單精度浮點數共有幾個位元？", ["16", "32", "64", "128"], 1, "單精度 32 位元（1 符號 + 8 指數 + 23 尾數）；雙精度是 64 位元。"],
+  ["cs", "下列何者是非揮發性記憶體？", ["SRAM", "DRAM", "快閃記憶體（Flash）", "暫存器"], 2, "Flash（例如 SSD、隨身碟）斷電後資料仍會保留。"],
+  ["cs", "快取記憶體（Cache）的主要目的是？", ["增加硬碟容量", "縮小 CPU 與主記憶體的速度落差", "防止病毒", "降低耗電"], 1, "Cache 放常用資料，讓 CPU 不必每次都等較慢的主記憶體。"],
+  ["cs", "撰寫遞迴函式時，一定要有什麼，否則會無限呼叫？", ["全域變數", "終止條件", "迴圈", "指標"], 1, "沒有終止條件（base case），遞迴會一直呼叫直到堆疊溢位。"],
+  ["cs", "要直接存取第 k 個元素，哪種結構最快？", ["陣列", "鏈結串列", "堆疊", "佇列"], 0, "陣列可用索引直接計算位址，O(1)；鏈結串列要從頭走，O(k)。"],
+  ["cs", "雜湊表（Hash Table）搜尋的平均時間複雜度是？", ["O(1)", "O(log n)", "O(n)", "O(n²)"], 0, "雜湊函數直接算出位置，平均 O(1)；碰撞嚴重時最差 O(n)。"],
+  ["cs", "快速排序（Quick Sort）的平均時間複雜度是？", ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], 1, "平均 O(n log n)；若每次都選到最差的基準值，最差是 O(n²)。"],
+  ["cs", "高度為 h 的二元樹（根在第 1 層）最多有幾個節點？", ["2h", "2ʰ", "2ʰ − 1", "h²"], 2, "每層最多 1、2、4…個，總和為 2ʰ − 1。"],
+  ["cs", "二元樹的前序走訪（Preorder）順序是？", ["左、根、右", "根、左、右", "左、右、根", "右、根、左"], 1, "前序：根→左→右；中序：左→根→右；後序：左→右→根。"],
+  ["cs", "圖的廣度優先搜尋（BFS）通常使用哪種資料結構？", ["堆疊", "佇列", "雜湊表", "堆積"], 1, "BFS 一層一層往外，用佇列；DFS 用堆疊或遞迴。"],
+  ["cs", "OSI 七層模型中，第 4 層是？", ["網路層", "傳輸層", "會議層", "資料鏈結層"], 1, "由下往上：實體、資料鏈結、網路、傳輸、會議、表現、應用。"],
+  ["cs", "IPv4 位址的長度是幾個位元？", ["16", "32", "64", "128"], 1, "IPv4 是 32 位元；IPv6 是 128 位元。"],
+  ["cs", "下列哪個 IP 位址屬於私有（Private）位址？", ["8.8.8.8", "192.168.1.10", "140.112.8.116", "1.1.1.1"], 1, "192.168.0.0/16、10.0.0.0/8、172.16.0.0/12 是私有位址範圍。"],
+  ["cs", "子網路遮罩 255.255.255.0 等同於 CIDR 的哪一個？", ["/8", "/16", "/24", "/32"], 2, "前三個 255 共 24 個 1，所以是 /24。"],
+  ["cs", "自動分配 IP 位址給裝置的協定是？", ["DNS", "DHCP", "FTP", "SMTP"], 1, "DHCP 自動分配 IP；DNS 負責名稱解析。"],
+  ["cs", "SQL 中用來查詢資料的指令是？", ["INSERT", "UPDATE", "SELECT", "DELETE"], 2, "SELECT 查詢；INSERT 新增；UPDATE 修改；DELETE 刪除。"],
+  ["cs", "關聯式資料庫中，能唯一識別每一筆紀錄的欄位稱為？", ["外鍵", "主鍵", "索引", "檢視表"], 1, "主鍵（Primary Key）不可重複、不可為空。"],
+  ["cs", "一次把整個原始程式翻譯成機器碼再執行的是？", ["直譯器", "編譯器", "連結器", "載入器"], 1, "編譯器整批翻譯；直譯器逐行翻譯並執行。"],
+  ["cs", "下列何者「不是」死結（Deadlock）的必要條件？", ["互斥", "占用並等待", "不可搶奪", "先來先服務"], 3, "四個必要條件：互斥、占用並等待、不可搶奪、循環等待。"],
+  ["cs", "虛擬記憶體的主要用途是？", ["加快網路速度", "讓程式能使用比實體記憶體更大的位址空間", "取代 CPU 快取", "加密資料"], 1, "作業系統把部分資料放到磁碟，讓程式感覺記憶體比實際更大。"],
+  ["cs", "下列何者「不是」物件導向的三大特性？", ["封裝", "繼承", "多型", "編譯"], 3, "物件導向三大特性：封裝、繼承、多型。"],
+  ["cs", "NAND 閘輸入 1 和 1 時，輸出為？", ["0", "1", "不確定", "高阻抗"], 0, "AND 得 1，再取反得 0。"],
+  ["cs", "1 XOR 1 的結果是？", ["0", "1", "2", "10"], 0, "XOR：兩個輸入相同為 0，不同為 1。"],
+  ["cs", "二進位 1011 向左移一位後，等於十進位多少？", ["11", "22", "5", "44"], 1, "左移一位等於乘以 2：11 × 2 = 22（10110）。"],
+  ["cs", "8 位元無號整數可以表示的最大值是？", ["127", "128", "255", "256"], 2, "2⁸ − 1 = 255。"],
+  ["cs", "下列何者是對稱式加密演算法？", ["AES", "RSA", "SHA-256", "MD5"], 0, "AES 是對稱式加密；RSA 是非對稱式；SHA-256、MD5 是雜湊函數。"],
+  ["calc", "d/dx (cos x) = ？", ["sin x", "−sin x", "−cos x", "sec x"], 1, "cos x 的導數是 −sin x。"],
+  ["calc", "d/dx (tan x) = ？", ["sec² x", "sec x tan x", "−csc² x", "cot x"], 0, "tan x 的導數是 sec² x。"],
+  ["calc", "d/dx (x² + 1)³ = ？", ["3(x² + 1)²", "6x(x² + 1)²", "3x(x² + 1)²", "2x(x² + 1)³"], 1, "連鎖律：3(x² + 1)² · 2x = 6x(x² + 1)²。"],
+  ["calc", "d/dx (√x) = ？", ["1/√x", "1/(2√x)", "2√x", "√x/2"], 1, "√x = x^(1/2)，導數是 (1/2)x^(−1/2)。"],
+  ["calc", "∫ cos x dx = ？", ["sin x + C", "−sin x + C", "cos x + C", "tan x + C"], 0, "sin x 的導數是 cos x。"],
+  ["calc", "∫ (1/x) dx = ？", ["ln x + C", "ln|x| + C", "1/x² + C", "−1/x² + C"], 1, "加絕對值，x < 0 時也成立。"],
+  ["calc", "∫₀^π sin x dx = ？", ["0", "1", "2", "π"], 2, "−cos x 從 0 到 π：−(−1) − (−1) = 2。"],
+  ["calc", "lim(x→0) (1 − cos x) / x = ？", ["0", "1", "1/2", "不存在"], 0, "這是另一個基本極限，值為 0；(1 − cos x)/x² 的極限才是 1/2。"],
+  ["calc", "lim(x→∞) (1 + 1/x)ˣ = ？", ["1", "e", "∞", "0"], 1, "這正是自然常數 e 的定義。"],
+  ["calc", "f(x) = x³ − 3x 的臨界點是？", ["x = 0", "x = ±1", "x = ±3", "x = 3"], 1, "f′(x) = 3x² − 3 = 0，得 x = ±1。"],
+  ["calc", "f(x) = x³ 在 x = 0 處是？", ["極大值", "極小值", "反曲點", "不連續點"], 2, "f′(0) = 0 但兩側都遞增，不是極值；f″ 在 0 變號，所以是反曲點。"],
+  ["calc", "d²/dx² (x⁴) = ？", ["4x³", "12x²", "24x", "12x³"], 1, "一階 4x³，二階 12x²。"],
+  ["calc", "若在某區間內 f′(x) > 0，則 f 在該區間？", ["遞減", "遞增", "凹向上", "有極值"], 1, "導數為正代表函數遞增；f″ > 0 才是凹向上。"],
+  ["calc", "∫₁^e (1/x) dx = ？", ["0", "1", "e", "e − 1"], 1, "ln e − ln 1 = 1 − 0 = 1。"],
+  ["calc", "d/dx (e^(2x)) = ？", ["e^(2x)", "2e^(2x)", "2x·e^(2x)", "e^(2x)/2"], 1, "連鎖律：e^(2x) · 2。"],
+  ["calc", "lim(x→2) (x² − 4) / (x − 2) = ？", ["0", "2", "4", "不存在"], 2, "分子因式分解為 (x − 2)(x + 2)，約分後代入得 4。"],
+  ["calc", "d/dx ln(x² + 1) = ？", ["1/(x² + 1)", "2x/(x² + 1)", "2x·ln(x² + 1)", "x/(x² + 1)"], 1, "連鎖律：(1/(x² + 1)) · 2x。"],
+  ["en", "I look forward to ___ you soon.", ["see", "seeing", "saw", "be seen"], 1, "look forward to 的 to 是介系詞，後面接動名詞。"],
+  ["en", "The doctor suggested that he ___ more water.", ["drinks", "drank", "drink", "drinking"], 2, "suggest 後的 that 子句用原形動詞（省略 should）。"],
+  ["en", "By the time we arrived, the movie ___.", ["starts", "has started", "had started", "was starting"], 2, "比過去某時間點更早發生，用過去完成式。"],
+  ["en", "Choose the word closest in meaning to \"reluctant\".", ["eager", "unwilling", "curious", "proud"], 1, "reluctant = unwilling，不情願的。"],
+  ["en", "This is the town ___ I grew up.", ["which", "that", "where", "what"], 2, "地點作關係副詞用 where（= in which）。"],
+  ["en", "She is used to ___ up early.", ["get", "getting", "got", "be getting"], 1, "be used to + V-ing 表示「習慣於」；used to + 原形 是「過去常常」。"],
+  ["en", "Choose the word closest in meaning to \"abundant\".", ["rare", "plentiful", "empty", "tiny"], 1, "abundant = plentiful，豐富的。"],
+  ["en", "Not until midnight ___ home.", ["he came", "did he come", "he did come", "came he"], 1, "Not until 放句首要倒裝：助動詞 + 主詞 + 原形動詞。"],
+  ["en", "He is one of the students who ___ always on time.", ["is", "are", "was", "be"], 1, "who 的先行詞是 the students（複數），所以用 are。"],
+  ["en", "Choose the word closest in meaning to \"postpone\".", ["cancel", "delay", "finish", "announce"], 1, "postpone = delay，延後。"],
+  ["en", "I wish I ___ more time to study yesterday.", ["have", "had", "had had", "would have"], 2, "對過去的願望（與過去事實相反）用過去完成式。"],
+  ["en", "The more you practice, ___ you will become.", ["more confident", "the more confident", "most confident", "the most confident"], 1, "the + 比較級…, the + 比較級… 表示「越…越…」。"],
+  ["zh", "「畫龍點睛」比喻什麼？", ["畫畫技巧高超", "在關鍵處加上一筆，使全體更生動", "做事多此一舉", "故弄玄虛"], 1, "相傳張僧繇畫龍，點上眼睛後龍便飛去，比喻關鍵處的精彩一筆。"],
+  ["zh", "「杯弓蛇影」比喻什麼？", ["技藝高超", "疑神疑鬼，自相驚擾", "以小見大", "飲酒過量"], 1, "把映在杯中的弓影誤認為蛇，比喻疑神疑鬼。"],
+  ["zh", "「守株待兔」比喻什麼？", ["耐心等待時機", "拘泥舊經驗不知變通，或妄想不勞而獲", "做事專心", "保護弱小"], 1, "農夫偶然撿到撞樹的兔子，便天天守著樹等，比喻不知變通或妄想不勞而獲。"],
+  ["zh", "「亡羊補牢」的意思是？", ["失去才懂珍惜", "犯錯後及時補救，還不算晚", "做事拖延", "損失慘重"], 1, "羊跑了再修羊圈，比喻出錯後及時補救。"],
+  ["zh", "「破釜沉舟」比喻什麼？", ["浪費資源", "下定決心，不留退路", "戰爭失敗", "重新開始"], 1, "項羽渡河後打破鍋、弄沉船，表示決一死戰。"],
+  ["zh", "「三人成虎」比喻什麼？", ["團結力量大", "謠言重複多次就會被當真", "人多好辦事", "勇氣可嘉"], 1, "市集本無虎，但三人都說有，聽者便信了。"],
+  ["zh", "「塞翁失馬」比喻什麼？", ["禍福相倚，壞事也可能變好事", "損失無法挽回", "做事謹慎", "貪小失大"], 0, "塞翁丟了馬，後來馬卻帶回駿馬，比喻得失禍福難以預料。"],
+  ["zh", "「莘莘學子」的「莘」應讀作？", ["ㄒㄧㄣ", "ㄕㄣ", "ㄒㄧㄥ", "ㄐㄧㄣ"], 1, "莘莘讀ㄕㄣ ㄕㄣ，形容眾多。"],
+  ["zh", "「罄竹難書」通常用來形容什麼？", ["功績多到寫不完", "罪狀多到寫不完", "文章冗長", "書寫困難"], 1, "原指罪狀多到用盡竹簡也寫不完，用於負面，不宜形容功績。"],
+  ["zh", "「差強人意」的意思是？", ["很不滿意", "大致還能令人滿意", "差一點就成功", "強人所難"], 1, "「差」是「稍微、尚」的意思，指大致還能令人滿意。"],
+  ["zh", "「首當其衝」的意思是？", ["第一個衝出去", "最先受到攻擊或遭遇災難", "領導眾人", "首先成功"], 1, "比喻最先遭受攻擊或災難，不是「第一個去做」。"],
+  ["zh", "「朝三暮四」今多用來比喻什麼？", ["勤勞工作", "反覆無常", "時間安排得當", "早晚問候"], 1, "原指以詐術欺人，今多比喻反覆無常。"]
+];
+
+const learn = { word: 0, q: 0, picked: null, filter: store.get("sdb.qfilter", "all") };
+// word familiarity: 0 = new / not yet, each "know" adds 1; 2+ counts as mastered
+let wordLv = store.get("sdb.words", {});
+let wrongs = store.get("sdb.wrong", []);
+function pickWord(avoid) {
+  // weight unfamiliar words higher so they come back more often
+  const weights = WORDS.map((w, i) => i === avoid ? 0 : 1 / (1 + 2 * (wordLv[w[0]] || 0)));
+  let t = Math.random() * weights.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < weights.length; i++) { t -= weights[i]; if (t <= 0) return i; }
+  return 0;
+}
+function poolFor(filter) {
+  if (filter === "wrong") return wrongs.filter(i => QUIZ[i]);
+  return QUIZ.map((q, i) => i).filter(i => filter === "all" || QUIZ[i][0] === filter);
+}
+(function initLearn() {
+  const r = rng(hash("learn" + todayKey()));
+  learn.word = Math.floor(r() * WORDS.length);
+  learn.q = Math.floor(r() * QUIZ.length);
+  const today = store.get("sdb.quizToday", null);
+  if (today && today.date === todayKey() && today.q === learn.q) learn.picked = today.picked;
+})();
+
+function drawLearn() {
+  const ui = UI[lang], w = WORDS[learn.word], q = QUIZ[learn.q];
+  $("wWord").textContent = w[0]; $("wPos").textContent = w[1];
+  $("wZh").textContent = w[2]; $("wEx").textContent = w[3]; $("wExZh").textContent = w[4];
+  $("wSpeak").textContent = ui.speak;
+  $("wSpeak").hidden = !("speechSynthesis" in window);
+  $("qNext").textContent = ui.qNext; $("wNext").textContent = ui.unsure; $("wKnow").textContent = ui.know;
+  const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 2).length;
+  $("wProg").textContent = ui.mastered(mastered, WORDS.length);
+  $("wBar").style.width = (mastered / WORDS.length * 100) + "%";
+  $("qFilters").innerHTML = ["all", "cs", "calc", "en", "zh", "wrong"].map(f =>
+    `<button class="chip" type="button" data-f="${f}" aria-pressed="${learn.filter === f}">${f === "all" ? ui.all : f === "wrong" ? ui.wrongBook(wrongs.length) : ui.subj[f]}</button>`).join("");
+  $("qSubject").textContent = ui.subj[q[0]];
+  const sc = store.get("sdb.quiz", { total: 0, correct: 0 });
+  $("qScore").textContent = ui.score(sc.correct, sc.total);
+  $("qText").textContent = q[1];
+  const done = learn.picked !== null;
+  $("qOpts").innerHTML = q[2].map((o, i) => {
+    const cls = done ? (i === q[3] ? " right" : i === learn.picked ? " wrong" : "") : "";
+    return `<button class="opt${cls}" data-opt="${i}" type="button"${done ? " disabled" : ""}>${String.fromCharCode(65 + i)}. ${esc(o)}</button>`;
+  }).join("");
+  $("qExp").hidden = !done;
+  if (done) $("qExp").textContent = `${learn.picked === q[3] ? ui.right : `${ui.wrong} ${String.fromCharCode(65 + q[3])}。`} ${q[4]}`;
+}
+
+$("qOpts").onclick = e => {
+  const b = e.target.closest("[data-opt]"); if (!b || learn.picked !== null) return;
+  learn.picked = +b.dataset.opt;
+  const ok = learn.picked === QUIZ[learn.q][3];
+  const sc = store.get("sdb.quiz", { total: 0, correct: 0 });
+  sc.total++; if (ok) sc.correct++;
+  store.set("sdb.quiz", sc);
+  if (!ok && !wrongs.includes(learn.q)) { wrongs.push(learn.q); store.set("sdb.wrong", wrongs); }
+  if (ok && wrongs.includes(learn.q)) { wrongs = wrongs.filter(x => x !== learn.q); store.set("sdb.wrong", wrongs); toast(UI[lang].wrongCleared); }
+  store.set("sdb.quizToday", { date: todayKey(), q: learn.q, picked: learn.picked });
+  if (ok) confetti();
+  dayLog("q", ok);
+  drawLearn();
+};
+function nextQuestion() {
+  let pool = poolFor(learn.filter);
+  if (!pool.length) { if (learn.filter === "wrong") toast(UI[lang].wrongEmpty); learn.filter = "all"; store.set("sdb.qfilter", "all"); pool = poolFor("all"); }
+  const choices = pool.length > 1 ? pool.filter(i => i !== learn.q) : pool;
+  learn.q = choices[Math.floor(Math.random() * choices.length)]; learn.picked = null; drawLearn();
+}
+$("qNext").onclick = nextQuestion;
+$("qFilters").onclick = e => {
+  const b = e.target.closest("[data-f]"); if (!b) return;
+  learn.filter = b.dataset.f; store.set("sdb.qfilter", learn.filter); nextQuestion();
+};
+function rateWord(known) {
+  const w = WORDS[learn.word][0];
+  wordLv[w] = known ? (wordLv[w] || 0) + 1 : 0;
+  if (known) dayLog("w", true);
+  store.set("sdb.words", wordLv);
+  learn.word = pickWord(learn.word); drawLearn();
+}
+$("wKnow").onclick = () => rateWord(true);
+$("wNext").onclick = () => rateWord(false);
+$("wSpeak").onclick = () => {
+  try {
+    speechSynthesis.cancel();
+    const say = t => { const u = new SpeechSynthesisUtterance(t); u.lang = "en-US"; u.rate = .9; speechSynthesis.speak(u); };
+    say(WORDS[learn.word][0]); say(WORDS[learn.word][3]);
+  } catch (e) {}
+};
+
+/* ================= Daily reminders ================= */
+let reminders = store.get("sdb.reminders", []); // [{ id, time: "HH:MM", days: [0..6], text, on }]
+let rDays = [0, 1, 2, 3, 4, 5, 6];
+const DAYS_ZH = ["日", "一", "二", "三", "四", "五", "六"], DAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
+
+function daysLabel(days) {
+  const ui = UI[lang], d = [...days].sort().join("");
+  if (d === "0123456") return ui.everyday;
+  if (d === "12345") return ui.weekdays5;
+  if (d === "06") return ui.weekend;
+  const sd = days.slice().sort((a, b) => a - b);
+  const name = i => lang === "zh" ? "週" + DAYS_ZH[i] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i];
+  if (sd.length >= 3 && sd.every((v, k) => k === 0 || v === sd[k - 1] + 1)) // a run like Mon–Sat
+    return lang === "zh" ? `${name(sd[0])}至${name(sd[sd.length - 1])}` : `${name(sd[0])}–${name(sd[sd.length - 1])}`;
+  return sd.map(i => (lang === "zh" ? "週" + DAYS_ZH[i] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i])).join(lang === "zh" ? "、" : ", ");
+}
+function saveReminders() { store.set("sdb.reminders", reminders); drawReminders(); }
+
+function drawReminders() {
+  const ui = UI[lang];
+  $("rText").placeholder = ui.rPh;
+  $("rAdd").textContent = ui.rAdd;
+  $("rNotify").textContent = notifyAllowed() ? ui.notifyOn : ui.notifyOff;
+  $("rHint").textContent = ui.rHint;
+  $("rDays").innerHTML = (lang === "zh" ? DAYS_ZH : DAYS_EN).map((n, i) =>
+    `<button class="day" type="button" data-day="${i}" aria-pressed="${rDays.includes(i)}" aria-label="${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i]}">${n}</button>`).join("");
+  const sorted = reminders.slice().sort((a, b) => a.time.localeCompare(b.time));
+  $("rList").innerHTML = sorted.length ? sorted.map(r => `
+    <li class="${r.on ? "" : "off"}">
+      <div><div class="rt">${r.time}</div><div class="rd">${daysLabel(r.days)}</div></div>
+      <div class="rx">${esc(r.text)}</div>
+      <div class="ract">
+        <button class="switch" type="button" role="switch" aria-checked="${r.on}" data-toggle="${r.id}" aria-label="on/off"></button>
+        <button class="icon" type="button" data-ics="${r.id}">${ui.rCal}</button>
+        <button class="icon" type="button" data-rdel="${r.id}">${ui.rDel}</button>
+      </div>
+    </li>`).join("") : `<li class="tmsg" style="display:block;background:none;padding:0">${ui.rNone}</li>`;
+}
+
+$("rDays").onclick = e => {
+  const b = e.target.closest("[data-day]"); if (!b) return;
+  const d = +b.dataset.day;
+  rDays = rDays.includes(d) ? rDays.filter(x => x !== d) : [...rDays, d];
+  drawReminders();
+};
+$("rForm").onsubmit = e => {
+  e.preventDefault();
+  if (!rDays.length) { toast(UI[lang].rNoDay); return; }
+  reminders.push({ id: Date.now().toString(36), time: $("rTime").value || "08:00", days: rDays.slice().sort(), text: $("rText").value.trim() || UI[lang].rDefault, on: true });
+  $("rText").value = "";
+  saveReminders(); toast(UI[lang].rAdded);
+  if ("Notification" in window && Notification.permission === "default") $("rNotify").click();
+};
+$("rNotify").onclick = () => $("notifyBtn").click();
+$("rList").onclick = e => {
+  const t = e.target.closest("[data-toggle]"), d = e.target.closest("[data-rdel]"), c = e.target.closest("[data-ics]");
+  if (t) { const r = reminders.find(x => x.id === t.dataset.toggle); r.on = !r.on; saveReminders(); }
+  if (d) { reminders = reminders.filter(x => x.id !== d.dataset.rdel); saveReminders(); }
+  if (c) downloadICS(reminders.find(x => x.id === c.dataset.ics));
+};
+
+/* calendar file (.ics) with a weekly repeating event and an alarm */
+function downloadICS(r) {
+  const pad = n => String(n).padStart(2, "0");
+  const icsEsc = t => t.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const [hh, mm] = r.time.split(":").map(Number);
+  // first date that matches one of the chosen days, starting today
+  const start = new Date(); start.setHours(hh, mm, 0, 0);
+  for (let i = 0; i < 7 && !r.days.includes(start.getDay()); i++) start.setDate(start.getDate() + 1);
+  const local = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  const now = new Date(), stamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
+  const byday = r.days.map(i => ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][i]).join(",");
+  const url = location.protocol.startsWith("http") ? location.href.split("#")[0] : "";
+  const ics = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Skyline Daily Boost//EN", "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT", `UID:${r.id}@skyline-daily-boost`, `DTSTAMP:${stamp}`,
+    `DTSTART:${local(start)}`, "DURATION:PT10M", `RRULE:FREQ=WEEKLY;BYDAY=${byday}`,
+    `SUMMARY:${icsEsc(r.text)}`, `DESCRIPTION:${icsEsc(UI[lang].rTitle + (url ? "\n" + url : ""))}`,
+    ...(url ? [`URL:${url}`] : []),
+    "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc(r.text)}`, "TRIGGER:PT0M", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR"
+  ].join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+  a.download = `daily-boost-${r.time.replace(":", "")}.ics`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast(UI[lang].rCalHint);
+}
+
+/* in-page scheduler: fires each reminder once per day, up to 60 min late */
+function fireReminder(r) {
+  const quote = Q(current().quote)[lang];
+  const body = `${r.text}\n${quote}`;
+  const title = UI[lang].rTitle;
+  chime(); toast(r.text);
+  try {
+    if (notifyAllowed()) {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body, icon: "icon-192.png", tag: "sdb-" + r.id }));
+      } else new Notification(title, { body, icon: "icon-192.png", tag: "sdb-" + r.id });
+    }
+  } catch (e) {}
+}
+function checkReminders() {
+  const now = new Date(), today = todayKey(now), mins = now.getHours() * 60 + now.getMinutes();
+  const fired = store.get("sdb.rFired", {});
+  let changed = false;
+  reminders.forEach(r => {
+    if (!r.on || !r.days.includes(now.getDay()) || fired[r.id] === today) return;
+    const [hh, mm] = r.time.split(":").map(Number), late = mins - (hh * 60 + mm);
+    if (late >= 0 && late <= 60) { fireReminder(r); fired[r.id] = today; changed = true; }
+  });
+  if (changed) store.set("sdb.rFired", fired);
+}
+setInterval(checkReminders, 20000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkReminders(); });
+
+/* ================= World cities (added to the built-in list after the US cities) ================= */
+const W = (zhName, enName, tz, g, terrain, h, n, lm, zhGeo, enGeo, zhTags, enTags, news) => ({ zhName, enName, tz, g, terrain, h, n, lm, zhGeo, enGeo, zhTags, enTags, news });
+const WORLD_CITIES = [
+  W("台北", "Taipei", "Asia/Taipei", [25.03, 121.56], "mountains", .55, 18, "taipei101", "台灣首都，盆地四周群山環繞，台北 101 是城市最醒目的地標。", "Taiwan's capital sits in a basin ringed by mountains, with Taipei 101 as its signature landmark.", ["台北 101", "陽明山", "夜市"], ["Taipei 101", "Yangmingshan", "Night markets"],
+    [["公視新聞網 PNN", "https://news.pts.org.tw"], ["中央社 CNA", "https://www.cna.com.tw"], ["Focus Taiwan (English)", "https://focustaiwan.tw"]]),
+  W("東京", "Tokyo", "Asia/Tokyo", [35.68, 139.69], "flat", .85, 28, "tower", "全球人口最多的都會區之一，摩天大樓與神社巷弄並存，晴天時可遠眺富士山。", "One of the world's largest metro areas, where skyscrapers sit beside shrines and Mount Fuji appears on clear days.", ["澀谷", "東京鐵塔", "富士山"], ["Shibuya", "Tokyo Tower", "Mount Fuji"],
+    [["NHK WORLD-JAPAN", "https://www3.nhk.or.jp/nhkworld/"], ["The Japan Times", "https://www.japantimes.co.jp"]]),
+  W("大阪", "Osaka", "Asia/Tokyo", [34.69, 135.5], "hills", .6, 20, "", "日本關西的商業中心，運河穿城而過，以美食文化聞名，被稱為「天下的廚房」。", "The commercial heart of Japan's Kansai region, laced with canals and famous for food. Known as the nation's kitchen.", ["道頓堀", "大阪城", "美食"], ["Dotonbori", "Osaka Castle", "Street food"],
+    [["NHK WORLD-JAPAN", "https://www3.nhk.or.jp/nhkworld/"], ["The Japan Times", "https://www.japantimes.co.jp"]]),
+  W("首爾", "Seoul", "Asia/Seoul", [37.57, 126.98], "mountains", .7, 24, "tower", "漢江橫貫市區，四周山巒環抱，是韓國的政治、經濟與流行文化中心。", "The Han River runs through this mountain-ringed city, the center of Korea's politics, economy and pop culture.", ["漢江", "南山塔", "K-pop"], ["Han River", "N Seoul Tower", "K-pop"],
+    [["KBS WORLD", "https://world.kbs.co.kr"], ["Yonhap News Agency", "https://en.yna.co.kr"]]),
+  W("香港", "Hong Kong", "Asia/Hong_Kong", [22.32, 114.17], "mountains", 1, 30, "", "高樓沿著維多利亞港與陡峭山坡密集排列，是全球摩天大樓最多的城市之一。", "Towers crowd the slopes around Victoria Harbour, making it one of the world's most skyscraper-dense cities.", ["維多利亞港", "太平山", "天星小輪"], ["Victoria Harbour", "Victoria Peak", "Star Ferry"],
+    [["RTHK", "https://news.rthk.hk"], ["South China Morning Post", "https://www.scmp.com"]]),
+  W("上海", "Shanghai", "Asia/Shanghai", [31.23, 121.47], "flat", 1, 26, "", "位於長江出海口，黃浦江一側是外灘老建築，另一側是陸家嘴的超高層天際線。", "At the mouth of the Yangtze, historic buildings line the Bund across the river from Lujiazui's supertall skyline.", ["外灘", "陸家嘴", "黃浦江"], ["The Bund", "Lujiazui", "Huangpu River"],
+    [["SHINE / Shanghai Daily", "https://www.shine.cn"]]),
+  W("新加坡", "Singapore", "Asia/Singapore", [1.35, 103.82], "flat", .8, 22, "", "赤道附近的城市國家，綠化程度極高，濱海灣一帶是金融與觀光中心。", "A city-state near the equator, famously green, with Marina Bay as its finance and tourism hub.", ["濱海灣", "花園城市", "熱帶"], ["Marina Bay", "Garden city", "Tropical"],
+    [["CNA", "https://www.channelnewsasia.com"], ["The Straits Times", "https://www.straitstimes.com"]]),
+  W("曼谷", "Bangkok", "Asia/Bangkok", [13.76, 100.5], "flat", .7, 22, "", "湄南河流經市中心，金色寺廟與現代購物中心交錯，街頭小吃文化豐富。", "The Chao Phraya River winds past golden temples and modern malls in this city of legendary street food.", ["湄南河", "大皇宮", "街頭小吃"], ["Chao Phraya", "Grand Palace", "Street food"],
+    [["Bangkok Post", "https://www.bangkokpost.com"], ["Thai PBS World", "https://www.thaipbsworld.com"]]),
+  W("孟買", "Mumbai", "Asia/Kolkata", [19.08, 72.88], "flat", .7, 24, "", "印度的金融與電影中心，濱臨阿拉伯海，寶萊塢就在這裡。", "India's financial and film capital on the Arabian Sea, home of Bollywood.", ["阿拉伯海", "寶萊塢", "金融中心"], ["Arabian Sea", "Bollywood", "Finance"],
+    [["The Times of India", "https://timesofindia.indiatimes.com"], ["Hindustan Times", "https://www.hindustantimes.com"]]),
+  W("杜拜", "Dubai", "Asia/Dubai", [25.2, 55.27], "flat", .8, 18, "burj", "從沙漠中崛起的城市，擁有世界最高建築哈里發塔與人工島。", "A city risen from the desert, with the world's tallest building and man-made islands.", ["哈里發塔", "沙漠", "人工島"], ["Burj Khalifa", "Desert", "Palm islands"],
+    [["Gulf News", "https://gulfnews.com"], ["Khaleej Times", "https://www.khaleejtimes.com"]]),
+  W("杜哈", "Doha", "Asia/Qatar", [25.29, 51.53], "flat", .65, 16, "", "卡達首都，濱臨波斯灣，近年以現代建築與大型國際活動受到矚目。", "Qatar's capital on the Persian Gulf, known for modern architecture and major international events.", ["波斯灣", "伊斯蘭藝術博物館", "沙漠"], ["Persian Gulf", "Museum of Islamic Art", "Desert"],
+    [["Al Jazeera", "https://www.aljazeera.com"]]),
+  W("倫敦", "London", "Europe/London", [51.51, -0.13], "flat", .6, 24, "bigben", "泰晤士河穿城而過，千年古蹟與現代金融區並存，天氣多變。", "The Thames flows past a thousand years of history and a modern financial district. The weather changes often.", ["大笨鐘", "泰晤士河", "倫敦眼"], ["Big Ben", "Thames", "London Eye"],
+    [["BBC News", "https://www.bbc.com/news"], ["Sky News", "https://news.sky.com"]]),
+  W("巴黎", "Paris", "Europe/Paris", [48.86, 2.35], "flat", .4, 26, "eiffel", "塞納河畔的藝術之都，奧斯曼式建築整齊排列，艾菲爾鐵塔俯瞰全城。", "The city of art along the Seine, lined with Haussmann buildings and overlooked by the Eiffel Tower.", ["艾菲爾鐵塔", "塞納河", "羅浮宮"], ["Eiffel Tower", "Seine", "Louvre"],
+    [["France 24", "https://www.france24.com"], ["Le Monde", "https://www.lemonde.fr"]]),
+  W("柏林", "Berlin", "Europe/Berlin", [52.52, 13.41], "flat", .5, 22, "tower", "德國首都，歷史遺跡與新創產業並存，河道與公園遍布。", "Germany's capital mixes historic sites with a thriving startup scene, threaded by rivers and parks.", ["布蘭登堡門", "電視塔", "新創"], ["Brandenburg Gate", "TV Tower", "Startups"],
+    [["DW", "https://www.dw.com"], ["Der Spiegel", "https://www.spiegel.de"]]),
+  W("羅馬", "Rome", "Europe/Rome", [41.9, 12.5], "hills", .4, 20, "", "建在七座山丘上的永恆之城，古羅馬遺跡隨處可見。", "The Eternal City, built on seven hills, with ancient Roman ruins around every corner.", ["競技場", "七丘", "梵蒂岡"], ["Colosseum", "Seven hills", "Vatican"],
+    [["ANSA", "https://www.ansa.it"], ["Corriere della Sera", "https://www.corriere.it"]]),
+  W("馬德里", "Madrid", "Europe/Madrid", [40.42, -3.7], "hills", .5, 20, "", "西班牙首都，位於伊比利半島中央高原，以美術館和夜生活聞名。", "Spain's capital on the central plateau of the Iberian Peninsula, famous for art museums and nightlife.", ["普拉多美術館", "高原", "夜生活"], ["Prado Museum", "Plateau", "Nightlife"],
+    [["RTVE", "https://www.rtve.es"], ["El País", "https://elpais.com"]]),
+  W("阿姆斯特丹", "Amsterdam", "Europe/Amsterdam", [52.37, 4.9], "flat", .35, 26, "", "運河環繞的低地城市，自行車比汽車還多，傳統山形屋整齊排列。", "A low-lying city of canals where bikes outnumber cars and gabled houses line the water.", ["運河", "自行車", "山形屋"], ["Canals", "Bicycles", "Gabled houses"],
+    [["NOS", "https://nos.nl"], ["NL Times", "https://nltimes.nl"]]),
+  W("伊斯坦堡", "Istanbul", "Europe/Istanbul", [41.01, 28.98], "hills", .5, 22, "", "橫跨博斯普魯斯海峽，同時位於歐洲與亞洲，清真寺圓頂點綴天際線。", "Spanning the Bosphorus across Europe and Asia, its skyline dotted with mosque domes.", ["博斯普魯斯海峽", "橫跨歐亞", "清真寺"], ["Bosphorus", "Two continents", "Mosques"],
+    [["TRT World", "https://www.trtworld.com"], ["Daily Sabah", "https://www.dailysabah.com"]]),
+  W("多倫多", "Toronto", "America/Toronto", [43.65, -79.38], "flat", .85, 24, "tower", "加拿大最大城市，位於安大略湖畔，CN 塔是天際線的標誌。", "Canada's largest city on Lake Ontario, with the CN Tower defining its skyline.", ["CN 塔", "安大略湖", "多元文化"], ["CN Tower", "Lake Ontario", "Multicultural"],
+    [["CBC News", "https://www.cbc.ca/news"], ["CP24", "https://www.cp24.com"]]),
+  W("溫哥華", "Vancouver", "America/Vancouver", [49.28, -123.12], "mountains", .65, 20, "", "背山面海，城市就在海岸山脈腳下，常被評為最宜居的城市之一。", "Between mountains and sea at the foot of the Coast Mountains, often ranked among the most livable cities.", ["史丹利公園", "海岸山脈", "宜居"], ["Stanley Park", "Coast Mountains", "Livable"],
+    [["CBC News", "https://www.cbc.ca/news"], ["Vancouver Sun", "https://vancouversun.com"]]),
+  W("墨西哥城", "Mexico City", "America/Mexico_City", [19.43, -99.13], "mountains", .55, 24, "", "建在高原上的古老湖床，海拔約 2,240 公尺，是西半球最大的城市之一。", "Built on an ancient lakebed on a high plateau about 2,240 m up, one of the largest cities in the Western Hemisphere.", ["高原", "阿茲特克", "壁畫"], ["High plateau", "Aztec heritage", "Murals"],
+    [["El Universal", "https://www.eluniversal.com.mx"], ["Mexico News Daily", "https://mexiconewsdaily.com"]]),
+  W("聖保羅", "São Paulo", "America/Sao_Paulo", [-23.55, -46.63], "hills", .75, 30, "", "南美洲最大城市，高樓一路延伸到地平線，是巴西的經濟引擎。", "South America's largest city, with towers stretching to the horizon. Brazil's economic engine.", ["南美最大城", "經濟中心", "美食"], ["Largest in South America", "Economy", "Food"],
+    [["Folha de S.Paulo", "https://www.folha.uol.com.br"], ["g1", "https://g1.globo.com"]]),
+  W("布宜諾斯艾利斯", "Buenos Aires", "America/Argentina/Buenos_Aires", [-34.6, -58.38], "flat", .55, 24, "", "拉普拉塔河畔的阿根廷首都，歐式建築林立，是探戈的發源地。", "Argentina's capital on the Río de la Plata, full of European-style architecture and the birthplace of tango.", ["探戈", "拉普拉塔河", "歐式建築"], ["Tango", "Río de la Plata", "European style"],
+    [["Clarín", "https://www.clarin.com"], ["Buenos Aires Times", "https://www.batimes.com.ar"]]),
+  W("開羅", "Cairo", "Africa/Cairo", [30.04, 31.24], "flat", .5, 22, "", "尼羅河畔的埃及首都，近郊就是吉薩金字塔。", "Egypt's capital on the Nile, with the Pyramids of Giza on its edge.", ["尼羅河", "金字塔", "古文明"], ["Nile", "Pyramids", "Ancient history"],
+    [["Ahram Online", "https://english.ahram.org.eg"]]),
+  W("開普敦", "Cape Town", "Africa/Johannesburg", [-33.92, 18.42], "mountains", .45, 16, "", "平頂的桌山俯瞰海灣，位於非洲大陸西南端，自然景觀壯麗。", "Flat-topped Table Mountain overlooks the bay at Africa's southwestern tip.", ["桌山", "好望角", "海岸"], ["Table Mountain", "Cape of Good Hope", "Coastline"],
+    [["News24", "https://www.news24.com"], ["SABC News", "https://www.sabcnews.com"]]),
+  W("雪梨", "Sydney", "Australia/Sydney", [-33.87, 151.21], "hills", .6, 20, "opera", "澳洲最大城市，雪梨歌劇院與港灣大橋相望，海灘就在市區旁。", "Australia's largest city, where the Opera House faces the Harbour Bridge and beaches sit beside downtown.", ["歌劇院", "港灣大橋", "邦迪海灘"], ["Opera House", "Harbour Bridge", "Bondi Beach"],
+    [["ABC News (Australia)", "https://www.abc.net.au/news"], ["The Sydney Morning Herald", "https://www.smh.com.au"]]),
+  W("奧克蘭", "Auckland", "Pacific/Auckland", [-36.85, 174.76], "hills", .5, 16, "tower", "紐西蘭最大城市，建在數十座死火山之間，兩側都是海港，被稱為「帆之城」。", "New Zealand's largest city, built among dozens of dormant volcanoes between two harbours. Called the City of Sails.", ["天空塔", "火山", "帆之城"], ["Sky Tower", "Volcanoes", "City of Sails"],
+    [["RNZ", "https://www.rnz.co.nz"], ["NZ Herald", "https://www.nzherald.co.nz"]])
+];
+const US_COUNT = cities.length;
+WORLD_CITIES.forEach((w, i) => {
+  cities.push({ tz: w.tz, world: true, news: w.news,
+    sky: { seed: 300 + i * 17, n: w.n, h: w.h, terrain: w.terrain, spire: w.h > .8 },
+    zh: { name: w.zhName, geo: w.zhGeo, tags: w.zhTags }, en: { name: w.enName, geo: w.enGeo, tags: w.enTags } });
+  GEO.push([w.g[0], w.g[1], ""]); CITY_LANDMARK.push(w.lm);
+});
+
+/* ================= Live weather (Open-Meteo, free, no key) ================= */
+const wxCache = store.get("sdb.wx", {});
+const wxKey = g => `${(+g[0]).toFixed(2)},${(+g[1]).toFixed(2)}`;
+const validGeo = g => g && typeof g[0] === "number" && typeof g[1] === "number";
+function wxFor(g) { if (!validGeo(g)) return null; const w = wxCache[wxKey(g)]; return w && Date.now() - w.at < 60 * 60 * 1000 ? w : null; }
+function wxInfo(code, isDay) {
+  const z = lang === "zh";
+  if (code === 0) return { icon: isDay ? "☀️" : "🌙", text: z ? "晴" : "Clear", fx: "" };
+  if (code <= 2) return { icon: isDay ? "🌤️" : "☁️", text: z ? "晴時多雲" : "Partly cloudy", fx: "" };
+  if (code === 3) return { icon: "☁️", text: z ? "陰" : "Overcast", fx: "" };
+  if (code === 45 || code === 48) return { icon: "🌫️", text: z ? "霧" : "Fog", fx: "fog" };
+  if (code >= 51 && code <= 57) return { icon: "🌦️", text: z ? "毛毛雨" : "Drizzle", fx: "rain" };
+  if (code >= 61 && code <= 67) return { icon: "🌧️", text: z ? "雨" : "Rain", fx: "rain" };
+  if (code >= 71 && code <= 77) return { icon: "🌨️", text: z ? "雪" : "Snow", fx: "snow" };
+  if (code >= 80 && code <= 82) return { icon: "🌦️", text: z ? "陣雨" : "Showers", fx: "rain" };
+  if (code === 85 || code === 86) return { icon: "🌨️", text: z ? "陣雪" : "Snow showers", fx: "snow" };
+  if (code >= 95) return { icon: "⛈️", text: z ? "雷雨" : "Thunderstorm", fx: "rain" };
+  return { icon: "🌡️", text: "", fx: "" };
+}
+const wxPending = {};
+function loadWeather(g) {
+  if (!validGeo(g)) return Promise.resolve(null);
+  const cached = wxFor(g); if (cached && Date.now() - cached.at < 30 * 60 * 1000) return Promise.resolve(cached);
+  const k = wxKey(g);
+  if (wxPending[k]) return wxPending[k];
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${g[0]}&longitude=${g[1]}&current=temperature_2m,weather_code,is_day&timezone=auto`;
+  return wxPending[k] = fetch(url).then(r => r.ok ? r.json() : Promise.reject(r.status)).then(j => {
+    const w = { t: j.current.temperature_2m, code: j.current.weather_code, isDay: !!j.current.is_day, at: Date.now() };
+    wxCache[k] = w;
+    const keys = Object.keys(wxCache); if (keys.length > 40) delete wxCache[keys[0]];
+    store.set("sdb.wx", wxCache);
+    return w;
+  }).catch(() => null).finally(() => { delete wxPending[k]; });
+}
+const wxText = w => {
+  if (!w) return UI[lang].wxNA;
+  const i = wxInfo(w.code, w.isDay), f = useF();
+  return `${i.icon} ${Math.round(f ? w.t * 9 / 5 + 32 : w.t)}°${f ? "F" : "C"} ${i.text}`;
+};
+function showWeather(ci) {
+  const g = GEO[ci];
+  $("vWx").textContent = wxText(wxFor(g));
+  loadWeather(g).then(w => {
+    if (!w || current().city !== ci) return;
+    $("vWx").textContent = wxText(w);
+    setWeather(ci, periodOf(localHour(cities[ci].tz))); // switch on real rain / snow / fog
+  });
+}
+
+/* ================= City picker & time converter ================= */
+function drawPicker() {
+  const ui = UI[lang], sel = $("cityPick"), cur = pinned();
+  const opt = i => `<option value="${i}"${cur === i ? " selected" : ""}>📍 ${esc(cities[i][lang].name)}</option>`;
+  const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, k) => a + k);
+  sel.innerHTML = `<option value="">${ui.pickRandom}</option>` +
+    `<optgroup label="${ui.wUS}">${range(0, US_COUNT).map(opt).join("")}</optgroup>` +
+    `<optgroup label="${ui.wWorld}">${range(US_COUNT, BASE.cities).map(opt).join("")}</optgroup>` +
+    (cities.length > BASE.cities ? `<optgroup label="${ui.wMine}">${range(BASE.cities, cities.length).map(opt).join("")}</optgroup>` : "");
+  if (cur === null) sel.value = "";
+}
+$("cityPick").onchange = e => {
+  const v = e.target.value;
+  if (v === "") { pin = null; store.set("sdb.pin", null); toast(UI[lang].unpinned); render(false); return; }
+  pin = +v; store.set("sdb.pin", pin); toast(UI[lang].pinned);
+  go({ ...current(), city: pin });
+};
+(function initConv() {
+  const n = new Date(); $("convIn").value = `${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}`;
+})();
+function drawConv() {
+  const [hh, mm] = ($("convIn").value || "00:00").split(":").map(Number);
+  const d = new Date(); d.setHours(hh, mm, 0, 0);
+  const tz = cities[current().city].tz;
+  $("convOut").textContent = new Intl.DateTimeFormat(lang === "zh" ? "zh-TW" : "en-US", { timeZone: tz, weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: hc() }).format(d);
+}
+$("convIn").oninput = drawConv;
+
+/* ================= World channels: local time, weather and news links ================= */
+// official news sites for the built-in cities, in the same order as cities[]
+const NEWS_US = [
+  [["NY1", "https://www.ny1.com"], ["PIX11", "https://pix11.com"], ["NBC New York", "https://www.nbcnewyork.com"], ["ABC7 New York", "https://abc7ny.com"]],
+  [["KQED", "https://www.kqed.org"], ["ABC7 San Francisco", "https://abc7news.com"], ["NBC Bay Area", "https://www.nbcbayarea.com"], ["San Francisco Chronicle", "https://www.sfchronicle.com"]],
+  [["WGN-TV", "https://wgntv.com"], ["ABC7 Chicago", "https://abc7chicago.com"], ["Chicago Tribune", "https://www.chicagotribune.com"]],
+  [["KING 5", "https://www.king5.com"], ["KOMO News", "https://komonews.com"], ["The Seattle Times", "https://www.seattletimes.com"]],
+  [["WSVN 7News", "https://wsvn.com"], ["NBC 6 South Florida", "https://www.nbcmiami.com"], ["Miami Herald", "https://www.miamiherald.com"]],
+  [["Denver7", "https://www.denver7.com"], ["9NEWS", "https://www.9news.com"], ["The Denver Post", "https://www.denverpost.com"]],
+  [["KTNV 13 Action News", "https://www.ktnv.com"], ["8 News Now", "https://www.8newsnow.com"], ["Las Vegas Review-Journal", "https://www.reviewjournal.com"]],
+  [["KTLA 5", "https://ktla.com"], ["ABC7 Los Angeles", "https://abc7.com"], ["Los Angeles Times", "https://www.latimes.com"]],
+  [["KXAN", "https://www.kxan.com"], ["KVUE", "https://www.kvue.com"], ["Austin American-Statesman", "https://www.statesman.com"]],
+  [["WCVB 5", "https://www.wcvb.com"], ["WBUR", "https://www.wbur.org"], ["The Boston Globe", "https://www.bostonglobe.com"]],
+  [["NBC Bay Area", "https://www.nbcbayarea.com"], ["KQED", "https://www.kqed.org"], ["The Mercury News", "https://www.mercurynews.com"]],
+  [["Hawaii News Now", "https://www.hawaiinewsnow.com"], ["KITV 4", "https://www.kitv.com"], ["Honolulu Star-Advertiser", "https://www.staradvertiser.com"]]
+];
+function places() {
+  return cities.map((c, i) => ({ key: "c" + i, city: i, name: c[lang].name, tz: c.tz, g: GEO[i],
+    news: c.news || (i < US_COUNT ? (NEWS_US[i] || []) : []),
+    group: i < US_COUNT ? "us" : i < BASE.cities ? "world" : "mine" }));
+}
+let wSel = null;
+const fmtZone = (tz, opts) => new Intl.DateTimeFormat(lang === "zh" ? "zh-TW" : "en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hourCycle: hc(), ...opts }).format(new Date());
+function drawWorld() {
+  if ($("world").hidden) return;
+  const ui = UI[lang], all = places();
+  if (!all.some(p => p.key === wSel)) wSel = "c" + current().city;
+  $("wTitle").textContent = ui.wTitle; $("wClose").textContent = ui.close;
+  const groups = [["us", ui.wUS], ["world", ui.wWorld], ["mine", ui.wMine]];
+  $("wPlaces").innerHTML = groups.map(([gk, gl]) => {
+    const ps = all.filter(p => p.group === gk); if (!ps.length) return "";
+    return `<h4>${gl}</h4>` + ps.map(p => `<button class="wplace" type="button" data-place="${p.key}" aria-current="${p.key === wSel}">
+      <span>${esc(p.name)}</span><small>${fmtZone(p.tz)}</small></button>`).join("");
+  }).join("");
+  const p = all.find(x => x.key === wSel);
+  const off = tzOffsetHours(p.tz);
+  const google = `https://news.google.com/search?q=${encodeURIComponent(p.name)}&hl=${lang === "zh" ? "zh-TW" : "en-US"}`;
+  const links = p.news.concat([[ui.wGoogle, google]]);
+  $("wDetail").innerHTML = `
+    <h2>${esc(p.name)}</h2>
+    <div class="wstats">
+      <div class="fact"><div class="k">${ui.wLocal}</div><div class="v">${fmtZone(p.tz, { weekday: "short" })}</div></div>
+      <div class="fact"><div class="k">${ui.wDiff}</div><div class="v">${off === 0 ? ui.same : `${off > 0 ? "+" : ""}${off} ${ui.hrs}`}</div></div>
+      <div class="fact"><div class="k">${ui.wx}</div><div class="v" id="wWx">${wxText(wxFor(p.g))}</div></div>
+    </div>
+    <h4 style="margin:4px 0;font-size:.85rem">${ui.wNews}</h4>
+    <ul class="wnews">${links.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener noreferrer"><span>${esc(n)}</span><small>${ui.wOpen}</small></a></li>`).join("")}</ul>
+    ${p.city !== undefined && p.city !== current().city ? `<div style="margin-top:12px"><button class="btn" type="button" id="wSet" style="padding:9px 18px;font-size:.9rem">${ui.wSet}</button></div>` : ""}
+    <p class="tmsg" style="margin-top:12px">${ui.wNote}</p>`;
+  loadWeather(p.g).then(w => { const el = $("wWx"); if (el && wSel === p.key) el.textContent = wxText(w); });
+  const set = $("wSet");
+  if (set) set.onclick = () => { go({ ...current(), city: p.city }); toast(ui.wSetDone); $("world").hidden = true; };
+}
+$("newsBtn").onclick = () => { wSel = "c" + current().city; $("world").hidden = false; drawWorld(); };
+$("wClose").onclick = () => { $("world").hidden = true; };
+$("world").onclick = e => { if (e.target.id === "world") $("world").hidden = true; };
+$("wPlaces").onclick = e => { const b = e.target.closest("[data-place]"); if (b) { wSel = b.dataset.place; drawWorld(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("world").hidden = true; });
+setInterval(() => { if (!$("world").hidden) drawWorld(); }, 30000);
+
+/* ================= Settings: theme, text size, units, clock, home ================= */
+let prefs = { theme: "auto", font: "m", unit: "auto", clock: "auto", home: "auto", ...store.get("sdb.prefs", {}) };
+const sysLight = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : { matches: false };
+function hc() {
+  if (prefs.clock === "12") return "h12";
+  if (prefs.clock === "24") return "h23";
+  try { const r = new Intl.DateTimeFormat(navigator.language, { hour: "numeric" }).resolvedOptions(); return r.hourCycle === "h12" || r.hour12 ? "h12" : "h23"; }
+  catch (e) { return "h23"; }
+}
+function useF() {
+  if (prefs.unit === "f") return true;
+  if (prefs.unit === "c") return false;
+  return /^en-(US|LR)|^my\b/i.test(navigator.language || ""); // countries that use Fahrenheit
+}
+function homeCity() {
+  if (prefs.home === "none") return null;
+  if (prefs.home !== "auto" && cities[+prefs.home]) return +prefs.home;
+  let tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) {}
+  const i = cities.findIndex((c, k) => k < BASE.cities && c.tz === tz);
+  return i >= 0 ? i : null;
+}
+function applyPrefs() {
+  const light = prefs.theme === "light" || (prefs.theme === "auto" && sysLight.matches);
+  document.body.classList.toggle("light", light);
+  document.documentElement.style.fontSize = { s: "14px", m: "16px", l: "18px", xl: "20px" }[prefs.font] || "16px";
+}
+if (sysLight.addEventListener) sysLight.addEventListener("change", applyPrefs);
+function setPref(k, v) { prefs[k] = v; store.set("sdb.prefs", prefs); applyPrefs(); render(false); drawSettings(); }
+
+function drawSettings() {
+  if ($("settings").hidden) return;
+  const ui = UI[lang];
+  const seg = (k, opts) => `<div class="seg">${opts.map(([v, t]) => `<button class="chip" type="button" data-pref="${k}" data-val="${v}" aria-pressed="${String(prefs[k]) === v}">${t}</button>`).join("")}</div>`;
+  $("sTitle").textContent = ui.sTitle; $("sClose").textContent = ui.close;
+  $("sGrid").innerHTML = `
+    <div class="srow"><span class="lbl">${ui.langK}</span><div class="seg">
+      <button class="chip" type="button" data-lang="zh" aria-pressed="${lang === "zh"}">中文</button>
+      <button class="chip" type="button" data-lang="en" aria-pressed="${lang === "en"}">English</button></div></div>
+    <div class="srow"><span class="lbl">${ui.theme}</span>${seg("theme", [["auto", ui.tAuto], ["dark", ui.tDark], ["light", ui.tLight]])}</div>
+    <div class="srow"><span class="lbl">${ui.font}</span>${seg("font", [["s", ui.fS], ["m", ui.fM], ["l", ui.fL], ["xl", ui.fXL]])}</div>
+    <div class="srow"><span class="lbl">${ui.unit}</span>${seg("unit", [["auto", ui.auto], ["c", "°C"], ["f", "°F"]])}</div>
+    <div class="srow"><span class="lbl">${ui.clock}</span>${seg("clock", [["auto", ui.auto], ["12", ui.h12], ["24", ui.h24]])}</div>
+    <div class="srow"><label class="lbl" for="homeSel">${ui.home}</label>
+      <select id="homeSel">
+        <option value="auto"${prefs.home === "auto" ? " selected" : ""}>${ui.homeAuto}${prefs.home === "auto" && homeCity() !== null ? ` — ${esc(cities[homeCity()][lang].name)}` : ""}</option>
+        <option value="none"${prefs.home === "none" ? " selected" : ""}>${ui.homeNone}</option>
+        ${cities.map((c, i) => `<option value="${i}"${String(prefs.home) === String(i) ? " selected" : ""}>${esc(c[lang].name)}</option>`).join("")}
+      </select></div>`;
+  $("homeSel").onchange = e => setPref("home", e.target.value);
+}
+$("setBtn").onclick = () => { $("settings").hidden = false; drawSettings(); };
+$("sClose").onclick = () => { $("settings").hidden = true; };
+$("settings").onclick = e => {
+  if (e.target.id === "settings") { $("settings").hidden = true; return; }
+  const b = e.target.closest("[data-pref]");
+  if (b) setPref(b.dataset.pref, b.dataset.val);
+  const l = e.target.closest("[data-lang]");
+  if (l && l.dataset.lang !== lang) { toggleLang(); drawSettings(); }
+};
+applyPrefs();
+
+/* ================= Zen mode ================= */
+function drawZen() {
+  if ($("zen").hidden) return;
+  const ui = UI[lang], st = current();
+  $("zCity").textContent = cities[st.city][lang].name;
+  $("zClock").textContent = $("clock").textContent;
+  $("zTimer").textContent = fmtTime(timer.left);
+  $("zQuote").textContent = Q(st.quote)[lang];
+  $("zStart").textContent = timer.running ? ui.pause : timer.status === "paused" ? ui.resume : ui.start;
+  $("zSound").textContent = `${ui.zSound} ${noiseOn ? "●" : "○"}`;
+  $("zExit").textContent = ui.zExit;
+}
+function enterZen() {
+  $("zen").hidden = false; document.body.classList.add("zen"); drawZen();
+  try { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {}
+}
+function exitZen() {
+  $("zen").hidden = true; document.body.classList.remove("zen");
+  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
+}
+$("zenBtn").onclick = enterZen;
+$("zExit").onclick = exitZen;
+$("zStart").onclick = () => { startPause(); drawZen(); };
+$("zSound").onclick = () => { noise(!noiseOn); drawSound(); drawZen(); };
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
+  if (e.key === "Escape" && !$("zen").hidden) exitZen();
+  else if (e.key.toLowerCase() === "z" && !e.metaKey && !e.ctrlKey) ($("zen").hidden ? enterZen : exitZen)();
+});
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && !$("zen").hidden) exitZen(); });
+setInterval(drawZen, 1000);
+
+/* ================= Daily review ================= */
+function dayLog(kind, ok) {
+  const log = store.get("sdb.daylog", {}), k = todayKey();
+  const d = log[k] || { q: 0, qc: 0, w: 0 };
+  if (kind === "q") { d.q++; if (ok) d.qc++; }
+  if (kind === "w") d.w++;
+  log[k] = d;
+  const keys = Object.keys(log).sort(); while (keys.length > 60) delete log[keys.shift()];
+  store.set("sdb.daylog", log);
+}
+function todayStats() {
+  const k = todayKey(), d = store.get("sdb.daylog", {})[k] || { q: 0, qc: 0, w: 0 };
+  const goals = getGoals().filter(g => g.t.trim());
+  return {
+    min: store.get("sdb.log", {})[k] || 0, rounds: store.get(roundsKey(), 0),
+    q: d.q, qc: d.qc, w: d.w, goals: goals.length, goalsDone: goals.filter(g => g.d).length, streak
+  };
+}
+function drawReview() {
+  if ($("review").hidden) return;
+  const ui = UI[lang], t = todayStats();
+  $("rvTitle").textContent = ui.rvTitle(todayKey()); $("rvClose").textContent = ui.close; $("rvCard").textContent = ui.rvCard;
+  const cell = (k, v) => `<div class="fact"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  $("rvGrid").innerHTML =
+    cell(ui.rvFocus, `${t.min} ${ui.min}`) + cell(ui.rvRounds, t.rounds) + cell(ui.rvStreak, ui.days(t.streak)) +
+    cell(ui.rvQuiz, `${t.qc}/${t.q}`) + cell(ui.rvGoals, `${t.goalsDone}/${t.goals}`) + cell(ui.rvWords, t.w);
+  $("rvQuote").textContent = `“${Q(current().quote)[lang]}”`;
+}
+$("reviewBtn").onclick = () => { $("review").hidden = false; drawReview(); };
+$("rvClose").onclick = () => { $("review").hidden = true; };
+$("review").onclick = e => { if (e.target.id === "review") $("review").hidden = true; };
+$("rvCard").onclick = () => {
+  const ui = UI[lang], t = todayStats();
+  const url = makeCard({
+    eyebrow: `${ui.rvCardTitle} · ${todayKey()}`, title: `🔥 ${ui.days(t.streak)}`,
+    lines: [`⏱ ${ui.rvFocus} ${t.min} ${ui.min}`, `📝 ${ui.rvQuiz} ${t.qc}/${t.q}`, `✅ ${ui.rvGoals} ${t.goalsDone}/${t.goals}`, `🔤 ${ui.rvWords} ${t.w}`]
+  });
+  $("review").hidden = true; openCard(url, ui.rvCardTitle);
+};
+
+/* ================= Leaderboard (needs cloud sync; sync.js fills window.sdbBoard) ================= */
+function weekKey(d = new Date()) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  return `${t.getUTCFullYear()}-W${String(Math.ceil(((t - y0) / 86400000 + 1) / 7)).padStart(2, "0")}`;
+}
+function weekMinutes() {
+  const log = store.get("sdb.log", {}), other = window.sdbRemoteLogs || {};
+  const now = new Date(), dow = (now.getDay() + 6) % 7; // Monday = 0
+  let sum = 0;
+  for (let i = 0; i <= dow; i++) {
+    const d = new Date(); d.setDate(now.getDate() - i); const k = todayKey(d);
+    sum += (log[k] || 0) + Object.values(other).reduce((a, l) => a + (l[k] || 0), 0);
+  }
+  return sum;
+}
+let boardRows = null;
+function drawBoard() {
+  const el = $("board"), ui = UI[lang], B = window.sdbBoard;
+  if (!B) { el.hidden = true; return; }
+  el.hidden = false;
+  if (!B.signedIn()) { el.innerHTML = `<h4>${ui.board}</h4><p class="tmsg">${ui.bNeed}</p>`; return; }
+  const me = B.me();
+  el.innerHTML = `<h4>${ui.board} · ${weekKey()}</h4>
+    <div class="brow">
+      ${me ? `<span class="tmsg">${esc(me)}</span><button class="chip" type="button" id="bLeave">${ui.bLeave}</button>`
+           : `<input id="bName" maxlength="20" placeholder="${ui.bName}" value="${esc(B.suggestName())}"><button class="chip" type="button" id="bJoin">${ui.bJoin}</button>`}
+    </div>
+    <ol>${boardRows === null ? "" : boardRows.length ? boardRows.map((r, i) =>
+      `<li class="${r.mine ? "me" : ""}"><span>${["🥇 ", "🥈 ", "🥉 "][i] || (i + 1) + ". "}${esc(r.name)}</span><b>${r.minutes} ${ui.min}</b></li>`).join("") : `<li class="tmsg">${ui.bEmpty}</li>`}</ol>`;
+  const j = $("bJoin"), l = $("bLeave");
+  if (j) j.onclick = async () => { const n = $("bName").value.trim(); if (!n) return; await B.join(n, weekKey(), weekMinutes()); toast(ui.bJoined); refreshBoard(); };
+  if (l) l.onclick = async () => { await B.leave(weekKey()); toast(ui.bLeft); refreshBoard(); };
+}
+async function refreshBoard() {
+  const B = window.sdbBoard;
+  if (B && B.signedIn()) { try { boardRows = await B.top(weekKey()); } catch (e) { boardRows = []; } }
+  drawBoard();
+}
+window.sdbBoardChanged = refreshBoard;
+
+/* ================= Custom content editor ================= */
+const BASE = { cities: cities.length, companies: companies.length, quiz: QUIZ.length, words: WORDS.length };
+let custom = store.get("sdb.custom", { cities: [], companies: [], quiz: [], words: [] });
+["cities", "companies", "quiz", "words"].forEach(k => { if (!Array.isArray(custom[k])) custom[k] = []; });
+const TZS = [...new Set(["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu",
+  ...WORLD_CITIES.map(w => w.tz),
+  "Asia/Taipei", "Asia/Tokyo", "Asia/Seoul", "Asia/Shanghai", "Asia/Hong_Kong", "Asia/Singapore", "Asia/Bangkok",
+  "Europe/London", "Europe/Paris", "Europe/Berlin", "Australia/Sydney"])];
+const num = v => (v === "" || v === null || v === undefined || isNaN(+v)) ? null : +v;
+
+// turn stored custom items into the same shapes the built-in data uses, appended after the built-ins
+function applyCustom() {
+  cities.length = BASE.cities; GEO.length = BASE.cities; CITY_LANDMARK.length = BASE.cities;
+  companies.length = BASE.companies; QUIZ.length = BASE.quiz; WORDS.length = BASE.words;
+  custom.cities.forEach(c => {
+    const tags = String(c.tags || "").split(/[,，、]/).map(t => t.trim()).filter(Boolean).slice(0, 5);
+    const text = { name: c.name, geo: c.desc, tags };
+    cities.push({ tz: TZS.includes(c.tz) ? c.tz : "America/New_York", custom: true,
+      sky: { seed: hash(c.id) % 997 + 1, n: 18, h: Math.min(1, Math.max(.3, +c.height || .7)), terrain: ["flat", "hills", "mountains"].includes(c.terrain) ? c.terrain : "flat" },
+      zh: text, en: text });
+    GEO.push([num(c.lat), num(c.lon), ""]); CITY_LANDMARK.push("");
+  });
+  custom.companies.forEach(c => {
+    const text = { name: c.name, hq: c.hq || "—", info: c.info, tip: c.tip || "" };
+    companies.push({ id: c.id, color: /^#[0-9a-f]{6}$/i.test(c.color || "") ? c.color : "#6b7280", mark: String(c.name).trim().charAt(0).toUpperCase() || "?",
+      founded: c.founded || "—", zh: text, en: text, custom: true });
+  });
+  custom.quiz.forEach(q => QUIZ.push([["cs", "calc", "en", "zh"].includes(q.subject) ? q.subject : "cs", q.question, [q.o0, q.o1, q.o2, q.o3], Math.min(3, Math.max(0, +q.answer || 0)), q.exp || ""]));
+  custom.words.forEach(w => WORDS.push([w.word, w.pos || "", w.zh, w.ex || "", w.exZh || ""]));
+}
+
+// keep every saved index valid after an item at `idx` is removed from `kind`
+function shiftAfterDelete(kind, idx) {
+  const fix = v => v > idx ? v - 1 : v === idx ? 0 : v;
+  if (kind === "cities") {
+    history.forEach(h => h.city = fix(h.city));
+    if (typeof pin === "number") { pin = pin === idx ? null : pin > idx ? pin - 1 : pin; store.set("sdb.pin", pin); }
+  }
+  if (kind === "companies") history.forEach(h => h.company = fix(h.company));
+  if (kind === "quiz") {
+    wrongs = wrongs.filter(x => x !== idx).map(x => x > idx ? x - 1 : x); store.set("sdb.wrong", wrongs);
+    learn.q = fix(learn.q); learn.picked = null;
+  }
+  if (kind === "words") learn.word = fix(learn.word);
+}
+function clampAll() {
+  history.forEach(h => {
+    if (h.city >= cities.length) h.city = 0;
+    if (h.company >= companies.length) h.company = 0;
+    if (h.quote >= allLen()) h.quote = 0;
+  });
+  if (learn.q >= QUIZ.length) { learn.q = 0; learn.picked = null; }
+  if (learn.word >= WORDS.length) learn.word = 0;
+}
+function saveCustom() {
+  store.set("sdb.custom", custom); applyCustom(); clampAll();
+  paintScene(current()); render(false); drawEditor();
+}
+
+const SCHEMA = {
+  cities: () => {
+    const f = UI[lang].f;
+    return [
+      { k: "name", l: f.name, req: true, max: 30 }, { k: "desc", l: f.desc, req: true, area: true, max: 160 },
+      { k: "tags", l: f.tags, max: 80 },
+      { row: [{ k: "tz", l: f.tz, sel: TZS.map(z => [z, z.replace("_", " ")]) }, { k: "terrain", l: f.terrain, sel: [["flat", f.tFlat], ["hills", f.tHills], ["mountains", f.tMountains]] }] },
+      { row: [{ k: "lat", l: f.lat, type: "number", step: "any", min: -90, max: 90 }, { k: "lon", l: f.lon, type: "number", step: "any", min: -180, max: 180 }] },
+      { k: "height", l: f.height, type: "range", min: .3, max: 1, step: .05, def: .7 }
+    ];
+  },
+  companies: () => {
+    const f = UI[lang].f;
+    return [
+      { row: [{ k: "name", l: f.name, req: true, max: 30 }, { k: "color", l: f.color, type: "color", def: "#4f46e5" }] },
+      { row: [{ k: "founded", l: f.founded, type: "number", min: 1800, max: 2100 }, { k: "hq", l: f.hq, max: 40 }] },
+      { k: "info", l: f.info, req: true, area: true, max: 160 }, { k: "tip", l: f.tip, max: 100 }
+    ];
+  },
+  quiz: () => {
+    const f = UI[lang].f, ui = UI[lang];
+    return [
+      { k: "subject", l: f.subject, sel: ["cs", "calc", "en", "zh"].map(x => [x, ui.subj[x]]) },
+      { k: "question", l: f.question, req: true, area: true, max: 200 },
+      { row: [{ k: "o0", l: f.opt(0), req: true, max: 60 }, { k: "o1", l: f.opt(1), req: true, max: 60 }] },
+      { row: [{ k: "o2", l: f.opt(2), req: true, max: 60 }, { k: "o3", l: f.opt(3), req: true, max: 60 }] },
+      { k: "answer", l: f.answer, sel: [0, 1, 2, 3].map(i => [String(i), "ABCD"[i]]) },
+      { k: "exp", l: f.exp, area: true, max: 200 }
+    ];
+  },
+  words: () => {
+    const f = UI[lang].f;
+    return [
+      { row: [{ k: "word", l: f.word, req: true, max: 30 }, { k: "pos", l: f.pos, max: 10 }] },
+      { k: "zh", l: f.zh, req: true, max: 40 }, { k: "ex", l: f.ex, max: 160 }, { k: "exZh", l: f.exZh, max: 160 }
+    ];
+  },
+  quotes: () => [{ k: "t", l: UI[lang].f.quote, req: true, max: 80 }]
+};
+const LIST_LABEL = { cities: x => x.name, companies: x => x.name, quiz: x => x.question, words: x => `${x.word} — ${x.zh}`, quotes: x => x.t };
+const ed = { cat: "cities", editing: null };
+const itemsOf = cat => cat === "quotes" ? myQuotes : custom[cat];
+
+function fieldHTML(fd, val) {
+  const v = val === undefined || val === null ? (fd.def !== undefined ? fd.def : "") : val;
+  const attrs = `name="${fd.k}"${fd.req ? " required" : ""}${fd.max && !fd.type ? ` maxlength="${fd.max}"` : ""}` +
+    (fd.min !== undefined ? ` min="${fd.min}"` : "") + (fd.max !== undefined && fd.type ? ` max="${fd.max}"` : "") + (fd.step ? ` step="${fd.step}"` : "");
+  let input;
+  if (fd.sel) input = `<select ${attrs}>${fd.sel.map(([k, t]) => `<option value="${esc(k)}"${String(v) === String(k) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  else if (fd.area) input = `<textarea ${attrs}>${esc(v)}</textarea>`;
+  else input = `<input type="${fd.type || "text"}" ${attrs} value="${esc(v)}" autocomplete="off">`;
+  return `<label>${esc(fd.l)}${input}</label>`;
+}
+function drawEditor() {
+  if ($("editor").hidden) return;
+  const ui = UI[lang], cat = ed.cat, items = itemsOf(cat);
+  const cur = ed.editing ? items.find(x => x.id === ed.editing) : null;
+  if (ed.editing && !cur) ed.editing = null;
+  $("eTitle").textContent = ui.eTitle; $("eClose").textContent = ui.close;
+  $("eTabs").innerHTML = Object.keys(ui.eCats).map(c =>
+    `<button class="chip" role="tab" type="button" data-ecat="${c}" aria-selected="${c === cat}">${ui.eCats[c]}</button>`).join("");
+  $("eForm").innerHTML = SCHEMA[cat]().map(fd => fd.row
+    ? `<div class="two">${fd.row.map(r => fieldHTML(r, cur && cur[r.k])).join("")}</div>`
+    : fieldHTML(fd, cur && cur[fd.k])).join("") +
+    `<div class="acts"><button class="btn" type="submit" style="padding:9px 18px;font-size:.92rem">${cur ? ui.eUpdate : ui.eSave}</button>` +
+    (cur ? `<button class="chip" type="button" id="eCancel">${ui.eCancel}</button>` : "") + `</div>`;
+  $("eList").innerHTML = items.length ? items.slice().reverse().map(x => `
+    <li><span class="t">${esc(LIST_LABEL[cat](x))}</span>
+      <span><button class="icon" type="button" data-eedit="${x.id}">${ui.eEdit}</button><button class="icon" type="button" data-edel="${x.id}">${ui.eDel}</button></span></li>`).join("")
+    : `<li class="tmsg" style="background:none">${ui.eEmpty}</li>`;
+  $("eExport").textContent = ui.eExport; $("eImportTxt").textContent = ui.eImport; $("eHint").textContent = ui.eHint;
+  const c = $("eCancel"); if (c) c.onclick = () => { ed.editing = null; drawEditor(); };
+}
+function openEditor(cat) {
+  if (cat) ed.cat = cat;
+  ed.editing = null; $("editor").hidden = false; drawEditor();
+  setTimeout(() => { const f = $("eForm").querySelector("input,textarea"); if (f) f.focus(); }, 30);
+}
+$("editBtn").onclick = () => openEditor();
+$("eClose").onclick = () => { $("editor").hidden = true; };
+$("editor").onclick = e => { if (e.target.id === "editor") $("editor").hidden = true; };
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("editor").hidden = true; });
+$("eTabs").onclick = e => { const b = e.target.closest("[data-ecat]"); if (b) { ed.cat = b.dataset.ecat; ed.editing = null; drawEditor(); } };
+
+$("eForm").onsubmit = e => {
+  e.preventDefault();
+  const ui = UI[lang], data = Object.fromEntries(new FormData($("eForm")).entries());
+  Object.keys(data).forEach(k => data[k] = String(data[k]).trim());
+  const flat = SCHEMA[ed.cat]().flatMap(fd => fd.row || [fd]);
+  if (flat.some(fd => fd.req && !data[fd.k])) { toast(ui.eRequired); return; }
+  const items = itemsOf(ed.cat);
+  if (ed.editing) Object.assign(items.find(x => x.id === ed.editing), data);
+  else items.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), ...data });
+  ed.editing = null;
+  if (ed.cat === "quotes") store.set("sdb.myQuotes", myQuotes);
+  toast(ui.eSaved); saveCustom();
+};
+$("eList").onclick = e => {
+  const ebtn = e.target.closest("[data-eedit]"), dbtn = e.target.closest("[data-edel]");
+  if (ebtn) { ed.editing = ebtn.dataset.eedit; drawEditor(); $("eForm").scrollIntoView({ block: "nearest" }); }
+  if (dbtn) {
+    const items = itemsOf(ed.cat), pos = items.findIndex(x => x.id === dbtn.dataset.edel);
+    if (pos < 0) return;
+    if (ed.cat === "quotes") {
+      const id = "c" + items[pos].id, curId = Q(current().quote).id;
+      items.splice(pos, 1); store.set("sdb.myQuotes", myQuotes);
+      favs = favs.filter(x => x !== id); store.set("sdb.favs", favs);
+      if (curId === id) current().quote = 0;
+    } else {
+      shiftAfterDelete(ed.cat, BASE[ed.cat] + pos);
+      items.splice(pos, 1);
+    }
+    if (ed.editing === dbtn.dataset.edel) ed.editing = null;
+    toast(UI[lang].eDeleted); saveCustom();
+  }
+};
+
+/* export / import a backup file that friends can share */
+$("eExport").onclick = () => {
+  const data = { app: "skyline-daily-boost", version: 1, exported: new Date().toISOString(), ...custom, quotes: myQuotes };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+  a.download = `daily-boost-custom-${todayKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast(UI[lang].eExported);
+};
+$("eImport").onchange = async e => {
+  const file = e.target.files[0]; e.target.value = "";
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    if (data.app !== "skyline-daily-boost") throw 0;
+    const str = (v, n) => String(v === undefined || v === null ? "" : v).slice(0, n);
+    const clean = {
+      cities: x => x.name && x.desc && { name: str(x.name, 30), desc: str(x.desc, 160), tags: str(x.tags, 80), tz: str(x.tz, 40), terrain: str(x.terrain, 10), lat: str(x.lat, 12), lon: str(x.lon, 12), height: str(x.height, 5) },
+      companies: x => x.name && x.info && { name: str(x.name, 30), color: str(x.color, 7), founded: str(x.founded, 4), hq: str(x.hq, 40), info: str(x.info, 160), tip: str(x.tip, 100) },
+      quiz: x => x.question && x.o0 && x.o1 && x.o2 && x.o3 && { subject: str(x.subject, 4), question: str(x.question, 200), o0: str(x.o0, 60), o1: str(x.o1, 60), o2: str(x.o2, 60), o3: str(x.o3, 60), answer: str(x.answer, 1), exp: str(x.exp, 200) },
+      words: x => x.word && x.zh && { word: str(x.word, 30), pos: str(x.pos, 10), zh: str(x.zh, 40), ex: str(x.ex, 160), exZh: str(x.exZh, 160) },
+      quotes: x => x.t && { t: str(x.t, 80) }
+    };
+    let n = 0;
+    Object.keys(clean).forEach(cat => {
+      const items = itemsOf(cat), have = new Set(items.map(x => x.id));
+      (Array.isArray(data[cat]) ? data[cat] : []).forEach(x => {
+        const c = x && typeof x === "object" && clean[cat](x);
+        if (!c) return;
+        const id = typeof x.id === "string" && /^[a-z0-9]{4,20}$/.test(x.id) ? x.id : Date.now().toString(36) + n;
+        if (have.has(id)) return; // already imported
+        items.push({ id, ...c }); have.add(id); n++;
+      });
+    });
+    store.set("sdb.myQuotes", myQuotes);
+    toast(UI[lang].eImported(n)); saveCustom();
+  } catch (err) { toast(UI[lang].eBad); }
+};
+
+applyCustom();
+
+/* ================= Start ================= */
+shootingStar();
+buildStars();
+go(mode === "daily" ? dailyState() : randomState());
+checkReminders();
+
+/* cloud sync: only loads when firebase-config.js has a config */
+if (window.SDB_FIREBASE && location.protocol.startsWith("http")) {
+  import("./sync.js").catch(e => console.warn("sync unavailable", e));
+}
+setInterval(tickClock, 15000);
+setInterval(() => paintScene(current()), 10 * 60 * 1000); // sky follows real time
+</script>
+</body>
+</html>
