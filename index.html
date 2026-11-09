@@ -4,13 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b1026">
-<meta name="description" content="Skyline Daily Boost — 美國城市風景、每日鼓勵與科技公司小知識。">
+<meta name="description" content="Daily encouragement with live city skylines, weather, 51 tech companies, a focus timer and endless practice quizzes.">
 <title>Skyline Daily Boost</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Daily Boost">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b1026'/><g fill='%23ffd27a'><rect x='10' y='30' width='9' height='24'/><rect x='22' y='16' width='10' height='38'/><rect x='35' y='24' width='8' height='30'/><rect x='46' y='34' width='8' height='20'/></g></svg>">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Skyline Daily Boost">
+<meta property="og:description" content="A city, a quote and a tech company every day, plus a focus timer and endless quizzes.">
+<meta property="og:url" content="https://black-tea666888.github.io/skyline-daily-boost/">
+<meta property="og:image" content="https://black-tea666888.github.io/skyline-daily-boost/screenshots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   :root {
     --ink: #fff;
@@ -66,7 +75,7 @@
     background: rgba(255,210,122,.16); color: var(--accent); white-space: nowrap;
   }
   .tools { display: flex; gap: 6px; }
-  #langBtn { white-space: nowrap; }
+  #langBtn, #noiseBtn, #notifyBtn { white-space: nowrap; }
   .colink { display: inline-block; margin-top: 8px; font-size: .85rem; color: inherit; opacity: .85; text-decoration: underline; text-underline-offset: 3px; }
   .colink:hover { opacity: 1; }
   #vol { flex: 1 1 100%; width: 100%; order: 3; }
