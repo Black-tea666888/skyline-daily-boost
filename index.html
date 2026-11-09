@@ -868,7 +868,7 @@ Object.assign(UI.zh, {
   focus: "⏱ 專注", goalsTab: "✅ 今日目標", start: "開始", pause: "暫停", resume: "繼續", reset: "重設",
   tIdle: "選好時間，按開始。", tRun: "專注中，手機先放一邊。", tPaused: "已暫停。",
   tDone: "完成一輪專注！休息一下。", rounds: n => `今天完成 ${n} 輪`,
-  goalPh: i => `目標 ${i + 1}，例如：讀 20 頁書`, allDone: "今天的目標全部完成 🎉",
+  goalPh: i => "＋ 新增今天的目標", allDone: "今天的目標全部完成 🎉",
   set: "🎛 設定", sTitle: "設定", theme: "主題", tAuto: "跟隨系統", tDark: "深色", tLight: "淺色",
   font: "字體大小", fS: "小", fM: "中", fL: "大", fXL: "特大", unit: "溫度單位", clock: "時間格式", auto: "自動", h12: "12 小時", h24: "24 小時",
   home: "我的所在地（用來算距離）", homeAuto: "自動（依時區）", homeNone: "不顯示距離", langK: "語言",
@@ -919,7 +919,7 @@ Object.assign(UI.en, {
   focus: "⏱ Focus", goalsTab: "✅ Today's goals", start: "Start", pause: "Pause", resume: "Resume", reset: "Reset",
   tIdle: "Pick a length and press Start.", tRun: "Focusing. Put your phone away.", tPaused: "Paused.",
   tDone: "Focus round done! Take a break.", rounds: n => `${n} round${n === 1 ? "" : "s"} today`,
-  goalPh: i => `Goal ${i + 1}, e.g. read 20 pages`, allDone: "All of today's goals done 🎉",
+  goalPh: i => "＋ Add a goal for today", allDone: "All of today's goals done 🎉",
   set: "🎛 Settings", sTitle: "Settings", theme: "Theme", tAuto: "System", tDark: "Dark", tLight: "Light",
   font: "Text size", fS: "S", fM: "M", fL: "L", fXL: "XL", unit: "Temperature", clock: "Clock", auto: "Auto", h12: "12-hour", h24: "24-hour",
   home: "My location (for distances)", homeAuto: "Auto (by time zone)", homeNone: "Don't show distance", langK: "Language",
@@ -1499,8 +1499,12 @@ function drawGoals() {
     box.innerHTML = goals.map((_, i) =>
       `<label class="goal" data-i="${i}"><input type="checkbox"><input type="text" maxlength="60"></label>`).join("");
   }
+  const firstEmpty = goals.findIndex(g => !g.t.trim());
   [...box.children].forEach((row, i) => {
     const [cb, tx] = row.querySelectorAll("input");
+    const empty = !goals[i].t.trim() && document.activeElement !== tx;
+    row.hidden = empty && i !== firstEmpty;
+    cb.style.display = empty ? "none" : "";
     cb.checked = goals[i].d;
     if (document.activeElement !== tx) tx.value = goals[i].t;
     tx.placeholder = ui.goalPh(i);
@@ -1510,12 +1514,14 @@ function drawGoals() {
   const filled = goals.filter(g => g.t.trim());
   const done = filled.filter(g => g.d).length;
   $("goalBar").style.width = filled.length ? (done / filled.length * 100) + "%" : "0";
+  $("goalBar").parentElement.hidden = !filled.length;
 }
+$("goals").addEventListener("focusout", () => setTimeout(drawGoals, 0));
 $("goals").addEventListener("input", e => {
   const row = e.target.closest(".goal"); if (!row) return;
   const goals = getGoals(), i = +row.dataset.i;
   const wasAll = goals.filter(g => g.t.trim()).every(g => g.d) && goals.some(g => g.t.trim());
-  if (e.target.type === "checkbox") goals[i].d = e.target.checked; else goals[i].t = e.target.value;
+  if (e.target.type === "checkbox") goals[i].d = e.target.checked; else { goals[i].t = e.target.value; if (!goals[i].t.trim()) goals[i].d = false; }
   store.set(goalsKey(), goals);
   drawGoals();
   const filled = goals.filter(g => g.t.trim());
