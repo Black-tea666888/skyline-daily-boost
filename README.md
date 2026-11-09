@@ -2,7 +2,7 @@
 
 A daily encouragement page set against live city skylines. Every day you get a city, a quote and a tech company, plus small tools for focusing and practicing.
 
-**Live site:** https://shiny-kleicha-085187.netlify.app
+**Live site:** https://black-tea666888.github.io/skyline-daily-boost/
 
 ## Features
 
