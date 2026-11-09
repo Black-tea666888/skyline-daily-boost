@@ -272,6 +272,16 @@
   .ebox { width: min(560px, 100%); max-height: 88vh; overflow-y: auto; text-align: left; padding: 20px; }
   .ehead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .ehead h3 { margin: 0; font-size: 1.05rem; }
+  .favbox { max-height: min(80vh, 640px); display: flex; flex-direction: column; }
+  .favsub { font-size: .8rem; opacity: .7; margin-top: 2px; }
+  .favlist { list-style: none; margin: 0; padding: 0; overflow-y: auto; display: grid; gap: 10px; }
+  .favlist li { border-left: 3px solid #ffc46b; background: rgba(255,255,255,.06); border-radius: 12px; padding: 12px 14px; }
+  body.light .favlist li { background: rgba(0,0,0,.04); }
+  .favlist .fq { font-size: 1rem; line-height: 1.5; }
+  .favlist .fa { display: flex; gap: 6px; margin-top: 8px; }
+  .favlist .fa .chip { padding: 4px 10px; font-size: .78rem; }
+  .favlist .empty { border: 0; background: none; text-align: center; padding: 28px 10px; opacity: .8; }
+  .favlist .empty b { display: block; font-size: 2.2rem; margin-bottom: 6px; color: #ffc46b; }
   .eform { display: grid; gap: 10px; }
   .eform label { display: grid; gap: 4px; font-size: .8rem; color: var(--muted); text-align: left; min-width: 0; }
   .eform input, .eform select, .eform textarea { width: 100%; min-width: 0; box-sizing: border-box; }
@@ -602,10 +612,6 @@
     </div>
   </section>
 
-  <section class="panel" id="panel" hidden>
-    <h3 id="panelTitle"></h3>
-    <ul id="favList"></ul>
-  </section>
 
   <p class="hint" id="hint"></p>
 </div>
@@ -620,6 +626,12 @@
     <button class="chip" id="zStart" type="button"></button>
     <button class="chip" id="zSound" type="button"></button>
     <button class="chip" id="zExit" type="button"></button>
+  </div>
+</div>
+<div class="modal" id="favs" hidden>
+  <div class="box ebox favbox" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+    <div class="ehead"><div><h3 id="panelTitle"></h3><div class="favsub" id="favSub"></div></div><button class="chip" id="favClose" type="button"></button></div>
+    <ul class="favlist" id="favList"></ul>
   </div>
 </div>
 <div class="modal" id="settings" hidden>
@@ -682,7 +694,7 @@ const UI = {
     eyebrow: "今日城市", daily: "今日一組", random: "隨機探索",
     copy: "複製", copied: "已複製到剪貼簿", fav: "☆ 收藏", faved: "★ 已收藏",
     favAdded: "已加入收藏", favRemoved: "已取消收藏",
-    favs: "收藏", panel: "我收藏的鼓勵語", empty: "還沒有收藏，按 ☆ 把喜歡的句子留下來。",
+    favs: "收藏", panel: "我的收藏", favSub: n => `${n} 句你選擇留下的話`, empty: "還沒有收藏。看到喜歡的句子，按下方的 ☆ 收藏，它就會留在這裡。",
     remove: "移除", founded: "創立", hq: "總部", tipLabel: "學習小提示：",
     streak: n => `🔥 連續 ${n} 天`, local: "當地時間",
     period: { night: "夜晚", dawn: "清晨", day: "白天", dusk: "黃昏" },
@@ -693,7 +705,7 @@ const UI = {
     eyebrow: "Today's city", daily: "Today's set", random: "Explore",
     copy: "Copy", copied: "Copied to clipboard", fav: "☆ Save", faved: "★ Saved",
     favAdded: "Saved", favRemoved: "Removed",
-    favs: "Saved", panel: "My saved quotes", empty: "Nothing saved yet. Tap ☆ to keep a quote you like.",
+    favs: "Saved", panel: "My collection", favSub: n => `${n} quote${n === 1 ? "" : "s"} you chose to keep`, empty: "Nothing saved yet. When a quote speaks to you, tap ☆ Save under it and it will live here.",
     remove: "Remove", founded: "Founded", hq: "HQ", tipLabel: "Learning tip: ",
     streak: n => `🔥 ${n}-day streak`, local: "Local time",
     period: { night: "Night", dawn: "Dawn", day: "Day", dusk: "Dusk" },
@@ -1301,10 +1313,13 @@ function render(animate) {
 
 function renderFavs() {
   const ui = UI[lang];
-  $("panelTitle").textContent = ui.panel;
-  $("favList").innerHTML = favs.length
-    ? favs.map(id => qById(id)).filter(Boolean).map(q => `<li><span>${esc(q[lang])}</span><button class="icon" data-rm="${q.id}" type="button">${ui.remove}</button></li>`).join("")
-    : `<li class="empty">${ui.empty}</li>`;
+  const list = favs.map(id => qById(id)).filter(Boolean).reverse();
+  $("panelTitle").textContent = "★ " + ui.panel;
+  $("favSub").textContent = list.length ? ui.favSub(list.length) : "";
+  $("favClose").textContent = ui.close;
+  $("favList").innerHTML = list.length
+    ? list.map(q => `<li><div class="fq">“${esc(q[lang])}”</div><div class="fa"><button class="chip" data-cp="${q.id}" type="button">⧉ ${ui.copy}</button><button class="chip" data-rm="${q.id}" type="button">${ui.remove}</button></div></li>`).join("")
+    : `<li class="empty"><b>☆</b>${ui.empty}</li>`;
 }
 
 function go(state, push = true) {
@@ -1364,11 +1379,13 @@ $("favBtn").onclick = toggleFav;
 $("copyBtn").onclick = copyQuote;
 $("modeDaily").onclick = () => { mode = "daily"; store.set("sdb.mode", mode); go(dailyState()); };
 $("modeRandom").onclick = newSet;
-$("favToggle").onclick = () => {
-  const p = $("panel"); p.hidden = !p.hidden;
-  $("favToggle").setAttribute("aria-pressed", !p.hidden);
-};
+$("favToggle").onclick = () => { renderFavs(); $("favs").hidden = false; };
+$("favClose").onclick = () => { $("favs").hidden = true; };
+$("favs").onclick = e => { if (e.target.id === "favs") $("favs").hidden = true; };
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("favs").hidden = true; });
 $("favList").onclick = e => {
+  const cp = e.target.closest("[data-cp]");
+  if (cp) { const q = qById(cp.dataset.cp); if (q) navigator.clipboard?.writeText(q[lang]).then(() => { cp.textContent = "✓"; setTimeout(() => renderFavs(), 900); }); return; }
   const rm = e.target.closest("[data-rm]"); if (!rm) return;
   favs = favs.filter(x => x !== rm.dataset.rm); store.set("sdb.favs", favs); render(false);
 };
