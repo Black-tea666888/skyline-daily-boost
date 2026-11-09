@@ -67,6 +67,8 @@
   }
   .tools { display: flex; gap: 6px; }
   #langBtn { white-space: nowrap; }
+  .colink { display: inline-block; margin-top: 8px; font-size: .85rem; color: inherit; opacity: .85; text-decoration: underline; text-underline-offset: 3px; }
+  .colink:hover { opacity: 1; }
   #vol { flex: 1 1 100%; width: 100%; order: 3; }
   .chip {
     padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.4);
@@ -477,6 +479,7 @@
           <div class="meta" id="companyMeta"></div>
           <p id="companyInfo"></p>
           <div class="tip" id="companyTip"></div>
+          <a class="colink" id="companyLink" target="_blank" rel="noopener noreferrer"></a>
         </div>
       </div>
     </section>
@@ -836,6 +839,8 @@ const companies = [
     en: { name: en, hq: ehq, info: ei, tip: et }
   }))
 ];
+
+const CO_URL = {apple: "https://www.apple.com", microsoft: "https://www.microsoft.com", oracle: "https://www.oracle.com", google: "https://www.about.google", nvidia: "https://www.nvidia.com", amazon: "https://www.aboutamazon.com", meta: "https://about.meta.com", intel: "https://www.intel.com", tesla: "https://www.tesla.com", salesforce: "https://www.salesforce.com", netflix: "https://www.netflix.com", adobe: "https://www.adobe.com", ibm: "https://www.ibm.com", cisco: "https://www.cisco.com", amd: "https://www.amd.com", qualcomm: "https://www.qualcomm.com", dell: "https://www.dell.com", hp: "https://www.hp.com", uber: "https://www.uber.com", airbnb: "https://www.airbnb.com", stripe: "https://www.stripe.com", zoom: "https://www.zoom.com", tsmc: "https://www.tsmc.com", mediatek: "https://www.mediatek.com", foxconn: "https://www.foxconn.com", asus: "https://www.asus.com", sony: "https://www.sony.com", nintendo: "https://www.nintendo.com", rakuten: "https://global.rakuten.com", samsung: "https://www.samsung.com", lg: "https://www.lg.com", naver: "https://www.navercorp.com", alibaba: "https://www.alibabagroup.com", tencent: "https://www.tencent.com", bytedance: "https://www.bytedance.com", huawei: "https://www.huawei.com", xiaomi: "https://www.mi.com", baidu: "https://ir.baidu.com", asml: "https://www.asml.com", sap: "https://www.sap.com", spotify: "https://www.spotify.com", arm: "https://www.arm.com", nokia: "https://www.nokia.com", ericsson: "https://www.ericsson.com", shopify: "https://www.shopify.com", infosys: "https://www.infosys.com", tcs: "https://www.tcs.com", grab: "https://www.grab.com", sea: "https://www.sea.com", atlassian: "https://www.atlassian.com", canva: "https://www.canva.com"};
 
 Object.assign(UI.zh, {
   diff: "與你的時差", dist: h => `距離${h}`, distNone: "距離", flight: "飛行約", hrs: "小時", same: "相同",
@@ -1248,6 +1253,9 @@ function render(animate) {
   $("companyMeta").textContent = `${ui.founded} ${co.founded} · ${ui.hq} ${cl.hq}`;
   $("companyInfo").textContent = cl.info;
   $("companyTip").textContent = ui.tipLabel + cl.tip;
+  const coUrl = /^https:\/\//.test(co.url || "") ? co.url : CO_URL[co.id];
+  $("companyLink").hidden = !coUrl;
+  if (coUrl) { $("companyLink").href = coUrl; $("companyLink").textContent = (lang === "zh" ? "官方網站 ↗ " : "Official site ↗ ") + coUrl.replace(/^https:\/\/(www\.)?/, ""); }
 
   $("prevBtn").disabled = hIndex <= 0;
   $("nextBtn").disabled = hIndex >= history.length - 1;
