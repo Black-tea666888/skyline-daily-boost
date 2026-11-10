@@ -420,6 +420,28 @@
 
   .chev { display: inline-block; width: 8px; height: 8px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); margin: 0 4px 1px 0; }
   .chev.l { transform: rotate(-135deg); margin: 0 0 1px 4px; }
+  .acbox { width: min(400px, 100%); text-align: left; }
+  .acsub { font-size: .85rem; opacity: .75; line-height: 1.55; margin: 4px 0 12px; }
+  .acwide { width: 100%; padding: 11px; font-size: .95rem; }
+  .acor { text-align: center; font-size: .78rem; opacity: .6; margin: 14px 0 10px; }
+  #acForm { display: grid; gap: 8px; }
+  #acForm input { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: inherit; font: inherit; }
+  .acrow { display: flex; gap: 8px; margin-top: 4px; }
+  .acrow .chip { flex: 1; padding: 9px; }
+  .acmain { background: rgba(255,255,255,.92) !important; color: #1a1f36 !important; font-weight: 600; }
+  .aclink { background: none; border: 0; color: inherit; opacity: .7; font: inherit; font-size: .8rem; text-decoration: underline; cursor: pointer; justify-self: start; padding: 2px 0; }
+  .acerr { color: #ff9b8a; font-size: .82rem; margin: 10px 0 0; min-height: 1em; line-height: 1.5; }
+  body.light .acerr { color: #b3261e; }
+  .acme { display: flex; gap: 12px; align-items: center; margin-bottom: 4px; }
+  .acme .acsub { margin: 0; }
+  .acav { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 1.1rem; background: linear-gradient(140deg, #7a3f78, #f08a5d); color: #fff; background-size: cover; }
+  .acsaved { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; opacity: .6; margin: 6px 0 8px; }
+  .acgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 10px; }
+  .acgrid div { border-radius: 12px; padding: 8px 10px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); }
+  .acgrid b { display: block; font-size: 1.1rem; }
+  .acgrid span { font-size: .72rem; opacity: .7; }
+  body.light #acForm input, body.light .acgrid div { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); }
+  body.light .acmain { background: #1a1f36 !important; color: #fff !important; }
   /* ---------- Liquid glass ---------- */
   .card, .modal .box, .chip, .round, .fact, .company { --g-hi: rgba(255,255,255,.55); --g-edge: rgba(255,255,255,.26); }
   .card {
@@ -678,6 +700,31 @@
     <button class="chip" id="zStart" type="button"></button>
     <button class="chip" id="zSound" type="button"></button>
     <button class="chip" id="zExit" type="button"></button>
+  </div>
+</div>
+<div class="modal" id="acBox" hidden>
+  <div class="box ebox acbox" role="dialog" aria-modal="true" aria-labelledby="acTitle">
+    <div class="ehead"><h3 id="acTitle"></h3><button class="chip" id="acClose" type="button"></button></div>
+    <div id="acOut">
+      <p class="acsub" id="acSub"></p>
+      <button class="btn acwide" id="acGoogle" type="button"></button>
+      <div class="acor" id="acOr"></div>
+      <form id="acForm" autocomplete="on">
+        <input id="acEmail" type="email" autocomplete="email" required>
+        <input id="acPass" type="password" autocomplete="current-password" minlength="6" required>
+        <div class="acrow"><button class="chip acmain" id="acLogin" type="submit"></button><button class="chip" id="acCreate" type="button"></button></div>
+        <button class="aclink" id="acForgot" type="button"></button>
+      </form>
+    </div>
+    <div id="acIn" hidden>
+      <div class="acme"><div class="acav" id="acAv"></div><div><b id="acName"></b><div class="acsub" id="acMail"></div></div></div>
+      <p class="acsub" id="acRemember"></p>
+      <div class="acsaved" id="acSavedT"></div>
+      <div class="acgrid" id="acGrid"></div>
+      <div class="acsub" id="acLast"></div>
+      <div class="acrow"><button class="chip" id="acSyncNow" type="button"></button><button class="chip" id="acSignOut" type="button"></button></div>
+    </div>
+    <p class="acerr" id="acErr" role="alert"></p>
   </div>
 </div>
 <div class="modal" id="alertBox" hidden>
@@ -944,7 +991,17 @@ Object.assign(UI.zh, {
   notifySent: "已送出一則測試通知", notifyOnToast: "通知已開啟",
   share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
-  signIn: "登入同步", synced: "已同步", syncing: "同步中…", signedIn: "已登入，資料會在裝置間同步",
+  signIn: "登入", account: "帳號", synced: "已同步",
+  acTitle: "登入帳號", acSub: "登入後，你的收藏、目標、連續天數、測驗進度和自訂內容都會存到帳號，換手機或電腦也能接著用。",
+  acGoogle: "使用 Google 繼續", acOr: "或用電子郵件", acEmail: "電子郵件", acPass: "密碼（至少 6 個字元）",
+  acLogin: "登入", acCreate: "建立帳號", acForgot: "忘記密碼？", acResetSent: "已寄出重設密碼的信，請到信箱查看。",
+  acNeedEmail: "請先輸入電子郵件。", acHello: "已登入", acRemember: "這台裝置會記住你的登入，下次打開不用再登入。",
+  acSaved: "存在帳號裡的資料", acFavs: "收藏的句子", acStreak: "連續天數", acQuiz: "已作答題目", acCustom: "自訂內容", acRem: "提醒",
+  acLast: "最後同步", acNever: "尚未同步", acSyncNow: "立即同步", acSignOut: "登出", acClose: "關閉",
+  acErr: { "auth/unauthorized-domain": "這個網址還沒加入 Firebase 的已授權網域，請到 Firebase → Authentication → Settings → Authorized domains 加入。",
+    "auth/invalid-credential": "電子郵件或密碼不正確。", "auth/wrong-password": "電子郵件或密碼不正確。", "auth/user-not-found": "找不到這個帳號，可以按「建立帳號」。",
+    "auth/email-already-in-use": "這個電子郵件已經註冊過，請直接登入。", "auth/weak-password": "密碼至少要 6 個字元。", "auth/invalid-email": "電子郵件格式不正確。",
+    "auth/too-many-requests": "嘗試次數太多，請稍後再試。", "auth/network-request-failed": "網路連線失敗，請檢查網路。", "auth/operation-not-allowed": "這種登入方式還沒在 Firebase 啟用。", other: "登入失敗，請再試一次。" }, syncing: "同步中…", signedIn: "已登入，資料會在裝置間同步",
   signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
   learnTab: "學習", speak: "發音", qNext: "下一題", wNext: "換一個單字", right: "答對了！", wrong: "正確答案是",
   score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
@@ -999,7 +1056,17 @@ Object.assign(UI.en, {
   notifySent: "Test alert sent", notifyOnToast: "Alerts on",
   share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
-  signIn: "Sign in to sync", synced: "Synced", syncing: "Syncing…", signedIn: "Signed in. Your data syncs across devices.",
+  signIn: "Sign in", account: "Account", synced: "Synced",
+  acTitle: "Sign in", acSub: "Your saved quotes, goals, streak, quiz progress and custom content are kept in your account, so they follow you to any phone or computer.",
+  acGoogle: "Continue with Google", acOr: "or use email", acEmail: "Email", acPass: "Password (at least 6 characters)",
+  acLogin: "Sign in", acCreate: "Create account", acForgot: "Forgot password?", acResetSent: "Password reset email sent. Check your inbox.",
+  acNeedEmail: "Enter your email first.", acHello: "Signed in", acRemember: "This device will remember you, so you won't need to sign in next time.",
+  acSaved: "Saved to your account", acFavs: "Saved quotes", acStreak: "Day streak", acQuiz: "Questions answered", acCustom: "Custom items", acRem: "Reminders",
+  acLast: "Last synced", acNever: "Not synced yet", acSyncNow: "Sync now", acSignOut: "Sign out", acClose: "Close",
+  acErr: { "auth/unauthorized-domain": "This site's address isn't on Firebase's allow list yet. Add it under Firebase → Authentication → Settings → Authorized domains.",
+    "auth/invalid-credential": "Email or password is incorrect.", "auth/wrong-password": "Email or password is incorrect.", "auth/user-not-found": "No account with that email. Tap Create account.",
+    "auth/email-already-in-use": "That email already has an account. Sign in instead.", "auth/weak-password": "Password must be at least 6 characters.", "auth/invalid-email": "That email doesn't look right.",
+    "auth/too-many-requests": "Too many attempts. Try again later.", "auth/network-request-failed": "Network error. Check your connection.", "auth/operation-not-allowed": "This sign-in method isn't enabled in Firebase yet.", other: "Sign-in failed. Please try again." }, syncing: "Syncing…", signedIn: "Signed in. Your data syncs across devices.",
   signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
   learnTab: "Learn", speak: "Listen", qNext: "Next question", wNext: "New word", right: "Correct!", wrong: "The answer is",
   score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
@@ -1316,6 +1383,7 @@ function render(animate) {
   $("editBtn").textContent = ui.edit; $("setBtn").textContent = ui.set;
   drawEditor(); drawWorld(); drawSettings(); drawZen(); drawReview();
   if (window.sdbSyncLabel) window.sdbSyncLabel();
+  if (window.sdbDrawAccount) window.sdbDrawAccount();
   $("btn").textContent = ui.btn;
   $("eyebrow").textContent = ui.eyebrow;
   $("modeDaily").textContent = ui.daily;
