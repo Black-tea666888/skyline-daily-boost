@@ -580,6 +580,11 @@
   .tutart .home .app::after { content: "Daily Boost"; position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: .62rem; white-space: nowrap; }
   .tutart .mini-row { width: 78%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.95); color: #1a1f36; font-weight: 600; }
   .tutart svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .rguide { margin-bottom: 14px; padding: 14px 16px; border-radius: 16px; background: rgba(255,196,107,.14); border: 1px solid rgba(255,196,107,.35); font-size: .88rem; line-height: 1.55; }
+  .rguide b { display: block; margin-bottom: 6px; }
+  .rguide ol { margin: 0 0 12px; padding-left: 22px; list-style: decimal; }
+  .rguide li { margin: 3px 0; }
+  .rguide .chip { width: 100%; padding: 10px; }
   /* ---------- Glass switch ---------- */
   .merow { cursor: default; }
   .melist .merow::after { display: none; }
@@ -840,6 +845,11 @@
       </div>
     </div>
     <div id="paneRemind" role="tabpanel" hidden>
+      <div class="rguide" id="rGuide" hidden>
+        <b id="rGuideT"></b>
+        <ol id="rGuideSteps"></ol>
+        <button class="chip acmain" id="rGuideBtn" type="button"></button>
+      </div>
       <form class="rform" id="rForm">
         <div class="rrow">
           <input type="time" id="rTime" value="08:00" required>
@@ -1196,7 +1206,7 @@ Object.assign(UI.zh, {
   signIn: "登入", account: "帳號", musLabel: "你的音樂", musPaste: "貼上歌單連結", musSave: "加入", musRemove: "移除",
   musBad: "看不懂這個連結。請貼上歌單、專輯或歌曲的分享連結。", musOpenIn: n => `在 ${n} 打開`, musNow: n => `來自 ${n}`,
   musHint: "Spotify 和 Apple Music 要在這個瀏覽器登入才能播完整歌曲，沒登入只能聽試聽片段。", musQuery: "讀書 專注 音樂",
-  tutWatch: "看教學", tutClose: "關閉", tutPrev: "上一步", tutNext: "下一步", tutDone: "完成", tutStep: (a, b) => `第 ${a} 步，共 ${b} 步`,
+  rGuideT: "iPhone 要先加到主畫面，提醒才會跳通知", rGuideSteps: ["在 Safari 點網址列旁的選單，再點「分享」", "選「加入主畫面」，再點「加入」", "從主畫面的 Daily Boost 圖示打開", "回到這裡按「開啟通知」並選「允許」"], rGuideBtn: "看圖文教學", tutWatch: "看教學", tutClose: "關閉", tutPrev: "上一步", tutNext: "下一步", tutDone: "完成", tutStep: (a, b) => `第 ${a} 步，共 ${b} 步`,
   installRow: "加到主畫面（教學）",
   tut: [
     ["打開選單", "在 Safari 下方，點網址列左邊的選單按鈕。舊版 iPhone 是直接點下方中間的「分享」按鈕，那就跳到下一步。"],
@@ -1278,7 +1288,7 @@ Object.assign(UI.en, {
   signIn: "Sign in", account: "Account", musLabel: "Your music", musPaste: "Paste a playlist link", musSave: "Add", musRemove: "Remove",
   musBad: "That link wasn't recognized. Paste a share link to a playlist, album or song.", musOpenIn: n => `Open in ${n}`, musNow: n => `From ${n}`,
   musHint: "Spotify and Apple Music play full songs only if you're signed in on this browser; otherwise you'll hear previews.", musQuery: "focus study music",
-  tutWatch: "Show me how", tutClose: "Close", tutPrev: "Back", tutNext: "Next", tutDone: "Done", tutStep: (a, b) => `Step ${a} of ${b}`,
+  rGuideT: "On iPhone, add the site to your Home Screen first so reminders can notify you", rGuideSteps: ["In Safari, tap the menu next to the address bar, then Share", "Choose Add to Home Screen, then Add", "Open Daily Boost from its Home Screen icon", "Come back here, tap Enable alerts and choose Allow"], rGuideBtn: "Show the illustrated guide", tutWatch: "Show me how", tutClose: "Close", tutPrev: "Back", tutNext: "Next", tutDone: "Done", tutStep: (a, b) => `Step ${a} of ${b}`,
   installRow: "Add to Home Screen (guide)",
   tut: [
     ["Open the menu", "In Safari, tap the menu button to the left of the address bar. On older iPhones, tap the Share button in the middle of the bottom bar and skip to the next step."],
@@ -1920,7 +1930,11 @@ function renderTools() {
   document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
   lensTo(page, !!window.__lensReady); window.__lensReady = true;
   $("meTitle").textContent = ui.meTitle;
-  $("installRow").hidden = !(isIOS() && !isStandalone()); $("installRow").textContent = ui.installRow; $("toolsTitle").textContent = ui.pages[page] || "";
+  const needHome = isIOS() && !isStandalone();
+  $("installRow").hidden = !needHome; $("installRow").textContent = ui.installRow;
+  $("rGuide").hidden = !needHome;
+  $("rGuideT").textContent = ui.rGuideT; $("rGuideBtn").textContent = ui.rGuideBtn;
+  $("rGuideSteps").innerHTML = ui.rGuideSteps.map(x => `<li>${esc(x)}</li>`).join(""); $("toolsTitle").textContent = ui.pages[page] || "";
   $("sndLabel").textContent = ui.sndLabel; drawMusic();
   drawSound();
   $("notifyLbl").textContent = ui.alertsLbl; $("notifyBtn").setAttribute("aria-checked", alertsOn()); $("notifyBtn").setAttribute("aria-label", ui.alertsLbl);
@@ -2002,7 +2016,7 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "35";
+const APP_VERSION = "36";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -2195,6 +2209,7 @@ $("tutor").onclick = e => { if (e.target.id === "tutor") $("tutor").hidden = tru
   });
 })();
 $("installRow").onclick = openTutor;
+$("rGuideBtn").onclick = openTutor;
 $("alertClose").onclick = () => { $("alertBox").hidden = true; };
 $("alertBox").onclick = e => { if (e.target.id === "alertBox") $("alertBox").hidden = true; };
 $("notifyBtn").onclick = async () => {
