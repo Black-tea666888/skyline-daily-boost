@@ -548,6 +548,17 @@
   .tmusic { justify-items: stretch; }
   .musgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
   .musgrid a { text-decoration: none; color: inherit; text-align: center; padding: 10px 6px; font-size: .88rem; font-weight: 600; }
+  .musmoods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
+  .musmoods button { padding: 12px 6px; border-radius: 14px; text-align: center; line-height: 1.25; }
+  .musmoods button b { display: block; font-size: .9rem; }
+  .musmoods button span { display: block; font-size: .7rem; opacity: .7; margin-top: 2px; }
+  .musmoods button[aria-pressed="true"] { background: rgba(255,255,255,.92) !important; color: #1a1f36; }
+  body.light .musmoods button[aria-pressed="true"] { background: #1a1f36 !important; color: #fff; }
+  .musopts { width: 100%; display: grid; gap: 10px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); font-size: .88rem; }
+  body.light .musopts { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.08); }
+  .musplayer .ytbox { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: #000; }
+  .musplayer .ytbox iframe, .musplayer .spbox iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .musplayer .spbox { width: 100%; height: 352px; border-radius: 14px; overflow: hidden; }
   .musform { display: flex; gap: 8px; width: 100%; }
   .musform input { flex: 1; min-width: 0; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: inherit; font: inherit; font-size: .88rem; }
   body.light .musform input { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); }
@@ -794,12 +805,18 @@
           </div>
           <div class="tsound tmusic">
             <div class="tsrow"><span class="tslabel" id="musLabel"></span></div>
+            <div class="musmoods" id="musMoods"></div>
             <div class="musgrid" id="musOpen"></div>
             <form class="musform" id="musForm">
               <input id="musUrl" type="url" inputmode="url" autocomplete="off">
               <button class="chip" id="musSave" type="submit"></button>
             </form>
             <div class="musplayer" id="musPlayer"></div>
+            <div class="musopts">
+              <div class="tsrow"><span id="optAutoL"></span><button class="gswitch" id="optAuto" type="button" role="switch"><span class="knob"></span></button></div>
+              <div class="tsrow"><span id="optLayerL"></span><button class="gswitch" id="optLayer" type="button" role="switch"><span class="knob"></span></button></div>
+              <div class="tsrow"><span id="optFadeL"></span><button class="gswitch" id="optFade" type="button" role="switch"><span class="knob"></span></button></div>
+            </div>
             <div class="mushint" id="musHint"></div>
           </div>
         </div>
@@ -1203,7 +1220,9 @@ Object.assign(UI.zh, {
   notifySent: "已送出一則測試通知", notifyOnToast: "通知已開啟",
   share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
-  signIn: "登入", account: "帳號", musLabel: "你的音樂", musPaste: "貼上歌單連結", musSave: "加入", musRemove: "移除",
+  signIn: "登入", account: "帳號", musLabel: "你的音樂", moods: [["Lo-fi", "輕鬆節奏"], ["Chill", "放鬆慢一點"], ["Classical", "古典專注"]],
+  optAuto: "按開始就播放，結束自動暫停", optLayer: "同時播背景聲音", optFade: "最後 10 秒慢慢變小聲",
+  musCtlNo: n => `${n} 不開放網站控制，要自己按播放；淡出只對背景聲音有效。`, musIOS: "iPhone 第一次請先在播放器裡按一下播放，之後就能跟著計時器自動播放。", musPaste: "貼上歌單連結", musSave: "加入", musRemove: "移除",
   musBad: "看不懂這個連結。請貼上歌單、專輯或歌曲的分享連結。", musOpenIn: n => `在 ${n} 打開`, musNow: n => `來自 ${n}`,
   musHint: "Spotify 和 Apple Music 要在這個瀏覽器登入才能播完整歌曲，沒登入只能聽試聽片段。", musQuery: "讀書 專注 音樂",
   rGuideT: "iPhone 要先加到主畫面，提醒才會跳通知", rGuideSteps: ["在 Safari 點網址列旁的選單，再點「分享」", "選「加入主畫面」，再點「加入」", "從主畫面的 Daily Boost 圖示打開", "回到這裡按「開啟通知」並選「允許」"], rGuideBtn: "看圖文教學", tutWatch: "看教學", tutClose: "關閉", tutPrev: "上一步", tutNext: "下一步", tutDone: "完成", tutStep: (a, b) => `第 ${a} 步，共 ${b} 步`,
@@ -1285,7 +1304,9 @@ Object.assign(UI.en, {
   notifySent: "Test alert sent", notifyOnToast: "Alerts on",
   share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
-  signIn: "Sign in", account: "Account", musLabel: "Your music", musPaste: "Paste a playlist link", musSave: "Add", musRemove: "Remove",
+  signIn: "Sign in", account: "Account", musLabel: "Your music", moods: [["Lo-fi", "easy beats"], ["Chill", "slow down"], ["Classical", "deep focus"]],
+  optAuto: "Play when I start, pause when it ends", optLayer: "Also play background sound", optFade: "Fade out in the last 10 seconds",
+  musCtlNo: n => `${n} can't be controlled by websites, so press play yourself. The fade only applies to background sound.`, musIOS: "On iPhone, tap play in the player once first; after that it follows the timer.", musPaste: "Paste a playlist link", musSave: "Add", musRemove: "Remove",
   musBad: "That link wasn't recognized. Paste a share link to a playlist, album or song.", musOpenIn: n => `Open in ${n}`, musNow: n => `From ${n}`,
   musHint: "Spotify and Apple Music play full songs only if you're signed in on this browser; otherwise you'll hear previews.", musQuery: "focus study music",
   rGuideT: "On iPhone, add the site to your Home Screen first so reminders can notify you", rGuideSteps: ["In Safari, tap the menu next to the address bar, then Share", "Choose Add to Home Screen, then Add", "Open Daily Boost from its Home Screen icon", "Come back here, tap Enable alerts and choose Allow"], rGuideBtn: "Show the illustrated guide", tutWatch: "Show me how", tutClose: "Close", tutPrev: "Back", tutNext: "Next", tutDone: "Done", tutStep: (a, b) => `Step ${a} of ${b}`,
@@ -1849,26 +1870,30 @@ function tick() {
   timer.left = Math.max(0, Math.round((timer.end - Date.now()) / 1000));
   if (timer.left === 0) {
     clearInterval(timer.id); timer.running = false; timer.status = "done";
+    musicStop();
     store.set(roundsKey(), store.get(roundsKey(), 0) + 1);
     chime(); confetti();
     const fq = Q(Math.floor(Math.random() * allLen()))[lang];
     toast(fq); notify(UI[lang].tDone, fq);
     logFocus(timer.total / 60);
     timer.left = timer.total;
-  }
+  } else if (timer.running) musFade(timer.left);
   drawTimer();
 }
 function startPause() {
   if (timer.running) {
     clearInterval(timer.id); timer.running = false; timer.status = "paused";
+    musicStop();
   } else {
     timer.end = Date.now() + timer.left * 1000;
     timer.running = true; timer.status = "run";
     timer.id = setInterval(tick, 250);
+    musicStart();
   }
   drawTimer();
 }
 function setLength(min) {
+  if (timer.running) musicStop();
   clearInterval(timer.id);
   Object.assign(timer, { total: min * 60, left: min * 60, running: false, status: "idle" });
   drawTimer();
@@ -1996,19 +2021,88 @@ function drawMusic() {
   $("musUrl").placeholder = ui.musPaste; $("musSave").textContent = ui.musSave;
   const saved = store.get("sdb.music", null), mu = saved && parseMusic(saved);
   const box = $("musPlayer"), name = mu && MUSIC.find(m => m.id === mu.p).name;
-  if (!mu) { box.innerHTML = ""; $("musHint").textContent = ""; return; }
+  drawMusOpts(ui, saved);
+  if (!mu) { box.innerHTML = ""; box.dataset.src = ""; musCtl = null; $("musHint").textContent = ""; return; }
   if (box.dataset.src !== saved) {
-    box.dataset.src = saved;
-    box.innerHTML = (mu.embed
-      ? `<iframe src="${mu.embed}" height="${mu.h}" loading="lazy" allow="autoplay; encrypted-media; clipboard-write; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" title="${name}"></iframe>`
-      : `<a class="chip musopen" href="${esc(mu.open)}" target="_blank" rel="noopener noreferrer"></a>`) +
-      `<div class="musbar"><span class="musfrom"></span><button class="aclink" id="musRemove" type="button"></button></div>`;
+    box.dataset.src = saved; musCtl = null;
+    const holder = mu.p === "ytm" ? `<div class="ytbox"><div id="ytSlot"></div></div>`
+      : mu.p === "spotify" ? `<div class="spbox"><div id="spSlot"></div></div>`
+      : mu.embed ? `<iframe src="${mu.embed}" height="${mu.h}" loading="lazy" allow="autoplay; encrypted-media; clipboard-write; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" title="${name}" style="width:100%;border:0;border-radius:14px"></iframe>`
+      : `<a class="chip musopen" href="${esc(mu.open)}" target="_blank" rel="noopener noreferrer"></a>`;
+    box.innerHTML = holder + `<div class="musbar"><span class="musfrom"></span><button class="aclink" id="musRemove" type="button"></button></div>`;
+    if (mu.p === "ytm") makeYT(mu); else if (mu.p === "spotify") makeSpotify(mu);
   }
   const o = box.querySelector(".musopen"); if (o) o.textContent = ui.musOpenIn(name);
   box.querySelector(".musfrom").textContent = ui.musNow(name);
   $("musRemove").textContent = ui.musRemove;
   $("musRemove").onclick = () => { store.set("sdb.music", null); box.dataset.src = ""; drawMusic(); };
-  $("musHint").textContent = mu.p === "spotify" || mu.p === "apple" ? ui.musHint : "";
+  const hints = [];
+  if (mu.p === "spotify" || mu.p === "apple") hints.push(ui.musHint);
+  if (mu.p === "apple" || mu.p === "kkbox") hints.push(ui.musCtlNo(name));
+  else if (isIOS()) hints.push(ui.musIOS);
+  $("musHint").textContent = hints.join(" ");
+}
+/* mood presets: verified public sources */
+const MOODS = ["https://www.youtube.com/watch?v=jfKfPfyJRdk", "https://www.youtube.com/watch?v=rUxyKA_-grg", "https://open.spotify.com/playlist/37i9dQZF1DX8NTLI2TtZa6"];
+function drawMusOpts(ui, saved) {
+  $("musMoods").innerHTML = ui.moods.map((m, i) => `<button class="chip" type="button" data-mood="${i}" aria-pressed="${saved === MOODS[i]}"><b>${m[0]}</b><span>${m[1]}</span></button>`).join("");
+  $("optAutoL").textContent = ui.optAuto; $("optLayerL").textContent = ui.optLayer; $("optFadeL").textContent = ui.optFade;
+  $("optAuto").setAttribute("aria-checked", store.get("sdb.musAuto", true));
+  $("optLayer").setAttribute("aria-checked", noiseOn);
+  $("optFade").setAttribute("aria-checked", store.get("sdb.musFade", true));
+  ["optAuto", "optLayer", "optFade"].forEach(id => $(id).setAttribute("aria-label", $(id + "L").textContent));
+}
+$("musMoods").onclick = e => { const b = e.target.closest("[data-mood]"); if (!b) return; store.set("sdb.music", MOODS[+b.dataset.mood]); drawMusic(); };
+$("optAuto").onclick = () => { store.set("sdb.musAuto", !store.get("sdb.musAuto", true)); drawMusic(); };
+$("optFade").onclick = () => { store.set("sdb.musFade", !store.get("sdb.musFade", true)); drawMusic(); };
+$("optLayer").onclick = () => { noise(!noiseOn); drawSound(); drawMusic(); };
+
+/* controllable players: YouTube and Spotify expose play/pause to the page */
+let musCtl = null, ytApi = null, spApi = null, musBaseVol = null;
+const loadScript = src => new Promise((res, rej) => { if (document.querySelector(`script[src="${src}"]`)) return res(); const sc = document.createElement("script"); sc.src = src; sc.async = true; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+function makeYT(mu) {
+  const u = new URL(mu.open), list = u.searchParams.get("list"), v = u.hostname === "youtu.be" ? u.pathname.slice(1) : u.searchParams.get("v");
+  const create = () => {
+    if (!$("ytSlot")) return;
+    const pl = new YT.Player("ytSlot", { host: "https://www.youtube-nocookie.com", width: "100%", height: "100%",
+      videoId: v || undefined, playerVars: Object.assign({ playsinline: 1, rel: 0, modestbranding: 1 }, list ? { listType: "playlist", list } : {}),
+      events: { onReady: () => { musCtl = { kind: "yt", play: () => pl.playVideo(), pause: () => pl.pauseVideo(), getVol: () => pl.getVolume(), setVol: x => pl.setVolume(x) }; } } });
+  };
+  if (window.YT && YT.Player) return create();
+  window.onYouTubeIframeAPIReady = create;
+  loadScript("https://www.youtube.com/iframe_api").catch(() => {});
+}
+function makeSpotify(mu) {
+  const m = mu.embed.match(/embed\/(\w+)\/([A-Za-z0-9]+)/); if (!m) return;
+  const create = api => {
+    if (!$("spSlot")) return;
+    api.createController($("spSlot"), { uri: `spotify:${m[1]}:${m[2]}`, width: "100%", height: 352 },
+      c => { musCtl = { kind: "sp", play: () => c.resume ? c.resume() : c.play(), pause: () => c.pause(), getVol: null, setVol: null }; });
+  };
+  if (spApi) return create(spApi);
+  window.onSpotifyIframeApiReady = api => { spApi = api; create(api); };
+  loadScript("https://open.spotify.com/embed/iframe-api/v1").catch(() => {});
+}
+function musicStart() {
+  if (!store.get("sdb.musAuto", true)) return;
+  musFadeReset();
+  try { musCtl && musCtl.play(); } catch (e) {}
+}
+function musicStop() {
+  if (!store.get("sdb.musAuto", true)) { musFadeReset(); return; }
+  try { musCtl && musCtl.pause(); } catch (e) {}
+  setTimeout(musFadeReset, 400);
+}
+function musFade(left) {
+  if (!store.get("sdb.musFade", true) || left > 10) return;
+  const k = Math.max(0, left / 10);
+  if (musCtl && musCtl.setVol) { if (musBaseVol === null) musBaseVol = musCtl.getVol() || 100; musCtl.setVol(Math.round(musBaseVol * k)); }
+  if (noiseGain && noiseCtx) noiseGain.gain.setTargetAtTime(vol * SND_GAIN[sndType] * k, noiseCtx.currentTime, .15);
+}
+function musFadeReset() {
+  if (musCtl && musCtl.setVol && musBaseVol !== null) musCtl.setVol(musBaseVol);
+  musBaseVol = null;
+  if (noiseGain && noiseCtx) noiseGain.gain.setTargetAtTime(vol * SND_GAIN[sndType], noiseCtx.currentTime, .3);
 }
 $("musForm").onsubmit = e => {
   e.preventDefault();
@@ -2016,7 +2110,7 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "37";
+const APP_VERSION = "38";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -2131,7 +2225,7 @@ function drawSound() {
   if (sp.querySelectorAll("[data-snd]").length !== keys.length) sp.innerHTML = keys.map(k => `<button class="chip" type="button" data-snd="${k}"></button>`).join("");
   sp.querySelectorAll("[data-snd]").forEach(b => { b.textContent = ui.snd[b.dataset.snd]; b.setAttribute("aria-pressed", b.dataset.snd === sndType); });
 }
-$("noiseBtn").onclick = () => { noise(!noiseOn); drawSound(); };
+$("noiseBtn").onclick = () => { noise(!noiseOn); drawSound(); $("optLayer").setAttribute("aria-checked", noiseOn); };
 document.addEventListener("pointerdown", e => {
   const sw = e.target.closest(".gswitch"); if (!sw) return;
   sw.classList.add("press");
