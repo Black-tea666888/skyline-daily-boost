@@ -478,45 +478,20 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 12px 30px rgba(0,0,0,.3);
   }
   .bnav button { flex: 1; border: 0; background: transparent; color: inherit; font: inherit; font-size: .9rem; font-weight: 600; padding: 11px 6px; border-radius: 999px; cursor: pointer; opacity: .75; transition: opacity .25s ease; background: none !important; }
-  .bnav { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-  .bnav button { position: relative; z-index: 1; }
-  .bnav button[aria-current="page"] { opacity: 0; background: none !important; }
-  .bnav.dragging button[aria-current="page"] { opacity: .75; }
+  .bnav button { position: relative; z-index: 1; transition: color .3s ease, opacity .3s ease; }
+  .bnav button[aria-current="page"] { opacity: 1; color: #c2620a; }
+  body:not(.light) .bnav button[aria-current="page"] { color: #ffb35c; }
   .lens {
-    position: absolute; top: 5px; bottom: 5px; left: 0; width: 100px; z-index: 2; pointer-events: none;
-    border-radius: 999px; overflow: hidden;
-    transform: translateX(var(--x, 0px)) scale(var(--sx, 1), calc(var(--sy, 1) * var(--sy2, 1)));
-    transition: transform .55s cubic-bezier(.3, 1.45, .45, 1);
-    background: linear-gradient(180deg, rgba(60,66,100,.72), rgba(30,34,60,.66) 55%, rgba(60,66,100,.7));
-    backdrop-filter: blur(7px) saturate(170%) brightness(1.1); -webkit-backdrop-filter: blur(7px) saturate(170%) brightness(1.1);
-    box-shadow: inset 0 1.5px 1px rgba(255,255,255,.75), inset 0 -2px 3px rgba(255,255,255,.18), inset 0 0 0 1px rgba(255,255,255,.35),
-                inset 0 0 18px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
+    position: absolute; top: 5px; bottom: 5px; left: 0; width: 0; z-index: 0; pointer-events: none; border-radius: 999px;
+    transform: translate3d(var(--x, 0px), 0, 0); will-change: transform;
+    transition: transform .45s cubic-bezier(.22, 1, .36, 1);
+    background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,245,250,.92));
+    box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255,255,255,.9), 0 4px 14px rgba(0,0,0,.18);
   }
-  .lens.drag { transition: transform .08s linear; }
-  .lens.moving::before, .lens.drag::before { opacity: .62; }
-  .lens.moving, .lens.drag { --sy2: 1.32; }
-  /* colored fringe along the rim, like light bending through glass */
-  .lens::before {
-    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px; z-index: 2;
-    background: conic-gradient(from 200deg, rgba(255,120,60,.85), rgba(255,220,90,.6), rgba(80,220,255,.75), rgba(170,90,255,.7), rgba(255,80,160,.7), rgba(255,120,60,.85));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    filter: blur(1.2px); opacity: .18; transition: opacity .3s;
-  }
-  /* soft inner shine */
-  .lens::after {
-    content: ""; position: absolute; left: 12%; right: 12%; top: 3px; height: 38%; border-radius: 999px; z-index: 3;
-    background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
-  }
-  /* magnified copy of the labels, seen through the lens */
-  .lens-track { position: absolute; top: -5px; height: calc(100% + 10px); display: flex; gap: 4px; transform-origin: var(--ox, 50px) 50%; transform: scale(1.08); transition: transform .55s cubic-bezier(.3, 1.45, .45, 1); }
-  .lens.drag .lens-track { transition: none; }
-  .lens.moving .lens-track, .lens.drag .lens-track { transform: scale(1.24, .94); }
-  .lens-track span { flex: none; display: grid; place-items: center; font-size: .9rem; font-weight: 700; color: #ffb35c; text-shadow: 0 0 10px rgba(255,170,80,.35); }
-  body.light .lens-track span { color: #c2620a; text-shadow: none; }
-  body.light .lens { background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.6) 55%, rgba(255,255,255,.75)); }
-  @media (prefers-reduced-motion: reduce) { .lens, .lens-track { transition: none; } }
-  body.light .bnav { background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55)); border-color: rgba(255,255,255,.8); }
+  body:not(.light) .lens { background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.1)); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 0 0 1px rgba(255,255,255,.22), 0 4px 14px rgba(0,0,0,.3); }
+  @media (prefers-reduced-motion: reduce) { .lens { transition: none; } }
+  body.light .bnav { background: linear-gradient(180deg, rgba(246,247,252,.95), rgba(232,234,244,.92)); border-color: rgba(255,255,255,.9); }
+  body:not(.light) .bnav { background: linear-gradient(180deg, rgba(40,46,80,.88), rgba(24,28,52,.9)); }
   body.zen .bnav { display: none; }
   .melist { display: grid; gap: 8px; }
   .melist .chip { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; border-radius: 16px; font-size: .95rem; text-align: left; white-space: normal; }
@@ -551,10 +526,10 @@
   .hint { display: none; }
   @media (hover: hover) and (pointer: fine) { body[data-page="today"] .hint { display: block; } }
   /* ---------- Page transitions ---------- */
-  @keyframes pageInR { from { opacity: 0; transform: translateX(28px) scale(.985); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
-  @keyframes pageInL { from { opacity: 0; transform: translateX(-28px) scale(.985); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
-  .page-in-r { animation: pageInR .42s cubic-bezier(.22, 1, .36, 1) both; }
-  .page-in-l { animation: pageInL .42s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes pageInR { from { opacity: 0; transform: translate3d(18px, 0, 0); } to { opacity: 1; transform: none; } }
+  @keyframes pageInL { from { opacity: 0; transform: translate3d(-18px, 0, 0); } to { opacity: 1; transform: none; } }
+  .page-in-r { animation: pageInR .32s cubic-bezier(.22, 1, .36, 1) both; }
+  .page-in-l { animation: pageInL .32s cubic-bezier(.22, 1, .36, 1) both; }
   .page-in-r + .page-in-r, .page-in-l + .page-in-l { animation-delay: .05s; }
   @keyframes paneIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .pane-in { animation: paneIn .3s cubic-bezier(.22, 1, .36, 1) both; }
@@ -600,7 +575,7 @@
     position: relative; isolation: isolate;
     background: linear-gradient(140deg, rgba(255,255,255,.16), rgba(255,255,255,.04) 45%, rgba(255,255,255,.08));
     border: 1px solid var(--g-edge);
-    backdrop-filter: blur(28px) saturate(185%) brightness(1.04); -webkit-backdrop-filter: blur(28px) saturate(185%) brightness(1.04);
+    backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
     box-shadow: inset 0 1px 0 var(--g-hi), inset 0 -1px 0 rgba(255,255,255,.07), inset 0 0 40px rgba(255,255,255,.05), 0 30px 70px rgba(0,0,0,.38);
   }
   .card::before {
@@ -851,7 +826,7 @@
   <button type="button" data-page="focus"></button>
   <button type="button" data-page="learn"></button>
   <button type="button" data-page="me"></button>
-  <div class="lens" id="lens" aria-hidden="true"><div class="lens-track" id="lensTrack"></div></div>
+  <div class="lens" id="lens" aria-hidden="true"></div>
 </nav>
 <div class="toast" id="toast" role="status"></div>
 <div class="zen" id="zen" hidden>
@@ -1863,7 +1838,7 @@ function renderTools() {
     $("pane" + T).hidden = tab !== t;
   });
   document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
-  buildLensTrack(); lensTo(page, !!window.__lensReady); window.__lensReady = true;
+  lensTo(page, !!window.__lensReady); window.__lensReady = true;
   $("meTitle").textContent = ui.meTitle; $("toolsTitle").textContent = ui.pages[page] || "";
   $("sndLabel").textContent = ui.sndLabel;
   drawSound();
@@ -1890,7 +1865,7 @@ new MutationObserver(muts => {
   segs.forEach(sg => requestAnimationFrame(() => syncSeg(sg)));
 }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "aria-selected"] });
 window.addEventListener("resize", () => segSyncAll(true));
-const APP_VERSION = "32";
+const APP_VERSION = "33";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -1908,71 +1883,17 @@ function showPage(p, scroll = true) {
   if (scroll) window.scrollTo({ top: 0 });
   requestAnimationFrame(() => segSyncAll(true));
 }
-/* liquid glass lens that slides between pages */
-const navBtns = () => [...document.querySelectorAll("#bnav [data-page]")];
-function buildLensTrack() {
-  const bs = navBtns();
-  $("lensTrack").innerHTML = bs.map(b => `<span style="width:${b.offsetWidth}px">${esc(b.textContent)}</span>`).join("");
-}
-function placeLens(x, w, stretch) {
-  const lens = $("lens"), pad = 6;
-  const lw = w + pad * 2, lx = x - pad;
-  lens.style.width = lw + "px";
-  lens.style.setProperty("--x", lx + "px");
-  lens.style.setProperty("--sx", stretch ? 1.12 : 1);
-  lens.style.setProperty("--sy", stretch ? 0.94 : 1);
-  const first = navBtns()[0];
-  const track = $("lensTrack");
-  track.style.left = (first.offsetLeft - lx) + "px";
-  track.style.setProperty("--ox", (lx + lw / 2 - first.offsetLeft) + "px");
-}
+/* sliding pill behind the current page label */
 function lensTo(p, animate = true) {
-  const b = navBtns().find(x => x.dataset.page === p); if (!b) return;
+  const b = [...document.querySelectorAll("#bnav [data-page]")].find(x => x.dataset.page === p); if (!b) return;
   const lens = $("lens");
   if (!animate) lens.style.transition = "none";
-  if (animate) {
-    lens.classList.add("moving"); placeLens(b.offsetLeft, b.offsetWidth, true);
-    clearTimeout(lens._t1); clearTimeout(lens._t2);
-    lens._t1 = setTimeout(() => placeLens(b.offsetLeft, b.offsetWidth, false), 180);
-    lens._t2 = setTimeout(() => lens.classList.remove("moving"), 520);
-  }
-  else placeLens(b.offsetLeft, b.offsetWidth, false);
+  lens.style.width = b.offsetWidth + "px";
+  lens.style.setProperty("--x", b.offsetLeft + "px");
   if (!animate) { lens.offsetWidth; lens.style.transition = ""; }
 }
-let navDrag = null;
-$("bnav").addEventListener("pointerdown", e => {
-  const lens = $("lens"), r = lens.getBoundingClientRect();
-  if (e.clientX < r.left - 4 || e.clientX > r.right + 4) return; // only drag when grabbing the lens
-  navDrag = { start: e.clientX, x0: parseFloat(lens.style.getPropertyValue("--x")) || 0, moved: false };
-  lens.classList.add("drag"); $("bnav").classList.add("dragging"); $("bnav").setPointerCapture(e.pointerId);
-});
-$("bnav").addEventListener("pointermove", e => {
-  if (!navDrag) return;
-  const dx = e.clientX - navDrag.start; if (Math.abs(dx) > 4) navDrag.moved = true;
-  const bs = navBtns(), lens = $("lens"), pad = 6, w = bs[0].offsetWidth;
-  const min = bs[0].offsetLeft - pad, max = bs[bs.length - 1].offsetLeft - pad;
-  const x = Math.max(min - 10, Math.min(max + 10, navDrag.x0 + dx));
-  lens.style.setProperty("--x", x + "px"); lens.style.setProperty("--sx", 1.1); lens.style.setProperty("--sy", .95);
-  const track = $("lensTrack"), lw = w + pad * 2;
-  track.style.left = (bs[0].offsetLeft - x) + "px"; track.style.setProperty("--ox", (x + lw / 2 - bs[0].offsetLeft) + "px");
-});
-const endDrag = e => {
-  if (!navDrag) return;
-  const lens = $("lens"); lens.classList.remove("drag"); $("bnav").classList.remove("dragging");
-  const moved = navDrag.moved; navDrag = null;
-  if (!moved) return; // a tap: let the click handler decide
-  const r = lens.getBoundingClientRect(), cx = r.left + r.width / 2;
-  const target = navBtns().reduce((a, b) => { const br = b.getBoundingClientRect(); const d = Math.abs(br.left + br.width / 2 - cx); return d < a.d ? { b, d } : a; }, { b: null, d: 1e9 }).b;
-  window.__navDragged = Date.now();
-  if (target) showPage(target.dataset.page);
-};
-$("bnav").addEventListener("pointerup", endDrag);
-$("bnav").addEventListener("pointercancel", endDrag);
-$("bnav").onclick = e => {
-  if (window.__navDragged && Date.now() - window.__navDragged < 300) return;
-  const b = e.target.closest("[data-page]"); if (b) showPage(b.dataset.page);
-};
-window.addEventListener("resize", () => { buildLensTrack(); lensTo(page, false); });
+$("bnav").onclick = e => { const b = e.target.closest("[data-page]"); if (b) showPage(b.dataset.page); };
+window.addEventListener("resize", () => lensTo(page, false));
 $("tabFocus").onclick = () => { tab = "focus"; renderTools(); };
 $("tabGoals").onclick = () => { tab = "goals"; renderTools(); const pn = $("paneGoals"); pn.classList.remove("pane-in"); void pn.offsetWidth; pn.classList.add("pane-in"); };
 $("tabStats").onclick = () => { tab = "stats"; renderTools(); const pn = $("paneStats"); pn.classList.remove("pane-in"); void pn.offsetWidth; pn.classList.add("pane-in"); };
