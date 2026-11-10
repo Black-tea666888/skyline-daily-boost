@@ -420,7 +420,21 @@
 
   .chev { display: inline-block; width: 8px; height: 8px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); margin: 0 4px 1px 0; }
   .chev.l { transform: rotate(-135deg); margin: 0 0 1px 4px; }
-  .acbox { width: min(400px, 100%); text-align: left; }
+  .acbox { width: min(400px, 100%); text-align: left; max-height: 90vh; overflow-y: auto; }
+  .acpw { position: relative; display: grid; }
+  .acpw input { padding-right: 64px !important; }
+  .acpw .aclink { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
+  .acverify { font-size: .82rem; padding: 8px 10px; border-radius: 10px; background: rgba(255,196,107,.16); margin: 8px 0; line-height: 1.5; }
+  .acname { display: flex; gap: 8px; margin: 0 0 12px; }
+  .acname input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: inherit; font: inherit; }
+  body.light .acname input { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); }
+  .acmore { margin-top: 12px; font-size: .85rem; }
+  .acmore summary { cursor: pointer; opacity: .7; list-style: none; text-decoration: underline; text-underline-offset: 3px; }
+  .acmore summary::-webkit-details-marker { display: none; }
+  .acmore .aclink { display: block; margin: 8px 0 0; }
+  .acdanger { color: #ff9b8a !important; opacity: 1 !important; }
+  body.light .acdanger { color: #b3261e !important; }
+  .acav-mini { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; margin-right: 6px; font-size: .7rem; font-weight: 700; color: #fff; background: linear-gradient(140deg, #7a3f78, #f08a5d) center/cover; vertical-align: -5px; }
   .acsub { font-size: .85rem; opacity: .75; line-height: 1.55; margin: 4px 0 12px; }
   .acwide { width: 100%; padding: 11px; font-size: .95rem; }
   .acor { text-align: center; font-size: .78rem; opacity: .6; margin: 14px 0 10px; }
@@ -711,18 +725,26 @@
       <div class="acor" id="acOr"></div>
       <form id="acForm" autocomplete="on">
         <input id="acEmail" type="email" autocomplete="email" required>
-        <input id="acPass" type="password" autocomplete="current-password" minlength="6" required>
+        <div class="acpw"><input id="acPass" type="password" autocomplete="current-password" minlength="6" required><button class="aclink" id="acShow" type="button"></button></div>
         <div class="acrow"><button class="chip acmain" id="acLogin" type="submit"></button><button class="chip" id="acCreate" type="button"></button></div>
         <button class="aclink" id="acForgot" type="button"></button>
       </form>
     </div>
     <div id="acIn" hidden>
       <div class="acme"><div class="acav" id="acAv"></div><div><b id="acName"></b><div class="acsub" id="acMail"></div></div></div>
+      <div class="acverify" id="acVerify" hidden><span id="acVerifyT"></span> <button class="aclink" id="acVerifySend" type="button"></button></div>
       <p class="acsub" id="acRemember"></p>
+      <div class="acname"><input id="acNameIn" maxlength="30"><button class="chip" id="acNameSave" type="button"></button></div>
       <div class="acsaved" id="acSavedT"></div>
       <div class="acgrid" id="acGrid"></div>
       <div class="acsub" id="acLast"></div>
       <div class="acrow"><button class="chip" id="acSyncNow" type="button"></button><button class="chip" id="acSignOut" type="button"></button></div>
+      <details class="acmore"><summary id="acMoreT"></summary>
+        <button class="aclink" id="acPwReset" type="button"></button>
+        <button class="aclink" id="acExport" type="button"></button>
+        <button class="aclink acdanger" id="acDelete" type="button"></button>
+        <p class="acsub" id="acDeleteNote"></p>
+      </details>
     </div>
     <p class="acerr" id="acErr" role="alert"></p>
   </div>
@@ -998,6 +1020,11 @@ Object.assign(UI.zh, {
   acNeedEmail: "請先輸入電子郵件。", acHello: "已登入", acRemember: "這台裝置會記住你的登入，下次打開不用再登入。",
   acSaved: "存在帳號裡的資料", acFavs: "收藏的句子", acStreak: "連續天數", acQuiz: "已作答題目", acCustom: "自訂內容", acRem: "提醒",
   acLast: "最後同步", acNever: "尚未同步", acSyncNow: "立即同步", acSignOut: "登出", acClose: "關閉",
+  acShow: "顯示", acHide: "隱藏", acBusy: "請稍候…", acWelcome: n => `歡迎回來，${n}`, acCreated: "帳號已建立，驗證信已寄到你的信箱。",
+  acMerged: "已把這台裝置上的資料和帳號合併。", acVerifyT: "電子郵件尚未驗證。", acVerifySend: "重寄驗證信", acVerifySent: "驗證信已寄出。",
+  acNamePh: "顯示名稱", acNameSave: "儲存", acNameSaved: "名稱已更新", acMoreT: "更多帳號選項", acPwReset: "寄送更改密碼的信",
+  acExport: "下載我的資料（JSON）", acDelete: "刪除帳號", acDeleteQ: "再按一次會永久刪除帳號和雲端資料，無法復原。",
+  acDeleteNote: "這台裝置上的資料會保留。", acDeleted: "帳號已刪除", acRelogin: "為了安全，請先登出再登入一次，然後再刪除帳號。",
   acErr: { "auth/unauthorized-domain": "這個網址還沒加入 Firebase 的已授權網域，請到 Firebase → Authentication → Settings → Authorized domains 加入。",
     "auth/invalid-credential": "電子郵件或密碼不正確。", "auth/wrong-password": "電子郵件或密碼不正確。", "auth/user-not-found": "找不到這個帳號，可以按「建立帳號」。",
     "auth/email-already-in-use": "這個電子郵件已經註冊過，請直接登入。", "auth/weak-password": "密碼至少要 6 個字元。", "auth/invalid-email": "電子郵件格式不正確。",
@@ -1063,6 +1090,11 @@ Object.assign(UI.en, {
   acNeedEmail: "Enter your email first.", acHello: "Signed in", acRemember: "This device will remember you, so you won't need to sign in next time.",
   acSaved: "Saved to your account", acFavs: "Saved quotes", acStreak: "Day streak", acQuiz: "Questions answered", acCustom: "Custom items", acRem: "Reminders",
   acLast: "Last synced", acNever: "Not synced yet", acSyncNow: "Sync now", acSignOut: "Sign out", acClose: "Close",
+  acShow: "Show", acHide: "Hide", acBusy: "Please wait…", acWelcome: n => `Welcome back, ${n}`, acCreated: "Account created. We sent a verification email.",
+  acMerged: "Data on this device was combined with your account.", acVerifyT: "Your email isn't verified yet.", acVerifySend: "Resend email", acVerifySent: "Verification email sent.",
+  acNamePh: "Display name", acNameSave: "Save", acNameSaved: "Name updated", acMoreT: "More account options", acPwReset: "Email me a password change link",
+  acExport: "Download my data (JSON)", acDelete: "Delete account", acDeleteQ: "Tap again to permanently delete your account and cloud data. This can't be undone.",
+  acDeleteNote: "Data on this device is kept.", acDeleted: "Account deleted", acRelogin: "For security, sign out and sign in again, then delete the account.",
   acErr: { "auth/unauthorized-domain": "This site's address isn't on Firebase's allow list yet. Add it under Firebase → Authentication → Settings → Authorized domains.",
     "auth/invalid-credential": "Email or password is incorrect.", "auth/wrong-password": "Email or password is incorrect.", "auth/user-not-found": "No account with that email. Tap Create account.",
     "auth/email-already-in-use": "That email already has an account. Sign in instead.", "auth/weak-password": "Password must be at least 6 characters.", "auth/invalid-email": "That email doesn't look right.",

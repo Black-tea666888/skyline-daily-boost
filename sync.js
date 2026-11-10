@@ -4,7 +4,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithRedirect,
   getRedirectResult, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  sendPasswordResetEmail, setPersistence, browserLocalPersistence
+  sendPasswordResetEmail, setPersistence, browserLocalPersistence, sendEmailVerification,
+  updateProfile, deleteUser
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, doc, getDoc, setDoc, onSnapshot, serverTimestamp,
@@ -27,9 +28,17 @@ if (!deviceId) { deviceId = Math.random().toString(36).slice(2, 10); localStorag
 
 let user = null, unsub = null, pushTimer = null, applying = false, state = "idle", lastSync = store.get("sdb.lastSync", null);
 
+const fullName = () => user ? (user.displayName || (user.email || "").split("@")[0]) : "";
+const shortName = () => fullName().split(" ")[0].slice(0, 12);
+const photo = () => user && user.photoURL && /^https:\/\/[^'"()\s]+$/.test(user.photoURL) ? user.photoURL : "";
 function label() {
   btn.hidden = false;
-  btn.textContent = !user ? ui().signIn : state === "syncing" ? ui().syncing : ui().account;
+  if (!user) btn.textContent = ui().signIn;
+  else if (state === "syncing") btn.textContent = ui().syncing;
+  else {
+    const nm = shortName();
+    btn.innerHTML = `<span class="acav-mini"${photo() ? ` style="background-image:url('${photo()}')"` : ""}>${photo() ? "" : esc((nm[0] || "?").toUpperCase())}</span>${esc(nm || ui().account)}`;
+  }
   btn.setAttribute("aria-pressed", !!user);
   btn.title = user ? (user.email || "") : "";
 }
@@ -164,7 +173,8 @@ async function start(u) {
     const snap = await getDoc(ref);
     const mergedKey = "sdb.merged." + u.uid;
     if (snap.exists()) {
-      if (!store.get(mergedKey, false)) mergeFirst(snap.data()); else applyShared(snap.data().shared);
+      if (!store.get(mergedKey, false)) { mergeFirst(snap.data()); setTimeout(() => toast(ui().acMerged), 1800); }
+      else applyShared(snap.data().shared);
       applyLogs(snap.data().logs);
     }
     localStorage.setItem(mergedKey, "true");
@@ -183,7 +193,11 @@ async function start(u) {
 const $a = id => document.getElementById(id);
 const box = $a("acBox");
 const err = e => { const t = ui().acErr; $a("acErr").textContent = e ? (t[e.code] || t.other) : ""; if (e) console.warn(e); };
-const busy = on => ["acGoogle", "acLogin", "acCreate"].forEach(id => { $a(id).disabled = on; });
+let deleteArmed = false;
+const busy = (on, which) => {
+  ["acGoogle", "acLogin", "acCreate"].forEach(id => { $a(id).disabled = on; });
+  if (on && which) $a(which).textContent = ui().acBusy; else if (!on) drawAccount();
+};
 function drawAccount() {
   if (!box) return;
   const t = ui();
@@ -194,14 +208,23 @@ function drawAccount() {
     $a("acGoogle").textContent = t.acGoogle; $a("acOr").textContent = t.acOr;
     $a("acEmail").placeholder = t.acEmail; $a("acPass").placeholder = t.acPass;
     $a("acLogin").textContent = t.acLogin; $a("acCreate").textContent = t.acCreate; $a("acForgot").textContent = t.acForgot;
+    $a("acShow").textContent = $a("acPass").type === "password" ? t.acShow : t.acHide;
+    if (!$a("acEmail").value) $a("acEmail").value = store.get("sdb.lastEmail", "") || "";
     return;
   }
-  const name = user.displayName || (user.email || "").split("@")[0];
+  const name = fullName();
   $a("acTitle").textContent = t.acHello;
+  const unverified = user.email && !user.emailVerified && (user.providerData || []).some(p => p.providerId === "password");
+  $a("acVerify").hidden = !unverified;
+  $a("acVerifyT").textContent = t.acVerifyT; $a("acVerifySend").textContent = t.acVerifySend;
+  if (document.activeElement !== $a("acNameIn")) $a("acNameIn").value = user.displayName || "";
+  $a("acNameIn").placeholder = t.acNamePh; $a("acNameSave").textContent = t.acNameSave;
+  $a("acMoreT").textContent = t.acMoreT; $a("acPwReset").textContent = t.acPwReset; $a("acPwReset").hidden = !(user.providerData || []).some(p => p.providerId === "password");
+  $a("acExport").textContent = t.acExport; $a("acDelete").textContent = deleteArmed ? t.acDeleteQ : t.acDelete; $a("acDeleteNote").textContent = t.acDeleteNote;
   $a("acName").textContent = name; $a("acMail").textContent = user.email || "";
   const av = $a("acAv");
   av.textContent = user.photoURL ? "" : (name[0] || "?").toUpperCase();
-  av.style.backgroundImage = user.photoURL && /^https:\/\//.test(user.photoURL) ? `url("${user.photoURL.replace(/"/g, "")}")` : "";
+  av.style.backgroundImage = photo() ? `url('${photo()}')` : "";
   $a("acRemember").textContent = t.acRemember;
   $a("acSavedT").textContent = t.acSaved;
   const nCustom = ["cities", "companies", "quiz", "words"].reduce((n, k) => n + (custom[k] || []).length, 0) + myQuotes.length;
@@ -217,10 +240,12 @@ btn.onclick = openBox;
 $a("acClose").onclick = closeBox;
 box.onclick = e => { if (e.target === box) closeBox(); };
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeBox(); });
-const done = () => { closeBox(); toast(ui().signedIn); };
+const done = (msg) => { closeBox(); toast(msg || ui().acWelcome(shortName() || "")); };
+const rememberEmail = () => { const em = $a("acEmail").value.trim(); if (em) localStorage.setItem("sdb.lastEmail", JSON.stringify(em)); };
 $a("acGoogle").onclick = async () => {
-  err(null); busy(true);
+  err(null); busy(true, "acGoogle");
   const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
   try { await signInWithPopup(auth, provider); done(); }
   catch (e) {
     // popups are often blocked on phones and in home-screen apps
@@ -229,15 +254,20 @@ $a("acGoogle").onclick = async () => {
   } finally { busy(false); }
 };
 $a("acForm").onsubmit = async ev => {
-  ev.preventDefault(); err(null); busy(true);
-  try { await signInWithEmailAndPassword(auth, $a("acEmail").value.trim(), $a("acPass").value); done(); }
+  ev.preventDefault(); err(null); busy(true, "acLogin");
+  try { await signInWithEmailAndPassword(auth, $a("acEmail").value.trim(), $a("acPass").value); rememberEmail(); $a("acPass").value = ""; done(); }
   catch (e) { err(e); } finally { busy(false); }
 };
 $a("acCreate").onclick = async () => {
   err(null);
   if (!$a("acForm").reportValidity()) return;
-  busy(true);
-  try { await createUserWithEmailAndPassword(auth, $a("acEmail").value.trim(), $a("acPass").value); done(); }
+  busy(true, "acCreate");
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, $a("acEmail").value.trim(), $a("acPass").value);
+    rememberEmail(); $a("acPass").value = "";
+    sendEmailVerification(cred.user).catch(() => {});
+    done(ui().acCreated);
+  }
   catch (e) { err(e); } finally { busy(false); }
 };
 $a("acForgot").onclick = async () => {
@@ -245,7 +275,33 @@ $a("acForgot").onclick = async () => {
   if (!em) { $a("acErr").textContent = ui().acNeedEmail; return; }
   try { await sendPasswordResetEmail(auth, em); $a("acErr").textContent = ui().acResetSent; } catch (e) { err(e); }
 };
-$a("acSyncNow").onclick = async () => { await push(); drawAccount(); };
+$a("acShow").onclick = () => { const p = $a("acPass"); p.type = p.type === "password" ? "text" : "password"; drawAccount(); };
+$a("acVerifySend").onclick = async () => { try { await sendEmailVerification(user); $a("acErr").textContent = ui().acVerifySent; } catch (e) { err(e); } };
+$a("acNameSave").onclick = async () => {
+  const n = $a("acNameIn").value.trim().slice(0, 30);
+  try { await updateProfile(user, { displayName: n || null }); label(); drawAccount(); toast(ui().acNameSaved); } catch (e) { err(e); }
+};
+$a("acPwReset").onclick = async () => { try { await sendPasswordResetEmail(auth, user.email); $a("acErr").textContent = ui().acResetSent; } catch (e) { err(e); } };
+$a("acExport").onclick = () => {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith("sdb.")) { try { data[k] = JSON.parse(localStorage.getItem(k)); } catch (e) { data[k] = localStorage.getItem(k); } } }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: "skyline-daily-boost", exported: new Date().toISOString(), data }, null, 2)], { type: "application/json" }));
+  a.download = `daily-boost-data-${todayKey()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+$a("acDelete").onclick = async () => {
+  if (!deleteArmed) { deleteArmed = true; drawAccount(); setTimeout(() => { deleteArmed = false; drawAccount(); }, 6000); return; }
+  deleteArmed = false;
+  const u = user;
+  try {
+    await deleteDoc(doc(db, "boards", weekKey(), "entries", u.uid)).catch(() => {});
+    await deleteDoc(doc(db, "users", u.uid));
+    await deleteUser(u);
+    localStorage.removeItem("sdb.merged." + u.uid); localStorage.removeItem("sdb.boardName");
+    closeBox(); toast(ui().acDeleted);
+  } catch (e) { if (e.code === "auth/requires-recent-login") $a("acErr").textContent = ui().acRelogin; else err(e); drawAccount(); }
+};
+$a("acSyncNow").onclick = async () => { $a("acSyncNow").textContent = ui().acBusy; await push(); drawAccount(); };
 $a("acSignOut").onclick = async () => { await signOut(auth); closeBox(); toast(ui().signedOut); };
 
 getRedirectResult(auth).then(r => { if (r) toast(ui().signedIn); }).catch(e => { if (e && e.code) { openBox(); err(e); } });
