@@ -2060,7 +2060,15 @@ $("optLayer").onclick = () => { noise(!noiseOn); drawSound(); drawMusic(); };
 /* controllable players: YouTube and Spotify expose play/pause to the page */
 let musCtl = null, ytApi = null, spApi = null, musBaseVol = null;
 const loadScript = src => new Promise((res, rej) => { if (document.querySelector(`script[src="${src}"]`)) return res(); const sc = document.createElement("script"); sc.src = src; sc.async = true; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+// if a player's control script can't load, fall back to the plain embed (no auto play/pause)
+function musFallback(slotId, mu) {
+  setTimeout(() => {
+    const slot = $(slotId); if (!slot || musCtl) return;
+    slot.outerHTML = `<iframe src="${mu.embed}" allow="autoplay; encrypted-media; clipboard-write; fullscreen; picture-in-picture" title="player" style="width:100%;height:100%;border:0"></iframe>`;
+  }, 6000);
+}
 function makeYT(mu) {
+  musFallback("ytSlot", mu);
   const u = new URL(mu.open), list = u.searchParams.get("list"), v = u.hostname === "youtu.be" ? u.pathname.slice(1) : u.searchParams.get("v");
   const create = () => {
     if (!$("ytSlot")) return;
@@ -2074,6 +2082,7 @@ function makeYT(mu) {
 }
 function makeSpotify(mu) {
   const m = mu.embed.match(/embed\/(\w+)\/([A-Za-z0-9]+)/); if (!m) return;
+  musFallback("spSlot", mu);
   const create = api => {
     if (!$("spSlot")) return;
     api.createController($("spSlot"), { uri: `spotify:${m[1]}:${m[2]}`, width: "100%", height: 352 },
