@@ -742,22 +742,22 @@ const UI = {
   zh: {
     heading: "每日鼓勵", title: "Skyline Daily Boost · 每日鼓勵", btn: "換一組", lang: "English",
     eyebrow: "今日城市", daily: "今日一組", random: "隨機探索",
-    copy: "複製", copied: "已複製到剪貼簿", fav: "☆ 收藏", faved: "★ 已收藏",
+    copy: "複製", copied: "已複製到剪貼簿", fav: "收藏", faved: "已收藏",
     favAdded: "已加入收藏", favRemoved: "已取消收藏",
-    favs: "收藏", panel: "我的收藏", favSub: n => `${n} 句你選擇留下的話`, empty: "還沒有收藏。看到喜歡的句子，按下方的 ☆ 收藏，它就會留在這裡。",
+    favs: "收藏", panel: "我的收藏", favSub: n => `${n} 句你選擇留下的話`, empty: "還沒有收藏。看到喜歡的句子，按下方的「收藏」，它就會留在這裡。",
     remove: "移除", founded: "創立", hq: "總部", tipLabel: "學習小提示：",
-    streak: n => `🔥 連續 ${n} 天`, local: "當地時間",
+    streak: n => `連續 ${n} 天`, local: "當地時間",
     period: { night: "夜晚", dawn: "清晨", day: "白天", dusk: "黃昏" },
     hint: "快捷鍵：<kbd>空白</kbd> 換一組　<kbd>←</kbd><kbd>→</kbd> 上一組／下一組　<kbd>F</kbd> 收藏　<kbd>C</kbd> 複製　<kbd>L</kbd> 語言　<kbd>Z</kbd> 禪模式"
   },
   en: {
     heading: "Daily Boost", title: "Skyline Daily Boost", btn: "New set", lang: "中文",
     eyebrow: "Today's city", daily: "Today's set", random: "Explore",
-    copy: "Copy", copied: "Copied to clipboard", fav: "☆ Save", faved: "★ Saved",
+    copy: "Copy", copied: "Copied to clipboard", fav: "Save", faved: "Saved",
     favAdded: "Saved", favRemoved: "Removed",
-    favs: "Saved", panel: "My collection", favSub: n => `${n} quote${n === 1 ? "" : "s"} you chose to keep`, empty: "Nothing saved yet. When a quote speaks to you, tap ☆ Save under it and it will live here.",
+    favs: "Saved", panel: "My collection", favSub: n => `${n} quote${n === 1 ? "" : "s"} you chose to keep`, empty: "Nothing saved yet. When a quote speaks to you, tap Save under it and it will live here.",
     remove: "Remove", founded: "Founded", hq: "HQ", tipLabel: "Learning tip: ",
-    streak: n => `🔥 ${n}-day streak`, local: "Local time",
+    streak: n => `${n}-day streak`, local: "Local time",
     period: { night: "Night", dawn: "Dawn", day: "Day", dusk: "Dusk" },
     hint: "Shortcuts: <kbd>Space</kbd> new set · <kbd>←</kbd><kbd>→</kbd> back / forward · <kbd>F</kbd> save · <kbd>C</kbd> copy · <kbd>L</kbd> language · <kbd>Z</kbd> zen"
   }
@@ -915,46 +915,46 @@ const CO_URL = {apple: "https://www.apple.com", microsoft: "https://www.microsof
 
 Object.assign(UI.zh, {
   diff: "與你的時差", dist: h => `距離${h}`, distNone: "距離", flight: "飛行約", hrs: "小時", same: "相同",
-  focus: "⏱ 專注", goalsTab: "✅ 今日目標", start: "開始", pause: "暫停", resume: "繼續", reset: "重設",
+  focus: "專注", goalsTab: "今日目標", start: "開始", pause: "暫停", resume: "繼續", reset: "重設",
   tIdle: "選好時間，按開始。", tRun: "專注中，手機先放一邊。", tPaused: "已暫停。",
   tDone: "完成一輪專注！休息一下。", rounds: n => `今天完成 ${n} 輪`,
-  goalPh: i => "＋ 新增今天的目標", allDone: "今天的目標全部完成 🎉",
-  set: "🎛 設定", sTitle: "設定", theme: "主題", tAuto: "跟隨系統", tDark: "深色", tLight: "淺色",
+  goalPh: i => "＋ 新增今天的目標", allDone: "今天的目標全部完成 ",
+  set: "設定", sTitle: "設定", theme: "主題", tAuto: "跟隨系統", tDark: "深色", tLight: "淺色",
   font: "字體大小", fS: "小", fM: "中", fL: "大", fXL: "特大", unit: "溫度單位", clock: "時間格式", auto: "自動", h12: "12 小時", h24: "24 小時",
   home: "我的所在地（用來算距離）", homeAuto: "自動（依時區）", homeNone: "不顯示距離", langK: "語言",
-  zen: "🧘 禪模式", zExit: "✕ 離開", zSound: "🎧 聲音",
-  review: "🌙 今日回顧", rvTitle: d => `今日回顧 · ${d}`, rvFocus: "專注", rvRounds: "專注輪數", rvQuiz: "答題", rvGoals: "目標", rvWords: "認識的單字", rvStreak: "連續天數",
-  rvCard: "🖼 存成圖卡", rvCardTitle: "今日回顧",
-  board: "🏆 本週專注排行", bJoin: "加入排行榜", bLeave: "退出", bName: "顯示名稱", bEmpty: "還沒有人上榜，成為第一個吧！", bNeed: "登入同步後就能加入全球排行榜。", bJoined: "已加入排行榜", bLeft: "已退出排行榜",
-  statsTab: "📊 統計", mineTab: "✍️ 我的句子", week: "本週專注", todayMin: "今天", streakK: "連續天數",
+  zen: "禪模式", zExit: "✕ 離開", zSound: "聲音",
+  review: "今日回顧", rvTitle: d => `今日回顧 · ${d}`, rvFocus: "專注", rvRounds: "專注輪數", rvQuiz: "答題", rvGoals: "目標", rvWords: "認識的單字", rvStreak: "連續天數",
+  rvCard: "存成圖卡", rvCardTitle: "今日回顧",
+  board: "本週專注排行", bJoin: "加入排行榜", bLeave: "退出", bName: "顯示名稱", bEmpty: "還沒有人上榜，成為第一個吧！", bNeed: "登入同步後就能加入全球排行榜。", bJoined: "已加入排行榜", bLeft: "已退出排行榜",
+  statsTab: "統計", mineTab: "我的句子", week: "本週專注", todayMin: "今天", streakK: "連續天數",
   min: "分", days: n => `${n} 天`, weekdays: ["日", "一", "二", "三", "四", "五", "六"],
   addPh: "寫一句給自己的話", add: "新增", mineEmpty: "加入你自己的句子，它們會出現在隨機探索裡。", added: "已新增",
-  noise: "🌧 白噪音", notifyOn: "🔔 通知已開", notifyOff: "🔔 開啟通知", notifyNo: "瀏覽器不支援或被封鎖通知",
-  share: "🖼 圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
+  noise: "白噪音", notifyOn: "通知已開", notifyOff: "開啟通知", notifyNo: "瀏覽器不支援或被封鎖通知",
+  share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
-  signIn: "☁️ 登入同步", synced: "☁️ 已同步", syncing: "☁️ 同步中…", signedIn: "已登入，資料會在裝置間同步",
+  signIn: "登入同步", synced: "已同步", syncing: "同步中…", signedIn: "已登入，資料會在裝置間同步",
   signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
-  learnTab: "📚 學習", speak: "🔊 發音", qNext: "下一題", wNext: "換一個單字", right: "✅ 答對了！", wrong: "❌ 正確答案是",
+  learnTab: "學習", speak: "發音", qNext: "下一題", wNext: "換一個單字", right: "答對了！", wrong: "正確答案是",
   score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
   subj: { cs: "科技全部", num: "數字系統", logic: "數位邏輯", arch: "電腦結構", ds: "資料結構", net: "網路", db: "資料庫", prog: "程式與作業系統", calc: "微積分", en: "英文", zh: "國文", endless: "∞ 無限題" },
   all: "全部", wrongBook: n => `錯題本 ${n}`, wrongEmpty: "錯題本是空的，太強了！", wrongCleared: "這題已從錯題本移除",
   know: "✓ 認識", unsure: "✗ 不熟", mastered: (a, b) => `已掌握 ${a}／${b} 個單字`,
-  remindTab: "⏰ 提醒", rPh: "提醒內容，例如：打開網站看今天的鼓勵語", rDefault: "看看今天的鼓勵語，做一題練習 💪",
+  remindTab: "提醒", rPh: "提醒內容，例如：打開網站看今天的鼓勵語", rDefault: "看看今天的鼓勵語，做一題練習 ",
   rAdd: "新增提醒", rAdded: "提醒已新增", rNone: "還沒有提醒，設定一個每天固定的時間吧。", rNoDay: "至少選一天",
-  rCal: "📅 行事曆", rDel: "刪除", everyday: "每天", weekdays5: "週一到週五", weekend: "週末",
-  rHint: "網頁或主畫面 App 開著時，時間到會跳通知。手機上想在網頁關著時也收到提醒，請按「📅 行事曆」把它加進手機行事曆。",
+  rCal: "行事曆", rDel: "刪除", everyday: "每天", weekdays5: "週一到週五", weekend: "週末",
+  rHint: "網頁或主畫面 App 開著時，時間到會跳通知。手機上想在網頁關著時也收到提醒，請按「行事曆」把它加進手機行事曆。",
   rTitle: "Skyline Daily Boost 提醒", rCalHint: "已下載行事曆檔，打開它即可加入行事曆",
-  edit: "⚙️ 自訂", eTitle: "自訂內容", close: "關閉",
-  pickRandom: "🎲 不固定", pinned: "已固定城市，之後每天都會是這裡", unpinned: "城市改回隨機",
-  wx: "當地天氣", wxNA: "—", conv: "🕒 你的時間", news: "📺 當地新聞",
-  wTitle: "🌍 世界頻道", wUS: "美國城市", wMine: "我的城市", wWorld: "世界", wLocal: "當地時間", wDiff: "時差",
+  edit: "自訂", eTitle: "自訂內容", close: "關閉",
+  pickRandom: "不固定", pinned: "已固定城市，之後每天都會是這裡", unpinned: "城市改回隨機",
+  wx: "當地天氣", wxNA: "—", conv: "你的時間", news: "當地新聞",
+  wTitle: "世界頻道", wUS: "美國城市", wMine: "我的城市", wWorld: "世界", wLocal: "當地時間", wDiff: "時差",
   wNews: "新聞台與媒體", wGoogle: "Google 新聞搜尋", wSet: "設為今日城市", wSetDone: "已切換城市", wOpen: "開啟網站 ↗",
   wNote: "連結會在新分頁開啟官方網站；有些媒體提供直播，請在網站內找「Live」或「直播」。",
-  snd: { rain: "🌧 雨聲", waves: "🌊 海浪", stream: "💧 流水", white: "⚪ 白噪音" }, play: "▶ 播放", stop: "⏸ 停止",
-  eCats: { cities: "🏙 城市", companies: "🏢 公司", quiz: "📝 題目", words: "🔤 單字", quotes: "💬 鼓勵語" },
+  snd: { rain: "雨聲", waves: "海浪", stream: "流水", white: "白噪音" }, play: "▶ 播放", stop: "停止",
+  eCats: { cities: "城市", companies: "公司", quiz: "題目", words: "單字", quotes: "鼓勵語" },
   eSave: "新增", eUpdate: "儲存修改", eCancel: "取消編輯", eEdit: "編輯", eDel: "刪除",
   eSaved: "已儲存", eDeleted: "已刪除", eEmpty: "還沒有自訂項目。", eRequired: "請填寫必填欄位",
-  eExport: "⬇️ 匯出備份", eImport: "⬆️ 匯入", eImported: n => `已匯入 ${n} 個項目`, eBad: "檔案格式不正確",
+  eExport: "匯出備份", eImport: "匯入", eImported: n => `已匯入 ${n} 個項目`, eBad: "檔案格式不正確",
   eExported: "已下載備份檔", eHint: "自訂的內容會和內建內容一起隨機出現。匯出的備份檔可以分享給朋友匯入。",
   f: {
     name: "名稱 *", desc: "介紹 *", tags: "標籤（用逗號分隔）", tz: "時區", lat: "緯度（選填）", lon: "經度（選填）",
@@ -966,46 +966,46 @@ Object.assign(UI.zh, {
 });
 Object.assign(UI.en, {
   diff: "Time vs you", dist: h => `From ${h}`, distNone: "Distance", flight: "Flight ~", hrs: "h", same: "Same",
-  focus: "⏱ Focus", goalsTab: "✅ Today's goals", start: "Start", pause: "Pause", resume: "Resume", reset: "Reset",
+  focus: "Focus", goalsTab: "Today's goals", start: "Start", pause: "Pause", resume: "Resume", reset: "Reset",
   tIdle: "Pick a length and press Start.", tRun: "Focusing. Put your phone away.", tPaused: "Paused.",
   tDone: "Focus round done! Take a break.", rounds: n => `${n} round${n === 1 ? "" : "s"} today`,
-  goalPh: i => "＋ Add a goal for today", allDone: "All of today's goals done 🎉",
-  set: "🎛 Settings", sTitle: "Settings", theme: "Theme", tAuto: "System", tDark: "Dark", tLight: "Light",
+  goalPh: i => "＋ Add a goal for today", allDone: "All of today's goals done ",
+  set: "Settings", sTitle: "Settings", theme: "Theme", tAuto: "System", tDark: "Dark", tLight: "Light",
   font: "Text size", fS: "S", fM: "M", fL: "L", fXL: "XL", unit: "Temperature", clock: "Clock", auto: "Auto", h12: "12-hour", h24: "24-hour",
   home: "My location (for distances)", homeAuto: "Auto (by time zone)", homeNone: "Don't show distance", langK: "Language",
-  zen: "🧘 Zen mode", zExit: "✕ Exit", zSound: "🎧 Sound",
-  review: "🌙 Today's review", rvTitle: d => `Today's review · ${d}`, rvFocus: "Focus", rvRounds: "Rounds", rvQuiz: "Questions", rvGoals: "Goals", rvWords: "Words learned", rvStreak: "Streak",
-  rvCard: "🖼 Save as card", rvCardTitle: "Today's review",
-  board: "🏆 Weekly focus leaderboard", bJoin: "Join leaderboard", bLeave: "Leave", bName: "Display name", bEmpty: "No one here yet. Be the first!", bNeed: "Sign in to sync to join the global leaderboard.", bJoined: "You're on the leaderboard", bLeft: "You left the leaderboard",
-  statsTab: "📊 Stats", mineTab: "✍️ My quotes", week: "Focus this week", todayMin: "Today", streakK: "Streak",
+  zen: "Zen mode", zExit: "✕ Exit", zSound: "Sound",
+  review: "Today's review", rvTitle: d => `Today's review · ${d}`, rvFocus: "Focus", rvRounds: "Rounds", rvQuiz: "Questions", rvGoals: "Goals", rvWords: "Words learned", rvStreak: "Streak",
+  rvCard: "Save as card", rvCardTitle: "Today's review",
+  board: "Weekly focus leaderboard", bJoin: "Join leaderboard", bLeave: "Leave", bName: "Display name", bEmpty: "No one here yet. Be the first!", bNeed: "Sign in to sync to join the global leaderboard.", bJoined: "You're on the leaderboard", bLeft: "You left the leaderboard",
+  statsTab: "Stats", mineTab: "My quotes", week: "Focus this week", todayMin: "Today", streakK: "Streak",
   min: "min", days: n => `${n} day${n === 1 ? "" : "s"}`, weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
   addPh: "Write a line for yourself", add: "Add", mineEmpty: "Add your own lines. They'll show up in Explore.", added: "Added",
-  noise: "🌧 Rain noise", notifyOn: "🔔 Alerts on", notifyOff: "🔔 Enable alerts", notifyNo: "Notifications unsupported or blocked",
-  share: "🖼 Card", download: "Download", nativeShare: "Share", close: "Close",
+  noise: "Rain noise", notifyOn: "Alerts on", notifyOff: "Enable alerts", notifyNo: "Notifications unsupported or blocked",
+  share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
-  signIn: "☁️ Sign in to sync", synced: "☁️ Synced", syncing: "☁️ Syncing…", signedIn: "Signed in. Your data syncs across devices.",
+  signIn: "Sign in to sync", synced: "Synced", syncing: "Syncing…", signedIn: "Signed in. Your data syncs across devices.",
   signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
-  learnTab: "📚 Learn", speak: "🔊 Listen", qNext: "Next question", wNext: "New word", right: "✅ Correct!", wrong: "❌ The answer is",
+  learnTab: "Learn", speak: "Listen", qNext: "Next question", wNext: "New word", right: "Correct!", wrong: "The answer is",
   score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
   subj: { cs: "All tech", num: "Number systems", logic: "Logic gates", arch: "Computer architecture", ds: "Data structures", net: "Networks", db: "Databases", prog: "Programming & OS", calc: "Calculus", en: "English", zh: "Chinese", endless: "∞ Endless" },
   all: "All", wrongBook: n => `Mistakes ${n}`, wrongEmpty: "No mistakes to review. Nice!", wrongCleared: "Removed from your mistakes",
   know: "✓ Know it", unsure: "✗ Not yet", mastered: (a, b) => `${a}/${b} words mastered`,
-  remindTab: "⏰ Reminders", rPh: "Reminder text, e.g. check today's boost", rDefault: "Check today's boost and do one practice question 💪",
+  remindTab: "Reminders", rPh: "Reminder text, e.g. check today's boost", rDefault: "Check today's boost and do one practice question ",
   rAdd: "Add reminder", rAdded: "Reminder added", rNone: "No reminders yet. Pick a time for every day.", rNoDay: "Pick at least one day",
-  rCal: "📅 Calendar", rDel: "Delete", everyday: "Every day", weekdays5: "Weekdays", weekend: "Weekends",
-  rHint: "While the page or home-screen app is open, you'll get a notification on time. To get reminders on your phone even when it's closed, tap \"📅 Calendar\" to add it to your phone's calendar.",
+  rCal: "Calendar", rDel: "Delete", everyday: "Every day", weekdays5: "Weekdays", weekend: "Weekends",
+  rHint: "While the page or home-screen app is open, you'll get a notification on time. To get reminders on your phone even when it's closed, tap \"Calendar\" to add it to your phone's calendar.",
   rTitle: "Skyline Daily Boost reminder", rCalHint: "Calendar file downloaded. Open it to add the reminder.",
-  edit: "⚙️ Customize", eTitle: "Customize content", close: "Close",
-  pickRandom: "🎲 Not pinned", pinned: "City pinned. It will stay here every day.", unpinned: "City back to random",
-  wx: "Weather", wxNA: "—", conv: "🕒 Your time", news: "📺 Local news",
-  wTitle: "🌍 World channels", wUS: "US cities", wMine: "My cities", wWorld: "World", wLocal: "Local time", wDiff: "Time diff",
+  edit: "Customize", eTitle: "Customize content", close: "Close",
+  pickRandom: "Not pinned", pinned: "City pinned. It will stay here every day.", unpinned: "City back to random",
+  wx: "Weather", wxNA: "—", conv: "Your time", news: "Local news",
+  wTitle: "World channels", wUS: "US cities", wMine: "My cities", wWorld: "World", wLocal: "Local time", wDiff: "Time diff",
   wNews: "News stations & media", wGoogle: "Google News search", wSet: "Make today's city", wSetDone: "City switched", wOpen: "Open site ↗",
   wNote: "Links open the official sites in a new tab. Many offer a live stream; look for \"Live\" on the site.",
-  snd: { rain: "🌧 Rain", waves: "🌊 Waves", stream: "💧 Stream", white: "⚪ White noise" }, play: "▶ Play", stop: "⏸ Stop",
-  eCats: { cities: "🏙 Cities", companies: "🏢 Companies", quiz: "📝 Questions", words: "🔤 Words", quotes: "💬 Quotes" },
+  snd: { rain: "Rain", waves: "Waves", stream: "Stream", white: "White noise" }, play: "▶ Play", stop: "Stop",
+  eCats: { cities: "Cities", companies: "Companies", quiz: "Questions", words: "Words", quotes: "Quotes" },
   eSave: "Add", eUpdate: "Save changes", eCancel: "Cancel edit", eEdit: "Edit", eDel: "Delete",
   eSaved: "Saved", eDeleted: "Deleted", eEmpty: "No custom items yet.", eRequired: "Please fill in the required fields",
-  eExport: "⬇️ Export backup", eImport: "⬆️ Import", eImported: n => `Imported ${n} item${n === 1 ? "" : "s"}`, eBad: "That file isn't a valid backup",
+  eExport: "Export backup", eImport: "Import", eImported: n => `Imported ${n} item${n === 1 ? "" : "s"}`, eBad: "That file isn't a valid backup",
   eExported: "Backup downloaded", eHint: "Your items show up alongside the built-in ones. Share an exported backup so friends can import it.",
   f: {
     name: "Name *", desc: "Description *", tags: "Tags (comma separated)", tz: "Time zone", lat: "Latitude (optional)", lon: "Longitude (optional)",
@@ -1315,7 +1315,7 @@ function render(animate) {
   const isFav = favs.includes(q.id);
   $("favBtn").textContent = isFav ? ui.faved : ui.fav;
   $("favBtn").setAttribute("aria-pressed", isFav);
-  $("copyBtn").textContent = "⧉ " + ui.copy;
+  $("copyBtn").textContent = ui.copy;
   $("shareBtn").textContent = ui.share;
 
   $("logo").textContent = co.mark;
@@ -1368,8 +1368,8 @@ function renderFavs() {
   $("favSub").textContent = list.length ? ui.favSub(list.length) : "";
   $("favClose").textContent = ui.close;
   $("favList").innerHTML = list.length
-    ? list.map(q => `<li><div class="fq">“${esc(q[lang])}”</div><div class="fa"><button class="chip" data-cp="${q.id}" type="button">⧉ ${ui.copy}</button><button class="chip" data-rm="${q.id}" type="button">${ui.remove}</button></div></li>`).join("")
-    : `<li class="empty"><b>☆</b>${ui.empty}</li>`;
+    ? list.map(q => `<li><div class="fq">“${esc(q[lang])}”</div><div class="fa"><button class="chip" data-cp="${q.id}" type="button">${ui.copy}</button><button class="chip" data-rm="${q.id}" type="button">${ui.remove}</button></div></li>`).join("")
+    : `<li class="empty"><b>★</b>${ui.empty}</li>`;
 }
 
 function go(state, push = true) {
@@ -2401,17 +2401,17 @@ const validGeo = g => g && typeof g[0] === "number" && typeof g[1] === "number";
 function wxFor(g) { if (!validGeo(g)) return null; const w = wxCache[wxKey(g)]; return w && Date.now() - w.at < 60 * 60 * 1000 ? w : null; }
 function wxInfo(code, isDay) {
   const z = lang === "zh";
-  if (code === 0) return { icon: isDay ? "☀️" : "🌙", text: z ? "晴" : "Clear", fx: "" };
-  if (code <= 2) return { icon: isDay ? "🌤️" : "☁️", text: z ? "晴時多雲" : "Partly cloudy", fx: "" };
-  if (code === 3) return { icon: "☁️", text: z ? "陰" : "Overcast", fx: "" };
-  if (code === 45 || code === 48) return { icon: "🌫️", text: z ? "霧" : "Fog", fx: "fog" };
-  if (code >= 51 && code <= 57) return { icon: "🌦️", text: z ? "毛毛雨" : "Drizzle", fx: "rain" };
-  if (code >= 61 && code <= 67) return { icon: "🌧️", text: z ? "雨" : "Rain", fx: "rain" };
-  if (code >= 71 && code <= 77) return { icon: "🌨️", text: z ? "雪" : "Snow", fx: "snow" };
-  if (code >= 80 && code <= 82) return { icon: "🌦️", text: z ? "陣雨" : "Showers", fx: "rain" };
-  if (code === 85 || code === 86) return { icon: "🌨️", text: z ? "陣雪" : "Snow showers", fx: "snow" };
-  if (code >= 95) return { icon: "⛈️", text: z ? "雷雨" : "Thunderstorm", fx: "rain" };
-  return { icon: "🌡️", text: "", fx: "" };
+  if (code === 0) return { icon: isDay ? "" : "", text: z ? "晴" : "Clear", fx: "" };
+  if (code <= 2) return { icon: isDay ? "" : "", text: z ? "晴時多雲" : "Partly cloudy", fx: "" };
+  if (code === 3) return { icon: "", text: z ? "陰" : "Overcast", fx: "" };
+  if (code === 45 || code === 48) return { icon: "", text: z ? "霧" : "Fog", fx: "fog" };
+  if (code >= 51 && code <= 57) return { icon: "", text: z ? "毛毛雨" : "Drizzle", fx: "rain" };
+  if (code >= 61 && code <= 67) return { icon: "", text: z ? "雨" : "Rain", fx: "rain" };
+  if (code >= 71 && code <= 77) return { icon: "", text: z ? "雪" : "Snow", fx: "snow" };
+  if (code >= 80 && code <= 82) return { icon: "", text: z ? "陣雨" : "Showers", fx: "rain" };
+  if (code === 85 || code === 86) return { icon: "", text: z ? "陣雪" : "Snow showers", fx: "snow" };
+  if (code >= 95) return { icon: "", text: z ? "雷雨" : "Thunderstorm", fx: "rain" };
+  return { icon: "", text: "", fx: "" };
 }
 const wxPending = {};
 function loadWeather(g) {
@@ -2431,7 +2431,7 @@ function loadWeather(g) {
 const wxText = w => {
   if (!w) return UI[lang].wxNA;
   const i = wxInfo(w.code, w.isDay), f = useF();
-  return `${i.icon} ${Math.round(f ? w.t * 9 / 5 + 32 : w.t)}°${f ? "F" : "C"} ${i.text}`;
+  return `${Math.round(f ? w.t * 9 / 5 + 32 : w.t)}°${f ? "F" : "C"} ${i.text}`;
 };
 function showWeather(ci) {
   const g = GEO[ci];
@@ -2446,7 +2446,7 @@ function showWeather(ci) {
 /* ================= City picker & time converter ================= */
 function drawPicker() {
   const ui = UI[lang], sel = $("cityPick"), cur = pinned();
-  const opt = i => `<option value="${i}"${cur === i ? " selected" : ""}>📍 ${esc(cities[i][lang].name)}</option>`;
+  const opt = i => `<option value="${i}"${cur === i ? " selected" : ""}>${esc(cities[i][lang].name)}</option>`;
   const range = (a, b) => Array.from({ length: Math.max(0, b - a) }, (_, k) => a + k);
   sel.innerHTML = `<option value="">${ui.pickRandom}</option>` +
     `<optgroup label="${ui.wUS}">${range(0, US_COUNT).map(opt).join("")}</optgroup>` +
@@ -2658,8 +2658,8 @@ $("review").onclick = e => { if (e.target.id === "review") $("review").hidden = 
 $("rvCard").onclick = () => {
   const ui = UI[lang], t = todayStats();
   const url = makeCard({
-    eyebrow: `${ui.rvCardTitle} · ${todayKey()}`, title: `🔥 ${ui.days(t.streak)}`,
-    lines: [`⏱ ${ui.rvFocus} ${t.min} ${ui.min}`, `📝 ${ui.rvQuiz} ${t.qc}/${t.q}`, `✅ ${ui.rvGoals} ${t.goalsDone}/${t.goals}`, `🔤 ${ui.rvWords} ${t.w}`]
+    eyebrow: `${ui.rvCardTitle} · ${todayKey()}`, title: `${ui.days(t.streak)}`,
+    lines: [`${ui.rvFocus} ${t.min} ${ui.min}`, `${ui.rvQuiz} ${t.qc}/${t.q}`, `${ui.rvGoals} ${t.goalsDone}/${t.goals}`, `${ui.rvWords} ${t.w}`]
   });
   $("review").hidden = true; openCard(url, ui.rvCardTitle);
 };
@@ -2694,7 +2694,7 @@ function drawBoard() {
            : `<input id="bName" maxlength="20" placeholder="${ui.bName}" value="${esc(B.suggestName())}"><button class="chip" type="button" id="bJoin">${ui.bJoin}</button>`}
     </div>
     <ol>${boardRows === null ? "" : boardRows.length ? boardRows.map((r, i) =>
-      `<li class="${r.mine ? "me" : ""}"><span>${["🥇 ", "🥈 ", "🥉 "][i] || (i + 1) + ". "}${esc(r.name)}</span><b>${r.minutes} ${ui.min}</b></li>`).join("") : `<li class="tmsg">${ui.bEmpty}</li>`}</ol>`;
+      `<li class="${r.mine ? "me" : ""}"><span>${(i + 1) + ". "}${esc(r.name)}</span><b>${r.minutes} ${ui.min}</b></li>`).join("") : `<li class="tmsg">${ui.bEmpty}</li>`}</ol>`;
   const j = $("bJoin"), l = $("bLeave");
   if (j) j.onclick = async () => { const n = $("bName").value.trim(); if (!n) return; await B.join(n, weekKey(), weekMinutes()); toast(ui.bJoined); refreshBoard(); };
   if (l) l.onclick = async () => { await B.leave(weekKey()); toast(ui.bLeft); refreshBoard(); };
