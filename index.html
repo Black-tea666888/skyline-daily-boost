@@ -545,6 +545,16 @@
   @media (prefers-reduced-motion: reduce) { .seg > .seg-thumb { transition: none; } }
   .appver { display: none; text-align: center; font-size: .72rem; opacity: .55; margin: 10px 0 0; }
   body[data-page="me"] .appver { display: block; order: 9; }
+  .tmusic { justify-items: stretch; }
+  .musgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+  .musgrid a { text-decoration: none; color: inherit; text-align: center; padding: 10px 6px; font-size: .88rem; font-weight: 600; }
+  .musform { display: flex; gap: 8px; width: 100%; }
+  .musform input { flex: 1; min-width: 0; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: inherit; font: inherit; font-size: .88rem; }
+  body.light .musform input { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); }
+  .musplayer iframe { width: 100%; border: 0; border-radius: 14px; display: block; background: rgba(0,0,0,.15); }
+  .musplayer .musbar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: .78rem; opacity: .75; }
+  .musplayer .musopen { display: block; text-align: center; padding: 12px; text-decoration: none; color: inherit; font-weight: 600; }
+  .mushint { font-size: .76rem; opacity: .6; line-height: 1.5; text-align: center; }
   /* ---------- Glass switch ---------- */
   .merow { cursor: default; }
   .melist .merow::after { display: none; }
@@ -750,6 +760,16 @@
             <div class="tsrow"><span class="tslabel" id="sndLabel"></span><button class="gswitch" id="noiseBtn" type="button" role="switch" aria-checked="false"><span class="knob"></span></button></div>
             <div class="seg seg-sm" id="sndPick" role="group"></div>
             <input type="range" id="vol" min="0" max="1" step="0.05" aria-label="volume">
+          </div>
+          <div class="tsound tmusic">
+            <div class="tsrow"><span class="tslabel" id="musLabel"></span></div>
+            <div class="musgrid" id="musOpen"></div>
+            <form class="musform" id="musForm">
+              <input id="musUrl" type="url" inputmode="url" autocomplete="off">
+              <button class="chip" id="musSave" type="submit"></button>
+            </form>
+            <div class="musplayer" id="musPlayer"></div>
+            <div class="mushint" id="musHint"></div>
           </div>
         </div>
       </div>
@@ -1137,7 +1157,10 @@ Object.assign(UI.zh, {
   notifySent: "已送出一則測試通知", notifyOnToast: "通知已開啟",
   share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
-  signIn: "登入", account: "帳號", subjPick: "科目", pages: { today: "今天", focus: "專注", learn: "學習", me: "我的" }, meTitle: "我的", sndLabel: "背景聲音", synced: "已同步",
+  signIn: "登入", account: "帳號", musLabel: "你的音樂", musPaste: "貼上歌單連結", musSave: "加入", musRemove: "移除",
+  musBad: "看不懂這個連結。請貼上歌單、專輯或歌曲的分享連結。", musOpenIn: n => `在 ${n} 打開`, musNow: n => `來自 ${n}`,
+  musHint: "Spotify 和 Apple Music 要在這個瀏覽器登入才能播完整歌曲，沒登入只能聽試聽片段。", musQuery: "讀書 專注 音樂",
+  subjPick: "科目", pages: { today: "今天", focus: "專注", learn: "學習", me: "我的" }, meTitle: "我的", sndLabel: "背景聲音", synced: "已同步",
   acTitle: "登入帳號", acSub: "登入後，你的收藏、目標、連續天數、測驗進度和自訂內容都會存到帳號，換手機或電腦也能接著用。",
   acGoogle: "使用 Google 繼續", acOr: "或用電子郵件", acEmail: "電子郵件", acPass: "密碼（至少 6 個字元）",
   acLogin: "登入", acCreate: "建立帳號", acForgot: "忘記密碼？", acResetSent: "已寄出重設密碼的信，請到信箱查看。",
@@ -1207,7 +1230,10 @@ Object.assign(UI.en, {
   notifySent: "Test alert sent", notifyOnToast: "Alerts on",
   share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
-  signIn: "Sign in", account: "Account", subjPick: "Subject", pages: { today: "Today", focus: "Focus", learn: "Learn", me: "Me" }, meTitle: "Me", sndLabel: "Background sound", synced: "Synced",
+  signIn: "Sign in", account: "Account", musLabel: "Your music", musPaste: "Paste a playlist link", musSave: "Add", musRemove: "Remove",
+  musBad: "That link wasn't recognized. Paste a share link to a playlist, album or song.", musOpenIn: n => `Open in ${n}`, musNow: n => `From ${n}`,
+  musHint: "Spotify and Apple Music play full songs only if you're signed in on this browser; otherwise you'll hear previews.", musQuery: "focus study music",
+  subjPick: "Subject", pages: { today: "Today", focus: "Focus", learn: "Learn", me: "Me" }, meTitle: "Me", sndLabel: "Background sound", synced: "Synced",
   acTitle: "Sign in", acSub: "Your saved quotes, goals, streak, quiz progress and custom content are kept in your account, so they follow you to any phone or computer.",
   acGoogle: "Continue with Google", acOr: "or use email", acEmail: "Email", acPass: "Password (at least 6 characters)",
   acLogin: "Sign in", acCreate: "Create account", acForgot: "Forgot password?", acResetSent: "Password reset email sent. Check your inbox.",
@@ -1840,7 +1866,7 @@ function renderTools() {
   document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
   lensTo(page, !!window.__lensReady); window.__lensReady = true;
   $("meTitle").textContent = ui.meTitle; $("toolsTitle").textContent = ui.pages[page] || "";
-  $("sndLabel").textContent = ui.sndLabel;
+  $("sndLabel").textContent = ui.sndLabel; drawMusic();
   drawSound();
   $("notifyLbl").textContent = ui.alertsLbl; $("notifyBtn").setAttribute("aria-checked", alertsOn()); $("notifyBtn").setAttribute("aria-label", ui.alertsLbl);
   drawTimer(); drawGoals(); drawStats(); drawMine(); drawLearn(); drawReminders();
@@ -1865,7 +1891,63 @@ new MutationObserver(muts => {
   segs.forEach(sg => requestAnimationFrame(() => syncSeg(sg)));
 }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "aria-selected"] });
 window.addEventListener("resize", () => segSyncAll(true));
-const APP_VERSION = "33";
+/* ---------- music platforms ---------- */
+const MUSIC = [
+  { id: "apple", name: "Apple Music", search: q => `https://music.apple.com/search?term=${encodeURIComponent(q)}` },
+  { id: "spotify", name: "Spotify", search: q => `https://open.spotify.com/search/${encodeURIComponent(q)}` },
+  { id: "ytm", name: "YouTube Music", search: q => `https://music.youtube.com/search?q=${encodeURIComponent(q)}` },
+  { id: "kkbox", name: "KKBOX", search: () => "https://play.kkbox.com/" }
+];
+// turn a share link into an embeddable player (or an open link for KKBOX)
+function parseMusic(raw) {
+  let u; try { u = new URL(raw.trim()); } catch (e) { return null; }
+  if (u.protocol !== "https:") return null;
+  const h = u.hostname.replace(/^www\./, "");
+  if (h === "open.spotify.com") {
+    const m = u.pathname.match(/^\/(?:intl-[a-z-]+\/)?(playlist|album|track|artist|show|episode)\/([A-Za-z0-9]+)/);
+    return m && { p: "spotify", embed: `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator`, h: m[1] === "track" || m[1] === "episode" ? 152 : 352, open: u.href };
+  }
+  if (h === "music.apple.com") {
+    if (!/^\/[a-z]{2}\/(playlist|album|song|station)\//.test(u.pathname)) return null;
+    return { p: "apple", embed: "https://embed.music.apple.com" + u.pathname + u.search, h: /\/song\//.test(u.pathname) || u.searchParams.has("i") ? 175 : 450, open: u.href };
+  }
+  if (h === "music.youtube.com" || h === "youtube.com" || h === "m.youtube.com" || h === "youtu.be") {
+    const list = u.searchParams.get("list"), v = h === "youtu.be" ? u.pathname.slice(1) : u.searchParams.get("v");
+    if (list && /^[A-Za-z0-9_-]+$/.test(list)) return { p: "ytm", embed: `https://www.youtube-nocookie.com/embed/videoseries?list=${list}`, h: 220, open: u.href };
+    if (v && /^[A-Za-z0-9_-]{6,}$/.test(v)) return { p: "ytm", embed: `https://www.youtube-nocookie.com/embed/${v}`, h: 220, open: u.href };
+    return null;
+  }
+  if (h.endsWith("kkbox.com") || h === "kkbox.fm") return { p: "kkbox", embed: null, open: u.href };
+  return null;
+}
+function drawMusic() {
+  const ui = UI[lang];
+  $("musLabel").textContent = ui.musLabel;
+  $("musOpen").innerHTML = MUSIC.map(m => `<a class="chip" href="${m.search(ui.musQuery)}" target="_blank" rel="noopener noreferrer">${m.name}</a>`).join("");
+  $("musUrl").placeholder = ui.musPaste; $("musSave").textContent = ui.musSave;
+  const saved = store.get("sdb.music", null), mu = saved && parseMusic(saved);
+  const box = $("musPlayer"), name = mu && MUSIC.find(m => m.id === mu.p).name;
+  if (!mu) { box.innerHTML = ""; $("musHint").textContent = ""; return; }
+  if (box.dataset.src !== saved) {
+    box.dataset.src = saved;
+    box.innerHTML = (mu.embed
+      ? `<iframe src="${mu.embed}" height="${mu.h}" loading="lazy" allow="autoplay; encrypted-media; clipboard-write; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" title="${name}"></iframe>`
+      : `<a class="chip musopen" href="${esc(mu.open)}" target="_blank" rel="noopener noreferrer"></a>`) +
+      `<div class="musbar"><span class="musfrom"></span><button class="aclink" id="musRemove" type="button"></button></div>`;
+  }
+  const o = box.querySelector(".musopen"); if (o) o.textContent = ui.musOpenIn(name);
+  box.querySelector(".musfrom").textContent = ui.musNow(name);
+  $("musRemove").textContent = ui.musRemove;
+  $("musRemove").onclick = () => { store.set("sdb.music", null); box.dataset.src = ""; drawMusic(); };
+  $("musHint").textContent = mu.p === "spotify" || mu.p === "apple" ? ui.musHint : "";
+}
+$("musForm").onsubmit = e => {
+  e.preventDefault();
+  const v = $("musUrl").value;
+  if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
+  store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
+};
+const APP_VERSION = "34";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];

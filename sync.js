@@ -60,7 +60,7 @@ function sharedLocal() {
     streak: store.get("sdb.streak", 1), last: store.get("sdb.last", todayKey()),
     goals: goalsLocal(),
     quiz: store.get("sdb.quiz", { total: 0, correct: 0 }),
-    words: wordLv, wrong: wrongs, reminders, custom
+    words: wordLv, wrong: wrongs, reminders, custom, music: store.get("sdb.music", null)
   };
 }
 function applyShared(sh) {
@@ -84,6 +84,7 @@ function applyShared(sh) {
     }
     if (Array.isArray(sh.reminders)) { reminders = sh.reminders; store.set("sdb.reminders", reminders); }
     if (Array.isArray(sh.wrong)) { wrongs = sh.wrong; store.set("sdb.wrong", wrongs); }
+    if (sh.music === null || (typeof sh.music === "string" && parseMusic(sh.music))) store.set("sdb.music", sh.music);
     if (sh.goals && sh.goals.date === todayKey() && Array.isArray(sh.goals.list)) {
       store.set("sdb.goals." + todayKey(), sh.goals.list);
       document.getElementById("goals").innerHTML = ""; // rebuild rows with new values
@@ -144,7 +145,7 @@ async function push() {
   }
   label();
 }
-const SYNCED = /^sdb\.(favs|myQuotes|lang|streak|last|log|quiz$|words$|wrong$|reminders$|custom$|goals\.)/;
+const SYNCED = /^sdb\.(favs|myQuotes|lang|streak|last|log|quiz$|words$|wrong$|reminders$|custom$|music$|goals\.)/;
 window.sdbOnLocalChange = k => {
   if (!user || applying || !SYNCED.test(k)) return;
   clearTimeout(pushTimer); pushTimer = setTimeout(push, 800);
