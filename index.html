@@ -418,6 +418,8 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 
+  .chev { display: inline-block; width: 8px; height: 8px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); margin: 0 4px 1px 0; }
+  .chev.l { transform: rotate(-135deg); margin: 0 0 1px 4px; }
   /* ---------- Liquid glass ---------- */
   .card, .modal .box, .chip, .round, .fact, .company { --g-hi: rgba(255,255,255,.55); --g-edge: rgba(255,255,255,.26); }
   .card {
@@ -527,7 +529,7 @@
       <div class="conv">
         <label for="convIn" id="convL"></label>
         <input type="time" id="convIn">
-        <span aria-hidden="true">→</span>
+        <span class="chev" aria-hidden="true"></span>
         <b id="convOut"></b>
         <button class="chip" id="newsBtn" type="button"></button>
       </div>
@@ -554,9 +556,9 @@
     </section>
 
     <div class="nav">
-      <button class="round" id="prevBtn" type="button">←</button>
+      <button class="round" id="prevBtn" type="button" aria-label="Back"><span class="chev l"></span></button>
       <button class="btn" id="btn" type="button"></button>
-      <button class="round" id="nextBtn" type="button">→</button>
+      <button class="round" id="nextBtn" type="button" aria-label="Forward"><span class="chev"></span></button>
     </div>
   </main>
 
@@ -742,24 +744,24 @@ const UI = {
   zh: {
     heading: "每日鼓勵", title: "Skyline Daily Boost · 每日鼓勵", btn: "換一組", lang: "English",
     eyebrow: "今日城市", daily: "今日一組", random: "隨機探索",
-    copy: "複製", copied: "已複製到剪貼簿", fav: "收藏", faved: "已收藏",
+    copy: "複製", copiedShort: "已複製", on: "開", off: "關", copied: "已複製到剪貼簿", fav: "收藏", faved: "已收藏",
     favAdded: "已加入收藏", favRemoved: "已取消收藏",
     favs: "收藏", panel: "我的收藏", favSub: n => `${n} 句你選擇留下的話`, empty: "還沒有收藏。看到喜歡的句子，按下方的「收藏」，它就會留在這裡。",
     remove: "移除", founded: "創立", hq: "總部", tipLabel: "學習小提示：",
     streak: n => `連續 ${n} 天`, local: "當地時間",
     period: { night: "夜晚", dawn: "清晨", day: "白天", dusk: "黃昏" },
-    hint: "快捷鍵：<kbd>空白</kbd> 換一組　<kbd>←</kbd><kbd>→</kbd> 上一組／下一組　<kbd>F</kbd> 收藏　<kbd>C</kbd> 複製　<kbd>L</kbd> 語言　<kbd>Z</kbd> 禪模式"
+    hint: "快捷鍵：<kbd>空白</kbd> 換一組　<kbd>左</kbd><kbd>右</kbd> 上一組／下一組　<kbd>F</kbd> 收藏　<kbd>C</kbd> 複製　<kbd>L</kbd> 語言　<kbd>Z</kbd> 禪模式"
   },
   en: {
     heading: "Daily Boost", title: "Skyline Daily Boost", btn: "New set", lang: "中文",
     eyebrow: "Today's city", daily: "Today's set", random: "Explore",
-    copy: "Copy", copied: "Copied to clipboard", fav: "Save", faved: "Saved",
+    copy: "Copy", copiedShort: "Copied", on: "on", off: "off", copied: "Copied to clipboard", fav: "Save", faved: "Saved",
     favAdded: "Saved", favRemoved: "Removed",
     favs: "Saved", panel: "My collection", favSub: n => `${n} quote${n === 1 ? "" : "s"} you chose to keep`, empty: "Nothing saved yet. When a quote speaks to you, tap Save under it and it will live here.",
     remove: "Remove", founded: "Founded", hq: "HQ", tipLabel: "Learning tip: ",
     streak: n => `${n}-day streak`, local: "Local time",
     period: { night: "Night", dawn: "Dawn", day: "Day", dusk: "Dusk" },
-    hint: "Shortcuts: <kbd>Space</kbd> new set · <kbd>←</kbd><kbd>→</kbd> back / forward · <kbd>F</kbd> save · <kbd>C</kbd> copy · <kbd>L</kbd> language · <kbd>Z</kbd> zen"
+    hint: "Shortcuts: <kbd>Space</kbd> new set · <kbd>Left</kbd><kbd>Right</kbd> back / forward · <kbd>F</kbd> save · <kbd>C</kbd> copy · <kbd>L</kbd> language · <kbd>Z</kbd> zen"
   }
 };
 
@@ -922,7 +924,7 @@ Object.assign(UI.zh, {
   set: "設定", sTitle: "設定", theme: "主題", tAuto: "跟隨系統", tDark: "深色", tLight: "淺色",
   font: "字體大小", fS: "小", fM: "中", fL: "大", fXL: "特大", unit: "溫度單位", clock: "時間格式", auto: "自動", h12: "12 小時", h24: "24 小時",
   home: "我的所在地（用來算距離）", homeAuto: "自動（依時區）", homeNone: "不顯示距離", langK: "語言",
-  zen: "禪模式", zExit: "✕ 離開", zSound: "聲音",
+  zen: "禪模式", zExit: "離開", zSound: "聲音",
   review: "今日回顧", rvTitle: d => `今日回顧 · ${d}`, rvFocus: "專注", rvRounds: "專注輪數", rvQuiz: "答題", rvGoals: "目標", rvWords: "認識的單字", rvStreak: "連續天數",
   rvCard: "存成圖卡", rvCardTitle: "今日回顧",
   board: "本週專注排行", bJoin: "加入排行榜", bLeave: "退出", bName: "顯示名稱", bEmpty: "還沒有人上榜，成為第一個吧！", bNeed: "登入同步後就能加入全球排行榜。", bJoined: "已加入排行榜", bLeft: "已退出排行榜",
@@ -936,9 +938,9 @@ Object.assign(UI.zh, {
   signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
   learnTab: "學習", speak: "發音", qNext: "下一題", wNext: "換一個單字", right: "答對了！", wrong: "正確答案是",
   score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
-  subj: { cs: "科技全部", num: "數字系統", logic: "數位邏輯", arch: "電腦結構", ds: "資料結構", net: "網路", db: "資料庫", prog: "程式與作業系統", calc: "微積分", en: "英文", zh: "國文", endless: "∞ 無限題" },
+  subj: { cs: "科技全部", num: "數字系統", logic: "數位邏輯", arch: "電腦結構", ds: "資料結構", net: "網路", db: "資料庫", prog: "程式與作業系統", calc: "微積分", en: "英文", zh: "國文", endless: "無限題" },
   all: "全部", wrongBook: n => `錯題本 ${n}`, wrongEmpty: "錯題本是空的，太強了！", wrongCleared: "這題已從錯題本移除",
-  know: "✓ 認識", unsure: "✗ 不熟", mastered: (a, b) => `已掌握 ${a}／${b} 個單字`,
+  know: "認識", unsure: "不熟", mastered: (a, b) => `已掌握 ${a}／${b} 個單字`,
   remindTab: "提醒", rPh: "提醒內容，例如：打開網站看今天的鼓勵語", rDefault: "看看今天的鼓勵語，做一題練習 ",
   rAdd: "新增提醒", rAdded: "提醒已新增", rNone: "還沒有提醒，設定一個每天固定的時間吧。", rNoDay: "至少選一天",
   rCal: "行事曆", rDel: "刪除", everyday: "每天", weekdays5: "週一到週五", weekend: "週末",
@@ -948,9 +950,9 @@ Object.assign(UI.zh, {
   pickRandom: "不固定", pinned: "已固定城市，之後每天都會是這裡", unpinned: "城市改回隨機",
   wx: "當地天氣", wxNA: "—", conv: "你的時間", news: "當地新聞",
   wTitle: "世界頻道", wUS: "美國城市", wMine: "我的城市", wWorld: "世界", wLocal: "當地時間", wDiff: "時差",
-  wNews: "新聞台與媒體", wGoogle: "Google 新聞搜尋", wSet: "設為今日城市", wSetDone: "已切換城市", wOpen: "開啟網站 ↗",
+  wNews: "新聞台與媒體", wGoogle: "Google 新聞搜尋", wSet: "設為今日城市", wSetDone: "已切換城市", wOpen: "開啟網站",
   wNote: "連結會在新分頁開啟官方網站；有些媒體提供直播，請在網站內找「Live」或「直播」。",
-  snd: { rain: "雨聲", waves: "海浪", stream: "流水", white: "白噪音" }, play: "▶ 播放", stop: "停止",
+  snd: { rain: "雨聲", waves: "海浪", stream: "流水", white: "白噪音" }, play: "播放", stop: "停止",
   eCats: { cities: "城市", companies: "公司", quiz: "題目", words: "單字", quotes: "鼓勵語" },
   eSave: "新增", eUpdate: "儲存修改", eCancel: "取消編輯", eEdit: "編輯", eDel: "刪除",
   eSaved: "已儲存", eDeleted: "已刪除", eEmpty: "還沒有自訂項目。", eRequired: "請填寫必填欄位",
@@ -965,7 +967,7 @@ Object.assign(UI.zh, {
   }
 });
 Object.assign(UI.en, {
-  diff: "Time vs you", dist: h => `From ${h}`, distNone: "Distance", flight: "Flight ~", hrs: "h", same: "Same",
+  diff: "Time vs you", dist: h => `From ${h}`, distNone: "Distance", flight: "Flight time", hrs: "h", same: "Same",
   focus: "Focus", goalsTab: "Today's goals", start: "Start", pause: "Pause", resume: "Resume", reset: "Reset",
   tIdle: "Pick a length and press Start.", tRun: "Focusing. Put your phone away.", tPaused: "Paused.",
   tDone: "Focus round done! Take a break.", rounds: n => `${n} round${n === 1 ? "" : "s"} today`,
@@ -973,7 +975,7 @@ Object.assign(UI.en, {
   set: "Settings", sTitle: "Settings", theme: "Theme", tAuto: "System", tDark: "Dark", tLight: "Light",
   font: "Text size", fS: "S", fM: "M", fL: "L", fXL: "XL", unit: "Temperature", clock: "Clock", auto: "Auto", h12: "12-hour", h24: "24-hour",
   home: "My location (for distances)", homeAuto: "Auto (by time zone)", homeNone: "Don't show distance", langK: "Language",
-  zen: "Zen mode", zExit: "✕ Exit", zSound: "Sound",
+  zen: "Zen mode", zExit: "Exit", zSound: "Sound",
   review: "Today's review", rvTitle: d => `Today's review · ${d}`, rvFocus: "Focus", rvRounds: "Rounds", rvQuiz: "Questions", rvGoals: "Goals", rvWords: "Words learned", rvStreak: "Streak",
   rvCard: "Save as card", rvCardTitle: "Today's review",
   board: "Weekly focus leaderboard", bJoin: "Join leaderboard", bLeave: "Leave", bName: "Display name", bEmpty: "No one here yet. Be the first!", bNeed: "Sign in to sync to join the global leaderboard.", bJoined: "You're on the leaderboard", bLeft: "You left the leaderboard",
@@ -987,9 +989,9 @@ Object.assign(UI.en, {
   signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
   learnTab: "Learn", speak: "Listen", qNext: "Next question", wNext: "New word", right: "Correct!", wrong: "The answer is",
   score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
-  subj: { cs: "All tech", num: "Number systems", logic: "Logic gates", arch: "Computer architecture", ds: "Data structures", net: "Networks", db: "Databases", prog: "Programming & OS", calc: "Calculus", en: "English", zh: "Chinese", endless: "∞ Endless" },
+  subj: { cs: "All tech", num: "Number systems", logic: "Logic gates", arch: "Computer architecture", ds: "Data structures", net: "Networks", db: "Databases", prog: "Programming & OS", calc: "Calculus", en: "English", zh: "Chinese", endless: "Endless" },
   all: "All", wrongBook: n => `Mistakes ${n}`, wrongEmpty: "No mistakes to review. Nice!", wrongCleared: "Removed from your mistakes",
-  know: "✓ Know it", unsure: "✗ Not yet", mastered: (a, b) => `${a}/${b} words mastered`,
+  know: "Know it", unsure: "Not yet", mastered: (a, b) => `${a}/${b} words mastered`,
   remindTab: "Reminders", rPh: "Reminder text, e.g. check today's boost", rDefault: "Check today's boost and do one practice question ",
   rAdd: "Add reminder", rAdded: "Reminder added", rNone: "No reminders yet. Pick a time for every day.", rNoDay: "Pick at least one day",
   rCal: "Calendar", rDel: "Delete", everyday: "Every day", weekdays5: "Weekdays", weekend: "Weekends",
@@ -999,9 +1001,9 @@ Object.assign(UI.en, {
   pickRandom: "Not pinned", pinned: "City pinned. It will stay here every day.", unpinned: "City back to random",
   wx: "Weather", wxNA: "—", conv: "Your time", news: "Local news",
   wTitle: "World channels", wUS: "US cities", wMine: "My cities", wWorld: "World", wLocal: "Local time", wDiff: "Time diff",
-  wNews: "News stations & media", wGoogle: "Google News search", wSet: "Make today's city", wSetDone: "City switched", wOpen: "Open site ↗",
+  wNews: "News stations & media", wGoogle: "Google News search", wSet: "Make today's city", wSetDone: "City switched", wOpen: "Open site",
   wNote: "Links open the official sites in a new tab. Many offer a live stream; look for \"Live\" on the site.",
-  snd: { rain: "Rain", waves: "Waves", stream: "Stream", white: "White noise" }, play: "▶ Play", stop: "Stop",
+  snd: { rain: "Rain", waves: "Waves", stream: "Stream", white: "White noise" }, play: "Play", stop: "Stop",
   eCats: { cities: "Cities", companies: "Companies", quiz: "Questions", words: "Words", quotes: "Quotes" },
   eSave: "Add", eUpdate: "Save changes", eCancel: "Cancel edit", eEdit: "Edit", eDel: "Delete",
   eSaved: "Saved", eDeleted: "Deleted", eEmpty: "No custom items yet.", eRequired: "Please fill in the required fields",
@@ -1326,7 +1328,7 @@ function render(animate) {
   $("companyTip").textContent = ui.tipLabel + cl.tip;
   const coUrl = /^https:\/\//.test(co.url || "") ? co.url : CO_URL[co.id];
   $("companyLink").hidden = !coUrl;
-  if (coUrl) { $("companyLink").href = coUrl; $("companyLink").textContent = (lang === "zh" ? "官方網站 ↗ " : "Official site ↗ ") + coUrl.replace(/^https:\/\/(www\.)?/, ""); }
+  if (coUrl) { $("companyLink").href = coUrl; $("companyLink").textContent = (lang === "zh" ? "前往 " : "Visit ") + coUrl.replace(/^https:\/\/(www\.)?/, ""); }
 
   $("prevBtn").disabled = hIndex <= 0;
   $("nextBtn").disabled = hIndex >= history.length - 1;
@@ -1349,7 +1351,7 @@ function render(animate) {
   drawConv(); drawPicker();
   renderTools();
 
-  $("favToggle").textContent = `★ ${ui.favs}${favs.length ? " " + favs.length : ""}`;
+  $("favToggle").textContent = `${ui.favs}${favs.length ? " " + favs.length : ""}`;
   $("streak").textContent = ui.streak(streak);
   $("hint").innerHTML = ui.hint;
   renderFavs();
@@ -1364,12 +1366,12 @@ function render(animate) {
 function renderFavs() {
   const ui = UI[lang];
   const list = favs.map(id => qById(id)).filter(Boolean).reverse();
-  $("panelTitle").textContent = "★ " + ui.panel;
+  $("panelTitle").textContent = ui.panel;
   $("favSub").textContent = list.length ? ui.favSub(list.length) : "";
   $("favClose").textContent = ui.close;
   $("favList").innerHTML = list.length
     ? list.map(q => `<li><div class="fq">“${esc(q[lang])}”</div><div class="fa"><button class="chip" data-cp="${q.id}" type="button">${ui.copy}</button><button class="chip" data-rm="${q.id}" type="button">${ui.remove}</button></div></li>`).join("")
-    : `<li class="empty"><b>★</b>${ui.empty}</li>`;
+    : `<li class="empty">${ui.empty}</li>`;
 }
 
 function go(state, push = true) {
@@ -1435,7 +1437,7 @@ $("favs").onclick = e => { if (e.target.id === "favs") $("favs").hidden = true; 
 document.addEventListener("keydown", e => { if (e.key === "Escape") $("favs").hidden = true; });
 $("favList").onclick = e => {
   const cp = e.target.closest("[data-cp]");
-  if (cp) { const q = qById(cp.dataset.cp); if (q) navigator.clipboard?.writeText(q[lang]).then(() => { cp.textContent = "✓"; setTimeout(() => renderFavs(), 900); }); return; }
+  if (cp) { const q = qById(cp.dataset.cp); if (q) navigator.clipboard?.writeText(q[lang]).then(() => { cp.textContent = UI[lang].copiedShort; setTimeout(() => renderFavs(), 900); }); return; }
   const rm = e.target.closest("[data-rm]"); if (!rm) return;
   favs = favs.filter(x => x !== rm.dataset.rm); store.set("sdb.favs", favs); render(false);
 };
@@ -2601,7 +2603,7 @@ function drawZen() {
   $("zTimer").textContent = fmtTime(timer.left);
   $("zQuote").textContent = Q(st.quote)[lang];
   $("zStart").textContent = timer.running ? ui.pause : timer.status === "paused" ? ui.resume : ui.start;
-  $("zSound").textContent = `${ui.zSound} ${noiseOn ? "●" : "○"}`;
+  $("zSound").textContent = `${ui.zSound}: ${noiseOn ? ui.on : ui.off}`;
   $("zExit").textContent = ui.zExit;
 }
 function enterZen() {
