@@ -480,12 +480,12 @@
   .bnav button { flex: 1; border: 0; background: transparent; color: inherit; font: inherit; font-size: .9rem; font-weight: 600; padding: 11px 6px; border-radius: 999px; cursor: pointer; opacity: .75; transition: background .2s, opacity .2s; }
   .bnav { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
   .bnav button { position: relative; z-index: 1; }
-  .bnav button[aria-current="page"] { opacity: 0; }
+  .bnav button[aria-current="page"] { opacity: 0; background: none !important; }
   .bnav.dragging button[aria-current="page"] { opacity: .75; }
   .lens {
-    position: absolute; top: -7px; bottom: -7px; left: 0; width: 100px; z-index: 2; pointer-events: none;
+    position: absolute; top: 5px; bottom: 5px; left: 0; width: 100px; z-index: 2; pointer-events: none;
     border-radius: 999px; overflow: hidden;
-    transform: translateX(var(--x, 0px)) scale(var(--sx, 1), var(--sy, 1));
+    transform: translateX(var(--x, 0px)) scale(var(--sx, 1), calc(var(--sy, 1) * var(--sy2, 1)));
     transition: transform .55s cubic-bezier(.3, 1.45, .45, 1);
     background: linear-gradient(180deg, rgba(60,66,100,.72), rgba(30,34,60,.66) 55%, rgba(60,66,100,.7));
     backdrop-filter: blur(7px) saturate(170%) brightness(1.1); -webkit-backdrop-filter: blur(7px) saturate(170%) brightness(1.1);
@@ -493,13 +493,15 @@
                 inset 0 0 18px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
   }
   .lens.drag { transition: transform .08s linear; }
+  .lens.moving::before, .lens.drag::before { opacity: .62; }
+  .lens.moving, .lens.drag { --sy2: 1.32; }
   /* colored fringe along the rim, like light bending through glass */
   .lens::before {
     content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px; z-index: 2;
     background: conic-gradient(from 200deg, rgba(255,120,60,.85), rgba(255,220,90,.6), rgba(80,220,255,.75), rgba(170,90,255,.7), rgba(255,80,160,.7), rgba(255,120,60,.85));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    filter: blur(1.2px); opacity: .62;
+    filter: blur(1.2px); opacity: .18; transition: opacity .3s;
   }
   /* soft inner shine */
   .lens::after {
@@ -507,14 +509,14 @@
     background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
   }
   /* magnified copy of the labels, seen through the lens */
-  .lens-track { position: absolute; top: 7px; height: calc(100% - 14px); display: flex; gap: 4px; transform-origin: var(--ox, 50px) 50%; transform: scale(1.22); transition: transform .55s cubic-bezier(.3, 1.45, .45, 1); }
+  .lens-track { position: absolute; top: -5px; height: calc(100% + 10px); display: flex; gap: 4px; transform-origin: var(--ox, 50px) 50%; transform: scale(1.08); transition: transform .55s cubic-bezier(.3, 1.45, .45, 1); }
   .lens.drag .lens-track { transition: none; }
+  .lens.moving .lens-track, .lens.drag .lens-track { transform: scale(1.24, .94); }
   .lens-track span { flex: none; display: grid; place-items: center; font-size: .9rem; font-weight: 700; color: #ffb35c; text-shadow: 0 0 10px rgba(255,170,80,.35); }
   body.light .lens-track span { color: #c2620a; text-shadow: none; }
   body.light .lens { background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.6) 55%, rgba(255,255,255,.75)); }
   @media (prefers-reduced-motion: reduce) { .lens, .lens-track { transition: none; } }
   body.light .bnav { background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55)); border-color: rgba(255,255,255,.8); }
-  body.light .bnav button[aria-current="page"] { background: #1a1f36; color: #fff; }
   body.zen .bnav { display: none; }
   .melist { display: grid; gap: 8px; }
   .melist .chip { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; border-radius: 16px; font-size: .95rem; text-align: left; white-space: normal; }
@@ -1922,7 +1924,12 @@ function lensTo(p, animate = true) {
   const b = navBtns().find(x => x.dataset.page === p); if (!b) return;
   const lens = $("lens");
   if (!animate) lens.style.transition = "none";
-  if (animate) { placeLens(b.offsetLeft, b.offsetWidth, true); setTimeout(() => placeLens(b.offsetLeft, b.offsetWidth, false), 160); }
+  if (animate) {
+    lens.classList.add("moving"); placeLens(b.offsetLeft, b.offsetWidth, true);
+    clearTimeout(lens._t1); clearTimeout(lens._t2);
+    lens._t1 = setTimeout(() => placeLens(b.offsetLeft, b.offsetWidth, false), 180);
+    lens._t2 = setTimeout(() => lens.classList.remove("moving"), 520);
+  }
   else placeLens(b.offsetLeft, b.offsetWidth, false);
   if (!animate) { lens.offsetWidth; lens.style.transition = ""; }
 }
