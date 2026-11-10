@@ -461,6 +461,59 @@
   .acgrid span { font-size: .72rem; opacity: .7; }
   body.light #acForm input, body.light .acgrid div { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); }
   body.light .acmain { background: #1a1f36 !important; color: #fff !important; }
+  /* ---------- Pages ---------- */
+  body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  body[data-page="today"] #toolsPanel, body[data-page="today"] #meCard { display: none; }
+  body:not([data-page="today"]) main.card { display: none; }
+  body:not([data-page="me"]) #meCard { display: none; }
+  body[data-page="focus"] #toolsPanel .tabs, body[data-page="learn"] #toolsPanel .tabs { display: none; }
+  body[data-page="me"] #tabFocus, body[data-page="me"] #tabLearn { display: none; }
+  body[data-page="me"] #toolsTitle { display: none; }
+  .pagetitle { margin: 0 0 14px; font-size: 1.35rem; }
+  .bnav {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 20;
+    display: flex; gap: 4px; padding: 5px; border-radius: 999px; width: min(440px, calc(100vw - 24px));
+    background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.08)); border: 1px solid rgba(255,255,255,.28);
+    backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 12px 30px rgba(0,0,0,.3);
+  }
+  .bnav button { flex: 1; border: 0; background: transparent; color: inherit; font: inherit; font-size: .9rem; font-weight: 600; padding: 11px 6px; border-radius: 999px; cursor: pointer; opacity: .75; transition: background .2s, opacity .2s; }
+  .bnav button[aria-current="page"] { background: rgba(255,255,255,.92); color: #1a1f36; opacity: 1; }
+  body.light .bnav { background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55)); border-color: rgba(255,255,255,.8); }
+  body.light .bnav button[aria-current="page"] { background: #1a1f36; color: #fff; }
+  body.zen .bnav { display: none; }
+  .melist { display: grid; gap: 8px; }
+  .melist .chip { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 16px; border-radius: 16px; font-size: .95rem; text-align: left; white-space: normal; }
+  .melist .chip::after { content: ""; width: 7px; height: 7px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); opacity: .5; flex: none; margin-left: 12px; }
+  #toolsPanel { margin-top: 14px; }
+  body[data-page="focus"] #toolsPanel, body[data-page="learn"] #toolsPanel { margin-top: 0; }
+  /* simpler focus screen */
+  .timer { flex-direction: column; align-items: center; gap: 18px; }
+  .ring { width: 200px; height: 200px; }
+  .ring svg { width: 200px; height: 200px; }
+  .ring .num { font-size: 2.6rem; }
+  .tctl { width: 100%; max-width: 360px; align-items: center; gap: 12px; }
+  .seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); }
+  .seg .chip { border: 0 !important; background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; padding: 7px 14px; }
+  .seg .chip[aria-pressed="true"] { background: rgba(255,255,255,.92) !important; color: #1a1f36; }
+  body.light .seg { background: rgba(0,0,0,.05); border-color: rgba(0,0,0,.08); }
+  body.light .seg .chip[aria-pressed="true"] { background: #1a1f36 !important; color: #fff; }
+  .seg-sm .chip { padding: 5px 10px; font-size: .8rem; }
+  .qsubj { display: flex; align-items: center; gap: 10px; margin: 14px 0 10px; font-size: .9rem; font-weight: 600; }
+  .qsubj select { flex: 1; padding: 9px 12px; border-radius: 12px; font-size: .9rem; }
+  .segtabs { display: flex; width: 100%; margin-bottom: 16px; flex-wrap: nowrap; }
+  .segtabs .chip { flex: 1; padding: 8px 4px; font-size: .85rem; white-space: nowrap; }
+  .seg .chip[aria-selected="true"] { background: rgba(255,255,255,.92) !important; color: #1a1f36; }
+  body.light .seg .chip[aria-selected="true"] { background: #1a1f36 !important; color: #fff; }
+  .twide { width: 100%; padding: 14px !important; font-size: 1.05rem !important; }
+  .tlinks { display: flex; gap: 22px; justify-content: center; }
+  .tmsg { text-align: center; }
+  .tsound { width: 100%; display: grid; gap: 10px; justify-items: center; margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .tsrow { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .tslabel { font-weight: 600; font-size: .9rem; }
+  #vol { width: 100%; order: 0; flex: none; }
+  .hint { display: none; }
+  @media (hover: hover) and (pointer: fine) { body[data-page="today"] .hint { display: block; } }
   /* ---------- Liquid glass ---------- */
   .card, .modal .box, .chip, .round, .fact, .company { --g-hi: rgba(255,255,255,.55); --g-edge: rgba(255,255,255,.26); }
   .card {
@@ -533,16 +586,10 @@
         <h1 id="heading"></h1>
         <span class="streak" id="streak"></span>
       </div>
-      <div class="tools">
-        <button class="chip" id="favToggle" type="button" aria-pressed="false"></button>
-        <button class="chip" id="setBtn" type="button"></button>
-        <button class="chip" id="editBtn" type="button"></button>
-        <button class="chip" id="syncBtn" type="button" hidden></button>
-        <button class="chip" id="langBtn" type="button"></button>
-      </div>
+
     </div>
 
-    <div class="mode" role="group" id="modeGroup">
+    <div class="mode seg" role="group" id="modeGroup">
       <button class="chip" id="modeDaily" type="button"></button>
       <button class="chip" id="modeRandom" type="button"></button>
     </div>
@@ -603,8 +650,21 @@
     </div>
   </main>
 
+  <section class="panel mecard" id="meCard">
+    <h2 class="pagetitle" id="meTitle"></h2>
+    <div class="melist">
+      <button class="chip" id="syncBtn" type="button" hidden></button>
+      <button class="chip" id="favToggle" type="button" aria-pressed="false"></button>
+      <button class="chip" id="setBtn" type="button"></button>
+      <button class="chip" id="editBtn" type="button"></button>
+      <button class="chip" id="notifyBtn" type="button"></button>
+      <button class="chip" id="langBtn" type="button"></button>
+    </div>
+  </section>
+
   <section class="panel" id="toolsPanel">
-    <div class="tabs" role="tablist">
+    <h2 class="pagetitle" id="toolsTitle"></h2>
+    <div class="tabs seg segtabs" role="tablist">
       <button class="chip" id="tabFocus" role="tab" type="button" aria-selected="true"></button>
       <button class="chip" id="tabGoals" role="tab" type="button" aria-selected="false"></button>
       <button class="chip" id="tabStats" role="tab" type="button" aria-selected="false"></button>
@@ -615,30 +675,26 @@
     <div id="paneFocus" role="tabpanel">
       <div class="timer">
         <div class="ring">
-          <svg width="120" height="120" viewBox="0 0 120 120">
+          <svg viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="8"/>
             <circle id="ringBar" cx="60" cy="60" r="52" fill="none" stroke="#ffd27a" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="0"/>
           </svg>
           <div class="num" id="tNum">25:00</div>
         </div>
         <div class="tctl">
-          <div class="presets">
-            <button class="chip" data-min="25" type="button">25</button>
-            <button class="chip" data-min="15" type="button">15</button>
-            <button class="chip" data-min="5" type="button">5</button>
+          <div class="seg" role="group" aria-label="length">
+            <button class="chip" data-min="25" type="button">25 min</button>
+            <button class="chip" data-min="15" type="button">15 min</button>
+            <button class="chip" data-min="5" type="button">5 min</button>
           </div>
-          <div class="presets">
-            <button class="btn" id="tStart" type="button" style="padding:9px 20px;font-size:.92rem"></button>
-            <button class="chip" id="tReset" type="button"></button>
-            <button class="chip" id="zenBtn" type="button"></button>
-          </div>
-          <div class="presets">
-            <button class="chip" id="noiseBtn" type="button" aria-pressed="false"></button>
-            <input type="range" id="vol" min="0" max="1" step="0.05" aria-label="volume">
-            <button class="chip" id="notifyBtn" type="button"></button>
-          </div>
-          <div class="presets" id="sndPick" role="group"></div>
+          <button class="btn twide" id="tStart" type="button"></button>
+          <div class="tlinks"><button class="aclink" id="tReset" type="button"></button><button class="aclink" id="zenBtn" type="button"></button></div>
           <div class="tmsg" id="tMsg"></div>
+          <div class="tsound">
+            <div class="tsrow"><span class="tslabel" id="sndLabel"></span><button class="chip" id="noiseBtn" type="button" aria-pressed="false"></button></div>
+            <div class="seg seg-sm" id="sndPick" role="group"></div>
+            <input type="range" id="vol" min="0" max="1" step="0.05" aria-label="volume">
+          </div>
         </div>
       </div>
     </div>
@@ -671,7 +727,7 @@
         <div class="wprog"><span id="wProg"></span><div class="progress"><i id="wBar" style="width:0"></i></div></div>
       </div>
       <div class="quiz">
-        <div class="filters" id="qFilters" role="group"></div>
+        <label class="qsubj"><span id="qSubjLbl"></span><select id="qFilters" class="pick"></select></label>
         <div class="qhead"><span class="tag" id="qSubject"></span><span class="tmsg" id="qScore"></span></div>
         <p class="qtext" id="qText"></p>
         <div class="opts" id="qOpts"></div>
@@ -709,6 +765,12 @@
   <p class="hint" id="hint"></p>
 </div>
 
+<nav class="bnav" id="bnav" aria-label="pages">
+  <button type="button" data-page="today"></button>
+  <button type="button" data-page="focus"></button>
+  <button type="button" data-page="learn"></button>
+  <button type="button" data-page="me"></button>
+</nav>
 <div class="toast" id="toast" role="status"></div>
 <div class="zen" id="zen" hidden>
   <p class="zcity" id="zCity"></p>
@@ -1018,7 +1080,7 @@ Object.assign(UI.zh, {
   notifySent: "已送出一則測試通知", notifyOnToast: "通知已開啟",
   share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
-  signIn: "登入", account: "帳號", synced: "已同步",
+  signIn: "登入", account: "帳號", subjPick: "科目", pages: { today: "今天", focus: "專注", learn: "學習", me: "我的" }, meTitle: "我的", sndLabel: "背景聲音", synced: "已同步",
   acTitle: "登入帳號", acSub: "登入後，你的收藏、目標、連續天數、測驗進度和自訂內容都會存到帳號，換手機或電腦也能接著用。",
   acGoogle: "使用 Google 繼續", acOr: "或用電子郵件", acEmail: "電子郵件", acPass: "密碼（至少 6 個字元）",
   acLogin: "登入", acCreate: "建立帳號", acForgot: "忘記密碼？", acResetSent: "已寄出重設密碼的信，請到信箱查看。",
@@ -1088,7 +1150,7 @@ Object.assign(UI.en, {
   notifySent: "Test alert sent", notifyOnToast: "Alerts on",
   share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
-  signIn: "Sign in", account: "Account", synced: "Synced",
+  signIn: "Sign in", account: "Account", subjPick: "Subject", pages: { today: "Today", focus: "Focus", learn: "Learn", me: "Me" }, meTitle: "Me", sndLabel: "Background sound", synced: "Synced",
   acTitle: "Sign in", acSub: "Your saved quotes, goals, streak, quiz progress and custom content are kept in your account, so they follow you to any phone or computer.",
   acGoogle: "Continue with Google", acOr: "or use email", acEmail: "Email", acPass: "Password (at least 6 characters)",
   acLogin: "Sign in", acCreate: "Create account", acForgot: "Forgot password?", acResetSent: "Password reset email sent. Check your inbox.",
@@ -1718,11 +1780,25 @@ function renderTools() {
     $("tab" + T).setAttribute("aria-selected", tab === t);
     $("pane" + T).hidden = tab !== t;
   });
+  document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
+  $("meTitle").textContent = ui.meTitle; $("toolsTitle").textContent = ui.pages[page] || "";
+  $("sndLabel").textContent = ui.sndLabel;
   drawSound();
   $("notifyBtn").textContent = notifyAllowed() ? ui.notifyOn : ui.notifyOff;
   drawTimer(); drawGoals(); drawStats(); drawMine(); drawLearn(); drawReminders();
   $("zenBtn").textContent = ui.zen; $("reviewBtn").textContent = ui.review; drawBoard();
 }
+let page = store.get("sdb.page", "today");
+if (!["today", "focus", "learn", "me"].includes(page)) page = "today";
+function showPage(p, scroll = true) {
+  page = p; store.set("sdb.page", p); document.body.dataset.page = p;
+  if (p === "focus") tab = "focus";
+  else if (p === "learn") tab = "learn";
+  else if (p === "me" && (tab === "focus" || tab === "learn")) tab = "goals";
+  renderTools();
+  if (scroll) window.scrollTo({ top: 0 });
+}
+$("bnav").onclick = e => { const b = e.target.closest("[data-page]"); if (b) showPage(b.dataset.page); };
 $("tabFocus").onclick = () => { tab = "focus"; renderTools(); };
 $("tabGoals").onclick = () => { tab = "goals"; renderTools(); };
 $("tabStats").onclick = () => { tab = "stats"; renderTools(); };
@@ -2292,8 +2368,9 @@ function drawLearn() {
   const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 2).length;
   $("wProg").textContent = ui.mastered(mastered, WORDS.length);
   $("wBar").style.width = (mastered / WORDS.length * 100) + "%";
+  $("qSubjLbl").textContent = ui.subjPick;
   $("qFilters").innerHTML = ["all", "cs", "num", "logic", "arch", "ds", "net", "db", "prog", "calc", "en", "endless", "wrong"].map(f =>
-    `<button class="chip" type="button" data-f="${f}" aria-pressed="${learn.filter === f}">${f === "all" ? ui.all : f === "wrong" ? ui.wrongBook(wrongs.length) : ui.subj[f]}</button>`).join("");
+    `<option value="${f}"${learn.filter === f ? " selected" : ""}>${f === "all" ? ui.all : f === "wrong" ? ui.wrongBook(wrongs.length) : ui.subj[f]}</option>`).join("");
   $("qSubject").textContent = ui.subj[q[0]];
   const sc = store.get("sdb.quiz", { total: 0, correct: 0 });
   $("qScore").textContent = ui.score(sc.correct, sc.total);
@@ -2333,9 +2410,8 @@ function nextQuestion() {
   learn.q = choices[Math.floor(Math.random() * choices.length)]; learn.picked = null; drawLearn();
 }
 $("qNext").onclick = nextQuestion;
-$("qFilters").onclick = e => {
-  const b = e.target.closest("[data-f]"); if (!b) return;
-  learn.filter = b.dataset.f; store.set("sdb.qfilter", learn.filter); nextQuestion();
+$("qFilters").onchange = e => {
+  learn.filter = e.target.value; store.set("sdb.qfilter", learn.filter); nextQuestion();
 };
 function rateWord(known) {
   const w = WORDS[learn.word][0];
@@ -3074,6 +3150,7 @@ if (window.SDB_FIREBASE && location.protocol.startsWith("http")) {
 }
 setInterval(tickClock, 15000);
 setInterval(() => paintScene(current()), 10 * 60 * 1000); // sky follows real time
+showPage(page, false);
 </script>
 </body>
 </html>
