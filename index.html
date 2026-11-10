@@ -555,6 +555,31 @@
   .musplayer .musbar { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: .78rem; opacity: .75; }
   .musplayer .musopen { display: block; text-align: center; padding: 12px; text-decoration: none; color: inherit; font-weight: 600; }
   .mushint { font-size: .76rem; opacity: .6; line-height: 1.5; text-align: center; }
+  /* ---------- Tutorial ---------- */
+  .tutbox { width: min(380px, 100%); text-align: center; }
+  .tutstep { font-size: .78rem; opacity: .65; letter-spacing: .06em; text-transform: uppercase; }
+  .tutart { height: 190px; margin: 6px 0 14px; border-radius: 18px; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, rgba(40,46,84,.9), rgba(20,24,46,.95)); display: grid; place-items: center; color: #fff; }
+  .tutbox h3 { margin: 0 0 6px; font-size: 1.1rem; }
+  .tuttext { margin: 0 0 12px; font-size: .9rem; line-height: 1.6; opacity: .85; min-height: 4.8em; }
+  .tutdots { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+  .tutdots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .25; transition: opacity .2s, width .25s; }
+  .tutdots i.on { opacity: .9; width: 18px; border-radius: 999px; }
+  .tutart .phone-bar { position: absolute; left: 14px; right: 14px; bottom: 18px; display: flex; gap: 8px; align-items: center; }
+  .tutart .pb-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.16); display: grid; place-items: center; flex: none; }
+  .tutart .pb-url { flex: 1; height: 40px; border-radius: 999px; background: rgba(255,255,255,.16); display: flex; align-items: center; gap: 10px; padding: 0 14px; font-size: .78rem; opacity: .9; }
+  .tutart .hl { box-shadow: 0 0 0 3px #ffb35c, 0 0 18px rgba(255,179,92,.7); animation: tutPulse 1.4s ease-in-out infinite; }
+  @keyframes tutPulse { 50% { box-shadow: 0 0 0 5px rgba(255,179,92,.5), 0 0 26px rgba(255,179,92,.5); } }
+  .tutart .sheet { position: absolute; left: 18px; right: 18px; bottom: 14px; border-radius: 14px; background: rgba(255,255,255,.95); color: #1a1f36; text-align: left; overflow: hidden; }
+  .tutart .sheet div { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; font-size: .85rem; border-top: 1px solid rgba(0,0,0,.07); }
+  .tutart .sheet div:first-child { border-top: 0; }
+  .tutart .sheet div.hl { background: #fff4e6; box-shadow: inset 0 0 0 2px #ffb35c; animation: none; font-weight: 700; }
+  .tutart .home { display: grid; grid-template-columns: repeat(4, 46px); gap: 18px 16px; }
+  .tutart .home span { width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,.14); }
+  .tutart .home .app { background: url(icon-192.png) center/cover; position: relative; }
+  .tutart .home .app::after { content: "Daily Boost"; position: absolute; top: 50px; left: 50%; transform: translateX(-50%); font-size: .62rem; white-space: nowrap; }
+  .tutart .mini-row { width: 78%; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.95); color: #1a1f36; font-weight: 600; }
+  .tutart svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   /* ---------- Glass switch ---------- */
   .merow { cursor: default; }
   .melist .merow::after { display: none; }
@@ -719,6 +744,7 @@
     <h2 class="pagetitle" id="meTitle"></h2>
     <div class="melist">
       <button class="chip" id="syncBtn" type="button" hidden></button>
+      <button class="chip" id="installRow" type="button" hidden></button>
       <button class="chip" id="favToggle" type="button" aria-pressed="false"></button>
       <button class="chip" id="setBtn" type="button"></button>
       <button class="chip" id="editBtn" type="button"></button>
@@ -893,10 +919,20 @@
     <p class="acerr" id="acErr" role="alert"></p>
   </div>
 </div>
+<div class="modal" id="tutor" hidden>
+  <div class="box ebox tutbox" role="dialog" aria-modal="true" aria-labelledby="tutTitle">
+    <div class="ehead"><span class="tutstep" id="tutStep"></span><button class="chip" id="tutClose" type="button"></button></div>
+    <div class="tutart" id="tutArt"></div>
+    <h3 id="tutTitle"></h3>
+    <p class="tuttext" id="tutText"></p>
+    <div class="tutdots" id="tutDots"></div>
+    <div class="acrow"><button class="chip" id="tutPrev" type="button"></button><button class="chip acmain" id="tutNext" type="button"></button></div>
+  </div>
+</div>
 <div class="modal" id="alertBox" hidden>
   <div class="box ebox" role="alertdialog" aria-modal="true" aria-describedby="alertMsg">
     <p id="alertMsg" style="margin:4px 0 14px;line-height:1.6;text-align:left"></p>
-    <button class="chip" id="alertClose" type="button"></button>
+    <div class="acrow"><button class="chip acmain" id="alertTutor" type="button" hidden></button><button class="chip" id="alertClose" type="button"></button></div>
   </div>
 </div>
 <div class="modal" id="favs" hidden>
@@ -1160,6 +1196,15 @@ Object.assign(UI.zh, {
   signIn: "登入", account: "帳號", musLabel: "你的音樂", musPaste: "貼上歌單連結", musSave: "加入", musRemove: "移除",
   musBad: "看不懂這個連結。請貼上歌單、專輯或歌曲的分享連結。", musOpenIn: n => `在 ${n} 打開`, musNow: n => `來自 ${n}`,
   musHint: "Spotify 和 Apple Music 要在這個瀏覽器登入才能播完整歌曲，沒登入只能聽試聽片段。", musQuery: "讀書 專注 音樂",
+  tutWatch: "看教學", tutClose: "關閉", tutPrev: "上一步", tutNext: "下一步", tutDone: "完成", tutStep: (a, b) => `第 ${a} 步，共 ${b} 步`,
+  installRow: "加到主畫面（教學）",
+  tut: [
+    ["打開選單", "在 Safari 下方，點網址列左邊的選單按鈕。舊版 iPhone 是直接點下方中間的「分享」按鈕，那就跳到下一步。"],
+    ["點「分享」", "在選單裡找到「分享」並點下去。"],
+    ["加入主畫面", "在分享選單往下滑，點「加入主畫面」，再點右上角的「加入」。"],
+    ["從主畫面打開", "回到手機主畫面，點 Daily Boost 的圖示打開網站。之後都從這個圖示打開。"],
+    ["開啟通知", "到「我的」頁，把「通知」的開關打開，跳出詢問時選「允許」。完成！"]
+  ],
   subjPick: "科目", pages: { today: "今天", focus: "專注", learn: "學習", me: "我的" }, meTitle: "我的", sndLabel: "背景聲音", synced: "已同步",
   acTitle: "登入帳號", acSub: "登入後，你的收藏、目標、連續天數、測驗進度和自訂內容都會存到帳號，換手機或電腦也能接著用。",
   acGoogle: "使用 Google 繼續", acOr: "或用電子郵件", acEmail: "電子郵件", acPass: "密碼（至少 6 個字元）",
@@ -1233,6 +1278,15 @@ Object.assign(UI.en, {
   signIn: "Sign in", account: "Account", musLabel: "Your music", musPaste: "Paste a playlist link", musSave: "Add", musRemove: "Remove",
   musBad: "That link wasn't recognized. Paste a share link to a playlist, album or song.", musOpenIn: n => `Open in ${n}`, musNow: n => `From ${n}`,
   musHint: "Spotify and Apple Music play full songs only if you're signed in on this browser; otherwise you'll hear previews.", musQuery: "focus study music",
+  tutWatch: "Show me how", tutClose: "Close", tutPrev: "Back", tutNext: "Next", tutDone: "Done", tutStep: (a, b) => `Step ${a} of ${b}`,
+  installRow: "Add to Home Screen (guide)",
+  tut: [
+    ["Open the menu", "In Safari, tap the menu button to the left of the address bar. On older iPhones, tap the Share button in the middle of the bottom bar and skip to the next step."],
+    ["Tap Share", "Find Share in the menu and tap it."],
+    ["Add to Home Screen", "Scroll down in the share sheet, tap Add to Home Screen, then tap Add in the top corner."],
+    ["Open from the icon", "Go to your Home Screen and tap the Daily Boost icon. Always open the site from this icon."],
+    ["Turn on Alerts", "Go to the Me page, switch Alerts on, and choose Allow when asked. That's it!"]
+  ],
   subjPick: "Subject", pages: { today: "Today", focus: "Focus", learn: "Learn", me: "Me" }, meTitle: "Me", sndLabel: "Background sound", synced: "Synced",
   acTitle: "Sign in", acSub: "Your saved quotes, goals, streak, quiz progress and custom content are kept in your account, so they follow you to any phone or computer.",
   acGoogle: "Continue with Google", acOr: "or use email", acEmail: "Email", acPass: "Password (at least 6 characters)",
@@ -1865,7 +1919,8 @@ function renderTools() {
   });
   document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
   lensTo(page, !!window.__lensReady); window.__lensReady = true;
-  $("meTitle").textContent = ui.meTitle; $("toolsTitle").textContent = ui.pages[page] || "";
+  $("meTitle").textContent = ui.meTitle;
+  $("installRow").hidden = !(isIOS() && !isStandalone()); $("installRow").textContent = ui.installRow; $("toolsTitle").textContent = ui.pages[page] || "";
   $("sndLabel").textContent = ui.sndLabel; drawMusic();
   drawSound();
   $("notifyLbl").textContent = ui.alertsLbl; $("notifyBtn").setAttribute("aria-checked", alertsOn()); $("notifyBtn").setAttribute("aria-label", ui.alertsLbl);
@@ -1947,7 +2002,7 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "34";
+const APP_VERSION = "35";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -2096,16 +2151,57 @@ function showNote(title, body, tag) {
 function notify(title, body) { if (document.hidden) showNote(title, body); }
 const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-function alertInfo(msg) {
-  $("alertMsg").textContent = msg; $("alertClose").textContent = UI[lang].close; $("alertBox").hidden = false;
+function alertInfo(msg, withTutor) {
+  $("alertMsg").textContent = msg; $("alertClose").textContent = UI[lang].close;
+  $("alertTutor").hidden = !withTutor; $("alertTutor").textContent = UI[lang].tutWatch;
+  $("alertBox").hidden = false;
 }
+$("alertTutor").onclick = () => { $("alertBox").hidden = true; openTutor(); };
+/* ---------- Add to Home Screen guide ---------- */
+const SVG = {
+  menu: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+  share: '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>'
+};
+const TUT_ART = [
+  () => `<div class="phone-bar"><span class="pb-btn hl">${SVG.menu}</span><span class="pb-url">${location.host}</span><span class="pb-btn">${SVG.share}</span></div>`,
+  () => { const z = lang === "zh"; return `<div class="sheet"><div>${z ? "拷貝" : "Copy"}</div><div class="hl">${z ? "分享" : "Share"} ${SVG.share}</div><div>${z ? "書籤" : "Bookmarks"}</div><div>${z ? "設定" : "Settings"}</div></div>`; },
+  () => { const z = lang === "zh"; return `<div class="sheet"><div>${z ? "拷貝" : "Copy"}</div><div>${z ? "加入書籤" : "Add Bookmark"}</div><div class="hl">${z ? "加入主畫面" : "Add to Home Screen"} ${SVG.plus}</div><div>${z ? "在頁面中尋找" : "Find on Page"}</div></div>`; },
+  () => `<div class="home"><span></span><span></span><span></span><span></span><span></span><span class="app hl"></span><span></span><span></span></div>`,
+  () => `<div class="mini-row">${lang === "zh" ? "通知" : "Alerts"}<button class="gswitch" type="button" role="switch" aria-checked="true" tabindex="-1"><span class="knob"></span></button></div>`
+];
+let tutAt = 0;
+function drawTutor() {
+  const ui = UI[lang], n = ui.tut.length;
+  $("tutStep").textContent = ui.tutStep(tutAt + 1, n);
+  $("tutArt").innerHTML = TUT_ART[tutAt]();
+  $("tutTitle").textContent = ui.tut[tutAt][0]; $("tutText").textContent = ui.tut[tutAt][1];
+  $("tutDots").innerHTML = ui.tut.map((_, i) => `<i class="${i === tutAt ? "on" : ""}"></i>`).join("");
+  $("tutClose").textContent = ui.tutClose; $("tutPrev").textContent = ui.tutPrev;
+  $("tutPrev").style.visibility = tutAt ? "visible" : "hidden";
+  $("tutNext").textContent = tutAt === n - 1 ? ui.tutDone : ui.tutNext;
+}
+function openTutor() { tutAt = 0; drawTutor(); $("tutor").hidden = false; }
+$("tutNext").onclick = () => { if (tutAt < UI[lang].tut.length - 1) { tutAt++; drawTutor(); } else $("tutor").hidden = true; };
+$("tutPrev").onclick = () => { if (tutAt > 0) { tutAt--; drawTutor(); } };
+$("tutClose").onclick = () => { $("tutor").hidden = true; };
+$("tutor").onclick = e => { if (e.target.id === "tutor") $("tutor").hidden = true; };
+(() => { // swipe between steps
+  let x0 = null;
+  $("tutor").addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  $("tutor").addEventListener("touchend", e => {
+    if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (dx < -40) $("tutNext").click(); else if (dx > 40) $("tutPrev").click();
+  });
+})();
+$("installRow").onclick = openTutor;
 $("alertClose").onclick = () => { $("alertBox").hidden = true; };
 $("alertBox").onclick = e => { if (e.target.id === "alertBox") $("alertBox").hidden = true; };
 $("notifyBtn").onclick = async () => {
   const ui = UI[lang];
   if (notifyAllowed()) { store.set("sdb.alerts", false); toast(ui.notifyOffToast); renderTools(); return; }
   if ("Notification" in window && Notification.permission === "granted") { store.set("sdb.alerts", true); showNote(ui.notifyTestTitle, ui.notifyTest); toast(ui.notifyOnToast, "ok"); renderTools(); return; }
-  if (!("Notification" in window)) { alertInfo(isIOS() && !isStandalone() ? ui.notifyIOS : ui.notifyNo); return; }
+  if (!("Notification" in window)) { const ios = isIOS() && !isStandalone(); alertInfo(ios ? ui.notifyIOS : ui.notifyNo, ios); return; }
   if (Notification.permission === "denied") { alertInfo(ui.notifyBlocked); return; }
   let r = "default";
   try { r = await Notification.requestPermission(); } catch (e) {}
