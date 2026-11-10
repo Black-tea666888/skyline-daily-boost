@@ -2016,7 +2016,7 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "36";
+const APP_VERSION = "37";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -2678,7 +2678,7 @@ function drawLearn() {
     return `<button class="opt${cls}" data-opt="${i}" type="button"${done ? " disabled" : ""}>${String.fromCharCode(65 + i)}. ${esc(o)}</button>`;
   }).join("");
   $("qExp").hidden = !done;
-  if (done) $("qExp").textContent = `${learn.picked === q[3] ? ui.right : `${ui.wrong} ${String.fromCharCode(65 + q[3])}。`} ${q[4]}`;
+  if (done) $("qExp").textContent = `${learn.picked === q[3] ? ui.right : `${ui.wrong} ${String.fromCharCode(65 + q[3])}${lang === "zh" ? "。" : "."}`} ${q[4]}`;
 }
 
 $("qOpts").onclick = e => {
