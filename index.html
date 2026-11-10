@@ -478,7 +478,41 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 12px 30px rgba(0,0,0,.3);
   }
   .bnav button { flex: 1; border: 0; background: transparent; color: inherit; font: inherit; font-size: .9rem; font-weight: 600; padding: 11px 6px; border-radius: 999px; cursor: pointer; opacity: .75; transition: background .2s, opacity .2s; }
-  .bnav button[aria-current="page"] { background: rgba(255,255,255,.92); color: #1a1f36; opacity: 1; }
+  .bnav { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+  .bnav button { position: relative; z-index: 1; }
+  .bnav button[aria-current="page"] { opacity: 0; }
+  .bnav.dragging button[aria-current="page"] { opacity: .75; }
+  .lens {
+    position: absolute; top: -7px; bottom: -7px; left: 0; width: 100px; z-index: 2; pointer-events: none;
+    border-radius: 999px; overflow: hidden;
+    transform: translateX(var(--x, 0px)) scale(var(--sx, 1), var(--sy, 1));
+    transition: transform .55s cubic-bezier(.3, 1.45, .45, 1);
+    background: linear-gradient(180deg, rgba(60,66,100,.72), rgba(30,34,60,.66) 55%, rgba(60,66,100,.7));
+    backdrop-filter: blur(7px) saturate(170%) brightness(1.1); -webkit-backdrop-filter: blur(7px) saturate(170%) brightness(1.1);
+    box-shadow: inset 0 1.5px 1px rgba(255,255,255,.75), inset 0 -2px 3px rgba(255,255,255,.18), inset 0 0 0 1px rgba(255,255,255,.35),
+                inset 0 0 18px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
+  }
+  .lens.drag { transition: transform .08s linear; }
+  /* colored fringe along the rim, like light bending through glass */
+  .lens::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px; z-index: 2;
+    background: conic-gradient(from 200deg, rgba(255,120,60,.85), rgba(255,220,90,.6), rgba(80,220,255,.75), rgba(170,90,255,.7), rgba(255,80,160,.7), rgba(255,120,60,.85));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    filter: blur(1.2px); opacity: .62;
+  }
+  /* soft inner shine */
+  .lens::after {
+    content: ""; position: absolute; left: 12%; right: 12%; top: 3px; height: 38%; border-radius: 999px; z-index: 3;
+    background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+  }
+  /* magnified copy of the labels, seen through the lens */
+  .lens-track { position: absolute; top: 7px; height: calc(100% - 14px); display: flex; gap: 4px; transform-origin: var(--ox, 50px) 50%; transform: scale(1.22); transition: transform .55s cubic-bezier(.3, 1.45, .45, 1); }
+  .lens.drag .lens-track { transition: none; }
+  .lens-track span { flex: none; display: grid; place-items: center; font-size: .9rem; font-weight: 700; color: #ffb35c; text-shadow: 0 0 10px rgba(255,170,80,.35); }
+  body.light .lens-track span { color: #c2620a; text-shadow: none; }
+  body.light .lens { background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.6) 55%, rgba(255,255,255,.75)); }
+  @media (prefers-reduced-motion: reduce) { .lens, .lens-track { transition: none; } }
   body.light .bnav { background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55)); border-color: rgba(255,255,255,.8); }
   body.light .bnav button[aria-current="page"] { background: #1a1f36; color: #fff; }
   body.zen .bnav { display: none; }
@@ -770,6 +804,7 @@
   <button type="button" data-page="focus"></button>
   <button type="button" data-page="learn"></button>
   <button type="button" data-page="me"></button>
+  <div class="lens" id="lens" aria-hidden="true"><div class="lens-track" id="lensTrack"></div></div>
 </nav>
 <div class="toast" id="toast" role="status"></div>
 <div class="zen" id="zen" hidden>
@@ -1781,6 +1816,7 @@ function renderTools() {
     $("pane" + T).hidden = tab !== t;
   });
   document.querySelectorAll("#bnav [data-page]").forEach(b => { b.textContent = ui.pages[b.dataset.page]; b.toggleAttribute("aria-current", b.dataset.page === page); if (b.dataset.page === page) b.setAttribute("aria-current", "page"); });
+  buildLensTrack(); lensTo(page, !!window.__lensReady); window.__lensReady = true;
   $("meTitle").textContent = ui.meTitle; $("toolsTitle").textContent = ui.pages[page] || "";
   $("sndLabel").textContent = ui.sndLabel;
   drawSound();
@@ -1798,7 +1834,66 @@ function showPage(p, scroll = true) {
   renderTools();
   if (scroll) window.scrollTo({ top: 0 });
 }
-$("bnav").onclick = e => { const b = e.target.closest("[data-page]"); if (b) showPage(b.dataset.page); };
+/* liquid glass lens that slides between pages */
+const navBtns = () => [...document.querySelectorAll("#bnav [data-page]")];
+function buildLensTrack() {
+  const bs = navBtns();
+  $("lensTrack").innerHTML = bs.map(b => `<span style="width:${b.offsetWidth}px">${esc(b.textContent)}</span>`).join("");
+}
+function placeLens(x, w, stretch) {
+  const lens = $("lens"), pad = 6;
+  const lw = w + pad * 2, lx = x - pad;
+  lens.style.width = lw + "px";
+  lens.style.setProperty("--x", lx + "px");
+  lens.style.setProperty("--sx", stretch ? 1.12 : 1);
+  lens.style.setProperty("--sy", stretch ? 0.94 : 1);
+  const first = navBtns()[0];
+  const track = $("lensTrack");
+  track.style.left = (first.offsetLeft - lx) + "px";
+  track.style.setProperty("--ox", (lx + lw / 2 - first.offsetLeft) + "px");
+}
+function lensTo(p, animate = true) {
+  const b = navBtns().find(x => x.dataset.page === p); if (!b) return;
+  const lens = $("lens");
+  if (!animate) lens.style.transition = "none";
+  if (animate) { placeLens(b.offsetLeft, b.offsetWidth, true); setTimeout(() => placeLens(b.offsetLeft, b.offsetWidth, false), 160); }
+  else placeLens(b.offsetLeft, b.offsetWidth, false);
+  if (!animate) { lens.offsetWidth; lens.style.transition = ""; }
+}
+let navDrag = null;
+$("bnav").addEventListener("pointerdown", e => {
+  const lens = $("lens"), r = lens.getBoundingClientRect();
+  if (e.clientX < r.left - 4 || e.clientX > r.right + 4) return; // only drag when grabbing the lens
+  navDrag = { start: e.clientX, x0: parseFloat(lens.style.getPropertyValue("--x")) || 0, moved: false };
+  lens.classList.add("drag"); $("bnav").classList.add("dragging"); $("bnav").setPointerCapture(e.pointerId);
+});
+$("bnav").addEventListener("pointermove", e => {
+  if (!navDrag) return;
+  const dx = e.clientX - navDrag.start; if (Math.abs(dx) > 4) navDrag.moved = true;
+  const bs = navBtns(), lens = $("lens"), pad = 6, w = bs[0].offsetWidth;
+  const min = bs[0].offsetLeft - pad, max = bs[bs.length - 1].offsetLeft - pad;
+  const x = Math.max(min - 10, Math.min(max + 10, navDrag.x0 + dx));
+  lens.style.setProperty("--x", x + "px"); lens.style.setProperty("--sx", 1.1); lens.style.setProperty("--sy", .95);
+  const track = $("lensTrack"), lw = w + pad * 2;
+  track.style.left = (bs[0].offsetLeft - x) + "px"; track.style.setProperty("--ox", (x + lw / 2 - bs[0].offsetLeft) + "px");
+});
+const endDrag = e => {
+  if (!navDrag) return;
+  const lens = $("lens"); lens.classList.remove("drag"); $("bnav").classList.remove("dragging");
+  const moved = navDrag.moved; navDrag = null;
+  if (!moved) return; // a tap: let the click handler decide
+  const r = lens.getBoundingClientRect(), cx = r.left + r.width / 2;
+  const target = navBtns().reduce((a, b) => { const br = b.getBoundingClientRect(); const d = Math.abs(br.left + br.width / 2 - cx); return d < a.d ? { b, d } : a; }, { b: null, d: 1e9 }).b;
+  window.__navDragged = Date.now();
+  if (target) showPage(target.dataset.page);
+};
+$("bnav").addEventListener("pointerup", endDrag);
+$("bnav").addEventListener("pointercancel", endDrag);
+$("bnav").onclick = e => {
+  if (window.__navDragged && Date.now() - window.__navDragged < 300) return;
+  const b = e.target.closest("[data-page]"); if (b) showPage(b.dataset.page);
+};
+window.addEventListener("resize", () => { buildLensTrack(); lensTo(page, false); });
 $("tabFocus").onclick = () => { tab = "focus"; renderTools(); };
 $("tabGoals").onclick = () => { tab = "goals"; renderTools(); };
 $("tabStats").onclick = () => { tab = "stats"; renderTools(); };
