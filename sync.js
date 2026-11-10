@@ -21,6 +21,14 @@ catch (e) { db = initializeFirestore(app, {}); }
 
 const btn = document.getElementById("syncBtn");
 const ui = () => UI[lang];
+let lastErrToast = 0;
+function syncFail(e) {
+  console.warn(e);
+  if (Date.now() - lastErrToast < 30000) return; // don't repeat the same warning every retry
+  lastErrToast = Date.now();
+  const c = (e && e.code) || "";
+  toast(/permission/.test(c) ? ui().syncErrPerm : (/unavailable|network/.test(c) || !navigator.onLine) ? ui().syncErrNet : ui().syncErr, "error");
+}
 
 // one id per browser, so each device keeps its own focus log
 let deviceId = store.get("sdb.device", null);
@@ -131,7 +139,7 @@ async function push() {
     const bn = store.get("sdb.boardName", null);
     if (bn) await setDoc(doc(db, "boards", weekKey(), "entries", user.uid), { name: bn, minutes: weekMinutes(), updatedAt: serverTimestamp() });
   } catch (e) {
-    state = "error"; toast(ui().syncErr); console.warn(e);
+    state = "error"; syncFail(e);
     clearTimeout(pushTimer); pushTimer = setTimeout(push, 15000);
   }
   label();
@@ -173,7 +181,7 @@ async function start(u) {
     const snap = await getDoc(ref);
     const mergedKey = "sdb.merged." + u.uid;
     if (snap.exists()) {
-      if (!store.get(mergedKey, false)) { mergeFirst(snap.data()); setTimeout(() => toast(ui().acMerged), 1800); }
+      if (!store.get(mergedKey, false)) { mergeFirst(snap.data()); setTimeout(() => toast(ui().acMerged, "ok"), 1800); }
       else applyShared(snap.data().shared);
       applyLogs(snap.data().logs);
     }
@@ -185,7 +193,7 @@ async function start(u) {
       if (d.updatedBy !== deviceId) applyShared(d.shared); // change came from another device
       applyLogs(d.logs);
     });
-  } catch (e) { state = "error"; toast(ui().syncErr); console.warn(e); }
+  } catch (e) { state = "error"; syncFail(e); }
   label(); drawAccount();
 }
 
@@ -240,7 +248,7 @@ btn.onclick = openBox;
 $a("acClose").onclick = closeBox;
 box.onclick = e => { if (e.target === box) closeBox(); };
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeBox(); });
-const done = (msg) => { closeBox(); toast(msg || ui().acWelcome(shortName() || "")); };
+const done = (msg) => { closeBox(); toast(msg || ui().acWelcome(shortName() || ""), "ok"); };
 const rememberEmail = () => { const em = $a("acEmail").value.trim(); if (em) localStorage.setItem("sdb.lastEmail", JSON.stringify(em)); };
 $a("acGoogle").onclick = async () => {
   err(null); busy(true, "acGoogle");
@@ -298,7 +306,7 @@ $a("acDelete").onclick = async () => {
     await deleteDoc(doc(db, "users", u.uid));
     await deleteUser(u);
     localStorage.removeItem("sdb.merged." + u.uid); localStorage.removeItem("sdb.boardName");
-    closeBox(); toast(ui().acDeleted);
+    closeBox(); toast(ui().acDeleted, "ok");
   } catch (e) { if (e.code === "auth/requires-recent-login") $a("acErr").textContent = ui().acRelogin; else err(e); drawAccount(); }
 };
 $a("acSyncNow").onclick = async () => { $a("acSyncNow").textContent = ui().acBusy; await push(); drawAccount(); };

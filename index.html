@@ -156,11 +156,16 @@
   [hidden] { display: none !important; }
 
   .toast {
-    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0;
-    padding: 9px 16px; border-radius: 999px; background: rgba(0,0,0,.75); font-size: .88rem;
-    transition: all .25s ease; z-index: 5; pointer-events: none;
+    position: fixed; left: 50%; top: calc(14px + env(safe-area-inset-top)); transform: translate(-50%, -16px); opacity: 0;
+    max-width: min(92vw, 460px); width: max-content; padding: 12px 18px; border-radius: 16px;
+    background: rgba(16,18,36,.94); color: #fff; font-size: .95rem; font-weight: 600; line-height: 1.45; text-align: center;
+    border: 1px solid rgba(255,255,255,.18); box-shadow: 0 12px 34px rgba(0,0,0,.4);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transition: opacity .25s ease, transform .25s ease; z-index: 50; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.error { background: #b3261e; border-color: rgba(255,255,255,.25); }
+  .toast.ok { background: #1f6f43; border-color: rgba(255,255,255,.25); }
 
   .fade { animation: fadeUp .55s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
@@ -1029,7 +1034,7 @@ Object.assign(UI.zh, {
     "auth/invalid-credential": "電子郵件或密碼不正確。", "auth/wrong-password": "電子郵件或密碼不正確。", "auth/user-not-found": "找不到這個帳號，可以按「建立帳號」。",
     "auth/email-already-in-use": "這個電子郵件已經註冊過，請直接登入。", "auth/weak-password": "密碼至少要 6 個字元。", "auth/invalid-email": "電子郵件格式不正確。",
     "auth/too-many-requests": "嘗試次數太多，請稍後再試。", "auth/network-request-failed": "網路連線失敗，請檢查網路。", "auth/operation-not-allowed": "這種登入方式還沒在 Firebase 啟用。", other: "登入失敗，請再試一次。" }, syncing: "同步中…", signedIn: "已登入，資料會在裝置間同步",
-  signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試",
+  signedOut: "已登出，資料只存在這台裝置", signOutQ: "再按一次登出", syncErr: "同步失敗，稍後會再試", syncErrPerm: "同步失敗：雲端資料庫拒絕存取。請確認 Firebase 的 Firestore 規則已經發佈。", syncErrNet: "同步失敗：目前沒有網路，連上後會自動同步。",
   learnTab: "學習", speak: "發音", qNext: "下一題", wNext: "換一個單字", right: "答對了！", wrong: "正確答案是",
   score: (c, t) => t ? `答對 ${c}／${t}（${Math.round(c / t * 100)}%）` : "每日練習",
   subj: { cs: "科技全部", num: "數字系統", logic: "數位邏輯", arch: "電腦結構", ds: "資料結構", net: "網路", db: "資料庫", prog: "程式與作業系統", calc: "微積分", en: "英文", zh: "國文", endless: "無限題" },
@@ -1099,7 +1104,7 @@ Object.assign(UI.en, {
     "auth/invalid-credential": "Email or password is incorrect.", "auth/wrong-password": "Email or password is incorrect.", "auth/user-not-found": "No account with that email. Tap Create account.",
     "auth/email-already-in-use": "That email already has an account. Sign in instead.", "auth/weak-password": "Password must be at least 6 characters.", "auth/invalid-email": "That email doesn't look right.",
     "auth/too-many-requests": "Too many attempts. Try again later.", "auth/network-request-failed": "Network error. Check your connection.", "auth/operation-not-allowed": "This sign-in method isn't enabled in Firebase yet.", other: "Sign-in failed. Please try again." }, syncing: "Syncing…", signedIn: "Signed in. Your data syncs across devices.",
-  signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.",
+  signedOut: "Signed out. Data stays on this device only.", signOutQ: "Tap again to sign out", syncErr: "Sync failed. Will retry.", syncErrPerm: "Sync failed: the cloud database refused access. Check that the Firestore rules are published in Firebase.", syncErrNet: "Sync failed: you're offline. It will sync when you're back online.",
   learnTab: "Learn", speak: "Listen", qNext: "Next question", wNext: "New word", right: "Correct!", wrong: "The answer is",
   score: (c, t) => t ? `${c}/${t} correct (${Math.round(c / t * 100)}%)` : "Daily practice",
   subj: { cs: "All tech", num: "Number systems", logic: "Logic gates", arch: "Computer architecture", ds: "Data structures", net: "Networks", db: "Databases", prog: "Programming & OS", calc: "Calculus", en: "English", zh: "Chinese", endless: "Endless" },
@@ -1510,9 +1515,13 @@ let streak = 1;
 
 /* ================= Actions ================= */
 let toastTimer;
-function toast(msg) {
-  const t = $("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
+function toast(msg, kind) {
+  const t = $("toast"); t.textContent = msg;
+  t.classList.remove("error", "ok"); if (kind) t.classList.add(kind);
+  t.setAttribute("role", kind === "error" ? "alert" : "status");
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), kind === "error" ? 5000 : Math.max(1800, msg.length * 60));
 }
 
 function newSet() { mode = "random"; store.set("sdb.mode", mode); go(randomState(current())); }
