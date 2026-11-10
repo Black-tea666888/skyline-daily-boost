@@ -680,6 +680,12 @@
     <button class="chip" id="zExit" type="button"></button>
   </div>
 </div>
+<div class="modal" id="alertBox" hidden>
+  <div class="box ebox" role="alertdialog" aria-modal="true" aria-describedby="alertMsg">
+    <p id="alertMsg" style="margin:4px 0 14px;line-height:1.6;text-align:left"></p>
+    <button class="chip" id="alertClose" type="button"></button>
+  </div>
+</div>
 <div class="modal" id="favs" hidden>
   <div class="box ebox favbox" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
     <div class="ehead"><div><h3 id="panelTitle"></h3><div class="favsub" id="favSub"></div></div><button class="chip" id="favClose" type="button"></button></div>
@@ -931,7 +937,11 @@ Object.assign(UI.zh, {
   statsTab: "統計", mineTab: "我的句子", week: "本週專注", todayMin: "今天", streakK: "連續天數",
   min: "分", days: n => `${n} 天`, weekdays: ["日", "一", "二", "三", "四", "五", "六"],
   addPh: "寫一句給自己的話", add: "新增", mineEmpty: "加入你自己的句子，它們會出現在隨機探索裡。", added: "已新增",
-  noise: "白噪音", notifyOn: "通知已開", notifyOff: "開啟通知", notifyNo: "瀏覽器不支援或被封鎖通知",
+  noise: "白噪音", notifyOn: "通知已開", notifyOff: "開啟通知", notifyNo: "這個瀏覽器不支援通知。可以改用 Chrome、Edge 或 Safari 試試。",
+  notifyIOS: "iPhone 和 iPad 只有從主畫面打開才能收到通知。請按 Safari 下方的「分享」，選「加入主畫面」，再從主畫面的圖示打開網站，然後按「開啟通知」。",
+  notifyBlocked: "通知已被封鎖。請到瀏覽器的網站設定（網址列左側的圖示）把這個網站的通知改成「允許」，再回來按一次。",
+  notifyTestTitle: "Daily Boost", notifyTest: "通知已開啟。專注結束和提醒時間到時，會在這裡通知你。",
+  notifySent: "已送出一則測試通知", notifyOnToast: "通知已開啟",
   share: "圖卡", download: "下載圖片", nativeShare: "分享", close: "關閉",
   saveHint: "如果下載沒反應，長按或右鍵圖片另存。",
   signIn: "登入同步", synced: "已同步", syncing: "同步中…", signedIn: "已登入，資料會在裝置間同步",
@@ -982,7 +992,11 @@ Object.assign(UI.en, {
   statsTab: "Stats", mineTab: "My quotes", week: "Focus this week", todayMin: "Today", streakK: "Streak",
   min: "min", days: n => `${n} day${n === 1 ? "" : "s"}`, weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
   addPh: "Write a line for yourself", add: "Add", mineEmpty: "Add your own lines. They'll show up in Explore.", added: "Added",
-  noise: "Rain noise", notifyOn: "Alerts on", notifyOff: "Enable alerts", notifyNo: "Notifications unsupported or blocked",
+  noise: "Rain noise", notifyOn: "Alerts on", notifyOff: "Enable alerts", notifyNo: "This browser doesn't support notifications. Try Chrome, Edge or Safari.",
+  notifyIOS: "On iPhone and iPad, alerts only work when the site is opened from the Home Screen. Tap Share in Safari, choose Add to Home Screen, open the site from that icon, then tap Enable alerts.",
+  notifyBlocked: "Alerts are blocked for this site. Open the site settings (the icon left of the address bar), set Notifications to Allow, then tap Enable alerts again.",
+  notifyTestTitle: "Daily Boost", notifyTest: "Alerts are on. You'll hear from us when a focus session ends and at your reminder times.",
+  notifySent: "Test alert sent", notifyOnToast: "Alerts on",
   share: "Card", download: "Download", nativeShare: "Share", close: "Close",
   saveHint: "If the download doesn't start, long-press or right-click the image to save it.",
   signIn: "Sign in to sync", synced: "Synced", syncing: "Syncing…", signedIn: "Signed in. Your data syncs across devices.",
@@ -1698,15 +1712,34 @@ $("vol").oninput = e => {
 
 /* ================= Notifications ================= */
 function notifyAllowed() { return "Notification" in window && Notification.permission === "granted"; }
-function notify(title, body) {
-  try { if (notifyAllowed() && document.hidden) new Notification(title, { body, icon: "icon-192.png" }); } catch (e) {}
+// Show a system notification. Mobile browsers only allow this through the service worker.
+function showNote(title, body, tag) {
+  if (!notifyAllowed()) return;
+  const opts = { body, icon: "icon-192.png", badge: "icon-192.png", tag: tag || "sdb" };
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg) return reg.showNotification(title, opts);
+      try { new Notification(title, opts); } catch (e) {}
+    }).catch(() => {});
+  } else { try { new Notification(title, opts); } catch (e) {} }
 }
+function notify(title, body) { if (document.hidden) showNote(title, body); }
+const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+function alertInfo(msg) {
+  $("alertMsg").textContent = msg; $("alertClose").textContent = UI[lang].close; $("alertBox").hidden = false;
+}
+$("alertClose").onclick = () => { $("alertBox").hidden = true; };
+$("alertBox").onclick = e => { if (e.target.id === "alertBox") $("alertBox").hidden = true; };
 $("notifyBtn").onclick = async () => {
-  try {
-    if (!("Notification" in window)) throw 0;
-    const r = await Notification.requestPermission();
-    if (r !== "granted") throw 0;
-  } catch (e) { toast(UI[lang].notifyNo); }
+  const ui = UI[lang];
+  if (notifyAllowed()) { showNote(ui.notifyTestTitle, ui.notifyTest); toast(ui.notifySent); return; }
+  if (!("Notification" in window)) { alertInfo(isIOS() && !isStandalone() ? ui.notifyIOS : ui.notifyNo); return; }
+  if (Notification.permission === "denied") { alertInfo(ui.notifyBlocked); return; }
+  let r = "default";
+  try { r = await Notification.requestPermission(); } catch (e) {}
+  if (r === "granted") { showNote(ui.notifyTestTitle, ui.notifyTest); toast(ui.notifyOnToast); }
+  else if (r === "denied") alertInfo(ui.notifyBlocked);
   renderTools();
 };
 
@@ -2308,13 +2341,7 @@ function fireReminder(r) {
   const body = `${r.text}\n${quote}`;
   const title = UI[lang].rTitle;
   chime(); toast(r.text);
-  try {
-    if (notifyAllowed()) {
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body, icon: "icon-192.png", tag: "sdb-" + r.id }));
-      } else new Notification(title, { body, icon: "icon-192.png", tag: "sdb-" + r.id });
-    }
-  } catch (e) {}
+  showNote(title, body, "sdb-" + r.id);
 }
 function checkReminders() {
   const now = new Date(), today = todayKey(now), mins = now.getHours() * 60 + now.getMinutes();
