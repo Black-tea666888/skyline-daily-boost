@@ -417,6 +417,55 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+
+  /* ---------- Liquid glass ---------- */
+  .card, .modal .box, .chip, .round, .fact, .company { --g-hi: rgba(255,255,255,.55); --g-edge: rgba(255,255,255,.26); }
+  .card {
+    position: relative; isolation: isolate;
+    background: linear-gradient(140deg, rgba(255,255,255,.16), rgba(255,255,255,.04) 45%, rgba(255,255,255,.08));
+    border: 1px solid var(--g-edge);
+    backdrop-filter: blur(28px) saturate(185%) brightness(1.04); -webkit-backdrop-filter: blur(28px) saturate(185%) brightness(1.04);
+    box-shadow: inset 0 1px 0 var(--g-hi), inset 0 -1px 0 rgba(255,255,255,.07), inset 0 0 40px rgba(255,255,255,.05), 0 30px 70px rgba(0,0,0,.38);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+    background: radial-gradient(120% 60% at 15% 0%, rgba(255,255,255,.22), transparent 55%),
+                radial-gradient(80% 50% at 100% 100%, rgba(255,255,255,.08), transparent 60%);
+  }
+  .chip, .round {
+    background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+    border: 1px solid var(--g-edge);
+    backdrop-filter: blur(16px) saturate(170%); -webkit-backdrop-filter: blur(16px) saturate(170%);
+    box-shadow: inset 0 1px 0 var(--g-hi), 0 4px 14px rgba(0,0,0,.12);
+    transition: background .2s, transform .15s, box-shadow .2s;
+  }
+  .chip:hover, .round:not(:disabled):hover { background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.1)); }
+  .chip:active, .round:not(:disabled):active { transform: scale(.97); }
+  .tabs .chip { border-color: var(--g-edge); background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); }
+  .tabs .chip[aria-selected="true"], .chip[aria-pressed="true"] { background: rgba(255,255,255,.92); color: #1a1f36; }
+  .fact, .company {
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.28);
+  }
+  .btn { box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 26px rgba(0,0,0,.28); }
+  .modal { background: rgba(0,0,0,.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .modal .box {
+    background: linear-gradient(150deg, rgba(40,46,84,.62), rgba(16,20,42,.55));
+    border: 1px solid var(--g-edge);
+    backdrop-filter: blur(32px) saturate(180%); -webkit-backdrop-filter: blur(32px) saturate(180%);
+    box-shadow: inset 0 1px 0 var(--g-hi), 0 30px 80px rgba(0,0,0,.45);
+  }
+  body.light .card, body.light .modal .box, body.light .chip, body.light .round, body.light .fact, body.light .company { --g-hi: rgba(255,255,255,.95); --g-edge: rgba(255,255,255,.7); }
+  body.light .card { background: linear-gradient(140deg, rgba(255,255,255,.6), rgba(255,255,255,.4) 50%, rgba(255,255,255,.5)); box-shadow: inset 0 1px 0 var(--g-hi), 0 30px 70px rgba(20,24,60,.18); }
+  body.light .chip, body.light .round { background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.35)); color: var(--ink); }
+  body.light .fact, body.light .company { background: linear-gradient(160deg, rgba(255,255,255,.55), rgba(255,255,255,.25)); border-color: rgba(255,255,255,.6); }
+  body.light .modal .box { background: linear-gradient(150deg, rgba(255,255,255,.78), rgba(245,247,255,.66)); }
+  body.light .tabs .chip[aria-selected="true"], body.light .chip[aria-pressed="true"] { background: #1a1f36; color: #fff; }
+  @media (prefers-reduced-transparency: reduce) {
+    .card, .modal .box { background: var(--glass); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .card::before { display: none; }
+  }
 </style>
 </head>
 <body>
