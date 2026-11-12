@@ -1757,7 +1757,7 @@ function toast(msg, kind) {
 function newSet() { mode = "random"; store.set("sdb.mode", mode); go(randomState(current())); }
 function prev() { if (hIndex > 0) { hIndex--; go(current(), false); } }
 function next() { if (hIndex < history.length - 1) { hIndex++; go(current(), false); } }
-function toggleLang() { lang = lang === "zh" ? "en" : "zh"; store.set("sdb.lang", lang); render(false); }
+function toggleLang() { lang = lang === "zh" ? "en" : "zh"; store.set("sdb.lang", lang); render(false); drawVersion(); }
 function toggleFav() {
   const i = Q(current().quote).id, ui = UI[lang];
   if (favs.includes(i)) { favs = favs.filter(x => x !== i); toast(ui.favRemoved); }
@@ -2119,9 +2119,16 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "39";
+const APP_VERSION = "40";
 $("toolsPanel").after($("appVer"));
-$("appVer").textContent = "Daily Boost · v" + APP_VERSION;
+// page views: counted once per app open on this device
+let views = 0;
+try { views = (+localStorage.getItem("sdb.views") || 0) + 1; localStorage.setItem("sdb.views", views); } catch (e) {}
+function drawVersion() {
+  const v = lang === "zh" ? "瀏覽 " + views + " 次" : views + " views";
+  $("appVer").textContent = "Daily Boost · v" + APP_VERSION + " · " + v;
+}
+drawVersion();
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
 function showPage(p, scroll = true) {
   const dir = PAGE_ORDER.indexOf(p) >= PAGE_ORDER.indexOf(page) ? "r" : "l", changed = p !== page;
