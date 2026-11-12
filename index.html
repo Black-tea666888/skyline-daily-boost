@@ -2119,7 +2119,7 @@ $("musForm").onsubmit = e => {
   if (!parseMusic(v)) { toast(UI[lang].musBad, "error"); return; }
   store.set("sdb.music", v.trim()); $("musUrl").value = ""; drawMusic();
 };
-const APP_VERSION = "38";
+const APP_VERSION = "39";
 $("toolsPanel").after($("appVer"));
 $("appVer").textContent = "Daily Boost · v" + APP_VERSION;
 const PAGE_ORDER = ["today", "focus", "learn", "me"];
@@ -2736,7 +2736,7 @@ function genEndless() {
 const TECH = ["cs", "num", "logic", "arch", "ds", "net", "db", "prog"];
 const learn = { word: 0, q: 0, gen: null, picked: null, filter: store.get("sdb.qfilter", "all") };
 function curQ() { return learn.gen || QUIZ[learn.q]; }
-// word familiarity: 0 = new / not yet, each "know" adds 1; 2+ counts as mastered
+// word familiarity: 0 = new / not yet, each "know" adds 1; 1+ counts as mastered
 let wordLv = store.get("sdb.words", {});
 let wrongs = store.get("sdb.wrong", []);
 function pickWord(avoid) {
@@ -2765,7 +2765,7 @@ function drawLearn() {
   $("wSpeak").textContent = ui.speak;
   $("wSpeak").hidden = !("speechSynthesis" in window);
   $("qNext").textContent = ui.qNext; $("wNext").textContent = ui.unsure; $("wKnow").textContent = ui.know;
-  const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 2).length;
+  const mastered = WORDS.filter(x => (wordLv[x[0]] || 0) >= 1).length;
   $("wProg").textContent = ui.mastered(mastered, WORDS.length);
   $("wBar").style.width = (mastered / WORDS.length * 100) + "%";
   $("qSubjLbl").textContent = ui.subjPick;

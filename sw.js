@@ -1,5 +1,5 @@
 // Offline support: serve cached files, refresh them in the background.
-const CACHE = "sdb-v38";
+const CACHE = "sdb-v39";
 const FILES = ["./", "index.html", "firebase-config.js", "sync.js", "manifest.webmanifest", "icon-192.png", "icon.svg", "apple-touch-icon.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
